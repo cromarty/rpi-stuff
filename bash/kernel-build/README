@@ -1,0 +1,78 @@
+
+This file gives a very brief description of what each of the files in 
+this directory are for.  For a greater length explanation of how I use 
+them to do a cross-compiled Raspberry Pi kernel build read the file 
+KNL-CC-HOW in the directory: notes/kernel-cc
+
+bash/kernel-build/*
+
+Here's what the files in this sub-directory do.
+
+Firstly the 'exports' file.  This contains some exported environment 
+variables.  These should be added to the bottom of your .bashrc before 
+you use the knl_* scripts to do a cross-compiled kernel build.
+Explanation of each variable:
+
+export KERNEL_ROOT=~/linux-rpi-3.6.y
+
+The top level directory of the tree where you will build the kernel.  
+Other exports below depend on this one.
+
+export KERNEL_SRC=${KERNEL_ROOT}/linux/
+
+Where the kernel source root directory is.
+
+export CCPREFIX=/usr/tools/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/bin/arm-bcm2708hardfp-linux-gnueabi-
+
+The prefix of the cross-compile tool-chain.  Note this can change with 
+versions and there are two versions.  Which you use will depend on 
+whether you are building a hard or soft float kernel.
+
+export MODULES_TEMP=${KERNEL_ROOT}/modules
+
+This is the root of where the modules will be put by the build process.
+
+export KERNEL_BUILD=${KERNEL_ROOT}/rpi-build
+
+This is the build directory, which is seperate from the kernel source 
+tree path to keep it tidy.
+
+Now here is an explanation of each script:
+
+knl_build
+
+Runs a full kernel build.
+
+knl_deploy
+
+knl_imod
+
+This script will collect all the modules into the one MODULES_TEMP path 
+as set up in your .bashrc.
+
+knl_modules
+
+Compiles all the kernel modules.
+
+knl_mrproper
+
+Runs a 'make mrproper' in the build directory to tidy it up before/after 
+a build.
+
+knl_oldconfig
+
+Runs 'make oldconfig' to take you through setting up a .config file from 
+an existing one.
+
+knl_zipmodules
+
+Zips up all the modules for slapping onto a Pi.
+
+mnt_rpi_card
+
+Will mount the two partitions of an SD card bearing an operating system 
+on your Linux machine.
+
+Note that this script makes assumptions about the /dev/sdX path of your 
+card so be careful to edit it correctly.
+

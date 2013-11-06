@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd ${KERNEL_ROOT}
+cd ${MODULES_TEMP}/lib
+tar -cjvf ${KERNEL_ROOT}/modules.tbz *
+ 

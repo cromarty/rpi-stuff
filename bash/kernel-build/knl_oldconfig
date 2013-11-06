@@ -1,0 +1,7 @@
+#!/bin/bash
+# Runs 'make oldconfig' in the correct place for our kernel build
+# See .bashrc for the environment settings
+
+cd ${KERNEL_SRC}
+make O=${KERNEL_BUILD} ARCH=arm CROSS_COMPILE=${CCPREFIX} oldconfig
+

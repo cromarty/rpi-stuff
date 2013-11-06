@@ -1,0 +1,9 @@
+#!/bin/bash
+# CBuilds the kernel modules saving the output messages in modules.script
+# See .bashrc for environment settings
+
+cd ${KERNEL_SRC}
+date > ~/modules.script
+make O=${KERNEL_BUILD} ARCH=arm CROSS_COMPILE=${CCPREFIX} modules &>> ~/modules.script
+date >> ~/modules.script
+ 

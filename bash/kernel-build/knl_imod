@@ -1,0 +1,13 @@
+#!/bin/bash
+# Installs the built kernel modules into directory
+# controlled by ${MODULES_TEMP}
+# See .bashrc for environment settings
+
+cd ${KERNEL_SRC}
+date > ~/modinstall.script
+make O=${KERNEL_BUILD} ARCH=arm CROSS_COMPILE=${CCPREFIX} INSTALL_MOD_PATH=${MODULES_TEMP} modules_install &>> ~/modinstall.script
+date >> ~/modinstall.script
+
+
+
+

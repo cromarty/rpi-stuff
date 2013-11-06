@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ $(id -u) -ne 0 ]; then
+    echo "Script must be run as root.  Try 'sudo $0'"
+    exit 1
+fi
+
+mount -t vfat /dev/sdc1 /mnt/rpi-boot
+mount /dev/sdc2 /mnt/rpi-root
+
+

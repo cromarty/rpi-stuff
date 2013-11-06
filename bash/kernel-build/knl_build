@@ -1,0 +1,16 @@
+#!/bin/bash
+# Kicks off a kernel compile, saving the output messages in ~/build.script
+# See .bashrc for the environment settings
+
+cd ${KERNEL_SRC}
+date > ~/build.script
+make O=${KERNEL_BUILD} ARCH=arm CROSS_COMPILE=${CCPREFIX} -j$(cat /proc/cpuinfo|grep processor|wc -l) >> ~/build.script
+date >> ~/build.script
+
+
+
+
+
+
+
+

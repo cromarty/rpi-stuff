@@ -1,0 +1,15 @@
+#!/bin/bash
+# Does a 'make mrproper' to clean the kernel build directory
+# See .bashrc for the environment settings
+
+cd ${KERNEL_SRC}
+make O=${KERNEL_BUILD} mrproper
+
+
+
+
+
+
+
+
+
