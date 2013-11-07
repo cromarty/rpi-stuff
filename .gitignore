@@ -4,6 +4,9 @@ bin/
 # ignore anything intarget
 target/
 
+# ignore my commonly used 'res' file
+res
+
 # ignore anything ending with ~
 *~
 
