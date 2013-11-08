@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+
+for PDF in *.pdf; do
+ HTML=$(echo "$PDF" | sed 's:pdf:html:i')
+	echo "Converting: ${PDF}"
+ pdftotext -q -enc UTF-8 -nopgbrk -htmlmeta ${PDF} > ${HTML}
+done
+
+echo done
+

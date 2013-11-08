@@ -1,0 +1,11 @@
+#!/bin/bash
+
+for MP3 in *.mp3
+do
+ WAV=$(echo "$MP3" | sed 's:mp3:wav:')
+	lame --decode "$MP3" "$WAV" 
+done
+
+cdrecord dev=/dev/sr0 -audio -pad -eject *.wav
+ 
+ 

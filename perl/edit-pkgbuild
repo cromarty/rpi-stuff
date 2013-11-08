@@ -1,0 +1,33 @@
+#!/usr/bin/perl -w
+# rewrite the PKGBUILD file in the current directory
+# adding all stuff from the command line to the 'arch=' line
+
+use strict;
+use IO::File;
+
+die "No architectures supplied as the command line\n\n" unless @ARGV;
+
+my $arch = "'".join("' '", @ARGV)."'";
+
+die "PKGBUILD file not found\n" unless -f "PKGBUILD";
+
+rename("PKGBUILD", "PKGBUILD-old") || die "Could not rename PKGBUILD to PKGBUILD-old: $!\n";
+
+my $old = new IO::File;
+my $new = new IO::File;
+
+$old->open("< PKGBUILD-old") || die "Could not open PKGBUILD-old for input: $!\n";
+$new->open("> PKGBUILD") || die "Could not open PKGBUILD for output: $!\n";
+
+while(<$old>) {
+    s/^arch=\((.*)?\)$/arch=\($1 $arch\)/;
+    $new->print("$_") || die "Failed writing to the new PKGBUILD file\n\n";
+}
+
+undef $old;
+undef $new;
+
+
+
+
+
