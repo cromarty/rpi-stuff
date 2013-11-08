@@ -1,0 +1,7 @@
+
+This directory contains a number of useful bash scripts for doing 
+various things.
+
+Some may be Arch specific but some of those are not RPI specific and 
+work just as well on i686 or x86_64 machines.
+
