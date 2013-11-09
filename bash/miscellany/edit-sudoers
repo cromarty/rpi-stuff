@@ -1,0 +1,28 @@
+#!/bin/bash
+
+
+if [ $(id -u) -ne 0 ]; then
+	echo "Must be run as root. Script will exit"
+	exit 1
+fi
+
+if [ -z $1 ]; then
+   echo "Path to sudoers file must be supplied on the command line"
+    exit 1
+fi
+
+which sudo &> /dev/null
+if [ $? != 0 ]; then
+	echo "sudo is not installed. Script will exit"
+	exit 1
+fi
+
+echo "Editing the sudoers file to grant the usual user privilege specs..."
+( mv $1 $1-old &&
+cat $1-old | sed -r 's:#( %wheel ALL=\(ALL\) ALL):\1:' > $1 ) || exit 1
+
+
+echo "Finished editing the file /etc/sudoers"
+exit 0
+
+
