@@ -1,0 +1,26 @@
+#!/bin/bash
+#
+# Script to add 'armv6h' to arch= line in PKGBUILD scripts downloaded
+# from the Arch ARM repo with cower
+#
+# First renames PKGBUILD to PKGBUILD.old before editing it
+# and streaming the output to PKGBUILD
+#
+
+function do_pkgbuild_edit {
+	mv PKGBUILD PKGBUILD.old &&
+	cat PKGBUILD.old | perl -e "while(<>) {s/^arch=\('i686'\s+'x86_64'\)$/arch=\('i686' 'x86_64' 'armv6h'\)/;print;}" > PKGBUILD
+}
+
+if [ ! -f PKGBUILD ]; then
+    echo "PKGBUILD file does not exist"
+    exit 1
+fi
+
+do_pkgbuild_edit || exit 2
+
+echo "Added 'armv6h' to PKGBUILD"
+
+
+
+

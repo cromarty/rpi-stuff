@@ -1,0 +1,39 @@
+#!/bin/bash
+#
+# Gets, builds and installs cower
+#
+
+# Don't use relative path here so we can call this script from another
+BUILD_PATH=~/.builds
+ARCH="'armv6h'"
+
+
+
+
+
+## main code
+
+# trigger need of password before we get to makepkg -s
+sudo true
+
+if [ ! -d ${BUILD_PATH} ]; then
+	mkdir ${BUILD_PATH}
+fi
+
+cd ${BUILD_PATH}
+
+( wget https://aur.archlinux.org/packages/co/cower-git/cower-git.tar.gz && tar -zxf cower-git.tar.gz ) || exit 1
+
+cd cower-git
+
+
+
+makepkg -s -i --noconfirm --noprogressbar || exit 1
+
+echo "Finished running arch-install-cower"
+
+exit 0
+
+
+
+

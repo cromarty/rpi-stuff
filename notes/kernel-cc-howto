@@ -1,7 +1,9 @@
 
-This document shows brief notes on how I cross-compile the Linux kernel on a desktop Linux machine.
+This document shows brief notes on how I cross-compile the Linux kernel on 
+a desktop Linux machine.
 
-It uses the kernel build scripts from bash/kernel-build in the same git repo as this document.
+It uses the kernel build scripts from bash/kernel-build in the same git repo 
+as this document.
 
 1.  Get the compiler tool-chain using Git.
 
@@ -24,16 +26,22 @@ sysidk
 
 curl https://codeload.github.com/raspberrypi/linux/zip/rpi-3.6.y -o ./rpi-3.6.y.zip
 
-3. Next I make the directory structure used by my kernel build scripts.  Assuming you are building from your home directory:
+3. Next I make the directory structure used by my kernel build scripts.
+Assuming you are building from your home directory:
 
-mkdir ~/linux-rpi-3.6.y  (change to match the version number of the kernel source you grabbed above)
+mkdir ~/linux-rpi-3.6.y  
+(change the above to match the version number of the kernel source you 
+grabbed above)
 cd linux-rpi-3.6.y
 mkdir rpi-build
 mkdir modules
 
-The Linux kernel source will be in the Linux subdirectory and the build will take place in rpi-build.  This keeps the source tree nice and clean.
+The Linux kernel source will be in the Linux subdirectory 
+and the build will take place in rpi-build.  
+This keeps the source tree nice and clean.
 
-I unzip the kernel source here and rename the resulting linux-rpi-3.6.y subdirectory to just 'linux'.
+I unzip the kernel source here and rename the resulting 
+linux-rpi-3.6.y subdirectory to just 'linux'.
 
 Now I have three sub-directories in ~/linux-3.6.y:
 
@@ -46,7 +54,8 @@ rpi-build : Will contain the kernel and other stuff after a build
 cd
 git clone https://github.com/cromarty/rpi-stuff.git
 
-I now create a directory to put my kernel build scripts into, so I can run them from anywhere:
+I now create a directory to put my kernel build scripts into, so I can run them 
+from anywhere:
 
 sudo mkdir /usr/local/bin/mike
 
@@ -54,7 +63,8 @@ cd ./rpi-stuff/bash/kernel-build
 sudo cp knl_* /usr/local/bin/mike
 sudo chmod +x /usr/local/bin/mike/knl_*
 
-Add /usr/local/bin/mike to your path in your .bashrc (changing mike for your path):
+Add /usr/local/bin/mike to your path in your .bashrc (changing mike for 
+your path):
 
 echo "export PATH=/usr/local/bin/mike:$PATH" >> ~/.bashrc
 
@@ -69,9 +79,13 @@ Either log out and log back in or do this to make your .bashrc take effect:
 
 source ~/.bashrc
 
-Check the environment variable $CCPREFIX and make sure it exists in /usr/tools.  It may have changed with the version of the tool-chain.  If it has changed, correct the value in your .bashrc file.
+Check the environment variable $CCPREFIX and make sure 
+it exists in /usr/tools.  It may have changed 
+with the version of the tool-chain.  If it has changed, correct the value in 
+your .bashrc file.
 
-5.  Have a look at each of the 'knl_*' scripts to understand what they do and read the file:
+5.  Have a look at each of the 'knl_*' 
+scripts to understand what they do and read the file:
 
 ~/rpi-stuff/bash/kernel-build/README
 
@@ -80,7 +94,9 @@ Check the environment variable $CCPREFIX and make sure it exists in /usr/tools. 
 cd ~/
 sudo zcat /proc/config.gz > .config
 
-You may have a .config directory in your home directory so you should maybe send the output to a different file name until you transfer it to your desktop machine.
+You may have a .config directory in your home directory 
+so you should maybe send the output to a different file name 
+until you transfer it to your desktop machine.
 
 I sometimes create a config file with the date I grabbed it:
 
@@ -88,21 +104,32 @@ sudo zcat /proc/config.gz > config-yyyymmdd
 
 Replacing yyyymmdd with the date.
 
-The file /proc/config.gz only exists while the Pi is running, so if you mount the SD card in another Linux machine expecting to find it, you won't!
+The file /proc/config.gz only exists while 
+the Pi is running, so if you mount the SD card in another Linux 
+machine expecting to find it, you won't!
 
-7.  Run knl_mrproper.  Make sure you have the proper paths set up in your .bashrc and have made sure they have taken effect (see part 4):
+7.  Run knl_mrproper.  Make sure you have the proper 
+paths set up in your .bashrc and have made sure they have taken 
+effect (see part 4):
 
 knl_mrproper
 
 This will tidy up the rpi-build directory.
 
-8.  Now put the config file from the Raspberry Pi in your rpi-build directory, calling it .config.  If you do this before running knl_mrproper it will disappear!
+8.  Now put the config file from the Raspberry Pi in your rpi-build 
+directory, calling it .config.  If you do this 
+before running knl_mrproper it will disappear!
 
-9.  It is now up to you how you run the configuration program to set options in the .config file.
+9.  It is now up to you how you run the configuration program 
+to set options in the .config file.
 
-Because I am blind and none of the configuration programs are especially accessible and because the only change I have made to the kernel so far is to compile the SpeakUp screen-reader, I edit .config by hand.
+Because I am blind and none of the configuration programs are especially 
+accessible and because the only change I have made 
+to the kernel so far is to compile the SpeakUp screen-reader, I 
+edit .config by hand.
 
-10.  After running whichever configuration option you prefer, run the script knl_oldconfig.
+10.  After running whichever configuration option you prefer, run the 
+script knl_oldconfig.
 
 This does something funky to check and finalise the .config file.
 
@@ -110,23 +137,31 @@ This does something funky to check and finalise the .config file.
 
 knl_build
 
-This will compile your kernel.  It will create a file called build.script in your home directory.  It shows the output of the kernel build.  You can check it for errors.
+This will compile your kernel.  It will create a file called build.script in 
+your home directory.  It shows the output of the kernel build.  
+You can check it for errors.
 
-The 'knl_build' script will automatically optimise the make process for the number of processing cores on your machine.
+The 'knl_build' script will automatically optimise the make process 
+for the number of processing cores on your machine.
 
-On my quad-core machine running Arch Linux it takes about fifteen minutes to build a kernel.  But that's fast.  However on a Raspberry Pi it took about fifteen HOURS!
+On my quad-core machine running Arch Linux it 
+takes about fifteen minutes to build a kernel.  But that's fast.  
+However on a Raspberry Pi it took about fifteen HOURS!
 
 12.  Now, assuming no errors in step 11, run:
 
 knl_modules
 
-This will compile all the kernel modules.  It creates a file called modules.script, again in your home directory.
+This will compile all the kernel modules.  It creates a file 
+called modules.script, again in your home directory.
 
 13.  Assuming no errors in step 12, run:
 
 knl_imod
 
-This creates a file called modinstall.script in your home directory which will show the result of installing the modules to the temporary modules directory.
+This creates a file called modinstall.script in your 
+home directory which will show the result of installing 
+the modules to the temporary modules directory.
 
 14.  You should now have the following structure:
 
@@ -138,19 +173,30 @@ Still just contains Linux source tree.
 
 modules:
 
-Will now contain a directory called 'lib'.  The contents of this directory contains stuff to go in /lib on the Pi, see below.
+Will now contain a directory called 'lib'.  
+The contents of this directory contains stuff to go in /lib on 
+the Pi, see below.
 
 rpi-build:
 
-In rpi-build/arch/arm/boot you will have a file called 'Image' (note the upper-case I).  This is the kernel and should be installed to the Raspberry Pi boot sector as 'kernel.img'.  You might want to save the old kernel first to something like 'kernel.img.old'.
+In rpi-build/arch/arm/boot you will have a file called 'Image' (note the 
+upper-case I).  This is the kernel and should be installed 
+to the Raspberry Pi boot sector as 'kernel.img'.  You might 
+want to save the old kernel first to something like 'kernel.img.old'.
 
 15.  Installing the modules.
 
-In ~/linux-rpi-3.6.y/modules/lib, zip up the contents of the modules and firmware directories like this:
+In ~/linux-rpi-3.6.y/modules/lib, zip up the 
+contents of the modules and firmware directories like this:
 
 tar -czf modules.tgz *
 
-Deploy these modules in /lib on a Pi, either by transferring it to a running Pi or by mounting a valid SD card with a Raspberry Pi image on your Linux machine.  It's better to mount an SD card on your Linux desktop.  If you do this remember to make sure your module files have the right ownership and permissions.
+Deploy these modules in /lib on a Pi, either 
+by transferring it to a running Pi or by mounting 
+a valid SD card with a Raspberry Pi image on your Linux machine.  
+It's better to mount an SD card on your Linux desktop.  
+If you do this remember to make sure your module files have the right 
+ownership and permissions.
 
 Notes:
 
