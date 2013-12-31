@@ -1,0 +1,66 @@
+#!/bin/bash
+
+
+# set to a true value to run pacman -Syu at start of script
+UPG=1
+
+# set to a true value to execute the installation of the packages named in PKGS
+EXTRA=1
+
+# set PKGS to a space-seperated list of packages to install, surrounded by quotes
+PKGS="base-devel sudo git"
+
+# set to the name of a user you want to add.  you will be asked for the password
+NEW_USER=user
+
+function edit_sudoers {
+	( mv /etc/sudoers /etc/sudoers-old && cat /etc/sudoers-old | sed -r 's:#( %wheel ALL=\(ALL\) ALL):\1:' > /etc/sudoers ) || return 1
+}
+
+function add_user {
+	echo "Adding user: ${NEW_USER}"
+	useradd -m -g users -G audio,lp,storage,video,wheel,games,power -s /bin/bash ${NEW_USER} || return 1
+	echo "Setting password for user ${NEW_USER}"
+	passwd ${NEW_USER} || echo "Failed to set password for user ${NEW_USER}"
+}
+
+
+if [ $(id -u) -ne 0 ]; then
+	echo "Script must be run as root. Script will exit"
+	exit 1
+fi
+
+date
+
+if [ ${UPG} ]; then
+	pacman -Syu --noconfirm --noprogressbar || exit 1
+fi
+
+if [ ${EXTRA} ]; then
+	if [ -z ${EXTRA} ]; then
+		echo "No named packages"
+	else
+		pacman -S --noconfirm --noprogressbar ${PKGS} || exit 1
+	fi
+fi
+
+# was sudo installed above?
+which sudo &> /dev/null
+if [ $? == 0 ]; then
+	# edit the sudoers file to grant the usual privilege specs
+	edit_sudoers || exit 1
+else
+	echo "sudo not installed"
+fi
+
+if [ ${NEWUSER} ]; then
+	add_user || exit 1
+else
+	echo "No new user to add"
+fi
+
+echo "Finished running 'arch-init-new-install'"
+
+date
+
+exit 0
