@@ -7,8 +7,10 @@
 BUILD_PATH=~/.builds
 ARCH="'armv6h'"
 
-
-
+function do_pkgbuild_edit {
+	( mv PKGBUILD PKGBUILD.old && cat PKGBUILD.old | perl -e "while(<>) {s/^arch=\('i686'\s+'x86_64'\)$/arch=\('i686' 'x86_64' ${ARCH}\)/;print;}" > PKGBUILD ) || return 1
+	return 0
+}
 
 
 ## main code
@@ -26,6 +28,9 @@ cd ${BUILD_PATH}
 
 cd cower-git
 
+if [ ${ARCH} ]; then
+	do_pkgbuild_edit || exit 1
+fi
 
 
 makepkg -s -i --noconfirm --noprogressbar || exit 1
