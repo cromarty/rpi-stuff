@@ -10,7 +10,6 @@ function do_pkgbuild_edit {
 
 ## main code
 
-sudo true
 
 if [ ! ${BUILDS} ]; then
 	${BUILDS}=~/.builds

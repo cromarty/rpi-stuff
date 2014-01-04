@@ -19,7 +19,6 @@ function do_pkgbuild_edit {
 
 ## main code
 
-sudo true
 
 # set BUILD_PATH to a default value if it's not set in the script
 if [ ! ${BUILD_PATH} ]; then

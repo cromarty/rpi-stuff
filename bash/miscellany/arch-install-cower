@@ -15,8 +15,6 @@ function do_pkgbuild_edit {
 
 ## main code
 
-# trigger need of password before we get to makepkg -s
-sudo true
 
 if [ ! -d ${BUILD_PATH} ]; then
 	mkdir ${BUILD_PATH}
