@@ -1,6 +1,30 @@
 #!/bin/bash
 
-cd ${KERNEL_ROOT}
-cd ${MODULES_TEMP}/lib
+if [ $# -ne 1 ]; then
+	echo "Usage: $0 <kernel-root>"
+	echo "Example: $0 ~/linux-rpi-3.6.y"
+	echo
+	exit 1
+fi
+
+if [ ! -d $1 ]; then
+	echo "There is no path to $1"
+	exit 1
+fi
+
+if [ ! -f "$1/linux/MAINTAINERS" ]; then
+	echo "$1/linux does not look like a valid kernel source tree"
+	exit 1
+fi
+
+
+export KERNEL_ROOT=$1
+
+# this has to come after KERNEL_ROOT is set above:
+[[ -f ~/.knl_exports ]] && . ~/.knl_exports
+
+
+cd ${KERNEL_ROOT}/${MODULES_TEMP}/lib
 tar -cjvf ${KERNEL_ROOT}/modules.tbz *
- 
+ exit $?
+

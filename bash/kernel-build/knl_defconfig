@@ -1,6 +1,4 @@
 #!/bin/bash
-# Kicks off a kernel compile, saving the output messages in ~/build.script
-
 
 if [ $# -ne 1 ]; then
 	echo "Usage: $0 <kernel-root>"
@@ -19,9 +17,6 @@ if [ ! -f "$1/linux/MAINTAINERS" ]; then
 	exit 1
 fi
 
-# will faile if the path to the script contains an underscore:
-BN=`$(basename $0)
-SCRPT=${BN##*_}.script
 
 export KERNEL_ROOT=$1
 
@@ -30,15 +25,7 @@ export KERNEL_ROOT=$1
 
 
 cd ${KERNEL_SRC}
-date > ${SCRPT}
-make O=${KERNEL_BUILD} ARCH=arm CROSS_COMPILE=${CCPREFIX} -j$(cat /proc/cpuinfo|grep processor|wc -l) &>> ${SCRPT}
-RES=$?
-date >> ${SCRPT}
-exit ${RES}
 
-
-
-
-
-
+make O=${KERNEL_BUILD} ARCH=arm CROSS_COMPILE=${CCPREFIX} ${PLATFORM}_defconfig
+exit $?
 
