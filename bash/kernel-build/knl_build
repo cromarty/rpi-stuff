@@ -20,8 +20,8 @@ if [ ! -f "$1/linux/MAINTAINERS" ]; then
 fi
 
 # will faile if the path to the script contains an underscore:
-BN=`$(basename $0)
-SCRPT=${BN##*_}.script
+BN=$(basename $0)
+SCRPT=~/${BN##*_}.script
 
 export KERNEL_ROOT=$1
 
@@ -31,6 +31,18 @@ export KERNEL_ROOT=$1
 
 cd ${KERNEL_SRC}
 date > ${SCRPT}
+echo "KERNEL_ROOT: ${KERNEL_ROOT}"
+echo "KERNEL_ROOT: ${KERNEL_ROOT}" >> ${SCRPT}
+
+echo "KERNEL_SRC: ${KERNEL_SRC}"
+echo "KERNEL_SRC: ${KERNEL_SRC}" >> ${SCRPT}
+
+echo "KERNEL_BUILD: ${KERNEL_BUILD}"
+echo "KERNEL_BUILD: ${KERNEL_BUILD}" >> ${SCRPT}
+
+echo "CCPREFIX: ${CCPREFIX}"
+echo "CCPREFIX: ${CCPREFIX}" >> ${SCRPT}
+
 make O=${KERNEL_BUILD} ARCH=arm CROSS_COMPILE=${CCPREFIX} -j$(cat /proc/cpuinfo|grep processor|wc -l) &>> ${SCRPT}
 RES=$?
 date >> ${SCRPT}
