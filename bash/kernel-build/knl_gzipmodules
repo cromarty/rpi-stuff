@@ -1,5 +1,4 @@
 #!/bin/bash
-# Does a 'make mrproper' to clean the kernel build directory
 
 
 
@@ -20,24 +19,14 @@ if [ ! -f "$1/linux/MAINTAINERS" ]; then
 	exit 1
 fi
 
+
 export KERNEL_ROOT=$1
 
 # this has to come after KERNEL_ROOT is set above:
 [[ -f ~/.knl_exports ]] && . ~/.knl_exports
 
+cd "${MODULES_TEMP}"
+echo "MODULES_TEMP: ${MODULES_TEMP}"
 
-echo ${KERNEL_BUILD}
-echo ${KERNEL_SRC}
-
-cd ${KERNEL_SRC}
-
-make O=${KERNEL_BUILD} mrproper
+find "${MODULES_TEMP}" -name '*.ko' -exec gzip -9 {} \;
 exit $?
-
-
-
-
-
-
-
-

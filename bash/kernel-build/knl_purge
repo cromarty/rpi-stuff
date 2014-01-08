@@ -1,6 +1,5 @@
 #!/bin/bash
-# Does a 'make mrproper' to clean the kernel build directory
-
+# removes everything from ${KERNEL_BUILD} and ${MODULES_TEMP}
 
 
 if [ $# -ne 1 ]; then
@@ -20,21 +19,20 @@ if [ ! -f "$1/linux/MAINTAINERS" ]; then
 	exit 1
 fi
 
+
 export KERNEL_ROOT=$1
 
 # this has to come after KERNEL_ROOT is set above:
 [[ -f ~/.knl_exports ]] && . ~/.knl_exports
 
 
-echo ${KERNEL_BUILD}
-echo ${KERNEL_SRC}
+echo "deleting everything in: ${KERNEL_BUILD}" 
+echo "Deleting everything in: ${MODULES_TEMP}"
+echo "Deleting: ${KERNEL_ROOT}/modules.tbz"
 
-cd ${KERNEL_SRC}
-
-make O=${KERNEL_BUILD} mrproper
-exit $?
-
-
+rm -rf ${KERNEL_BUILD}/*
+rm -rf ${MODULES_TEMP}/*
+rm ${KERNEL_ROOT}/modules.tbz
 
 
 

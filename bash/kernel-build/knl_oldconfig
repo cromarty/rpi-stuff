@@ -28,5 +28,6 @@ export KERNEL_ROOT=$1
 
 
 cd ${KERNEL_SRC}
+
 make O=${KERNEL_BUILD} ARCH=arm CROSS_COMPILE=${CCPREFIX} oldconfig
 exit $?
