@@ -17,9 +17,6 @@ if [ ! -f "$1/linux/MAINTAINERS" ]; then
 	exit 1
 fi
 
-# will faile if the path to the script contains an underscore:
-BN=$(basename $0)
-SCRPT=~/${BN##*_}.script
 
 
 export KERNEL_ROOT=$1
@@ -28,6 +25,6 @@ export KERNEL_ROOT=$1
 [[ -f ~/.knl_exports ]] && . ~/.knl_exports
 
 cd "${MODULES_TEMP}/lib"
-tar -cjvf "${KERNEL_ROOT}/modules.tbz" * &> ${SCRPT}
+tar -cjvf "${KERNEL_ROOT}/modules.tbz" modules/* firmware/*
  exit $?
 
