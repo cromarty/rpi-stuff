@@ -1,0 +1,226 @@
+
+a11y-arch
+=========
+
+This is a bunch of files, including a script called 'install.sh', which is
+designed to take a Raspberry Pi running a new and clean install of Arch Linux
+from the Raspberry Pi Foundation, and create an accessible Arch Linux by
+installing a number of accessibility tools and their dependancies.
+
+Running the script
+------------------
+
+If you are reading this file you have either downloaded and extracted the
+contents of a11y-arch.tar.gz or you have this file from somewhere else.
+
+The main components of the system is the script 'install.sh'.  Before you
+can run the script you need to set the executable flag.  As root, perform the
+following:
+
+# chmod +x install.sh
+
+(Note that the '#' here and in the rest of this file represents the
+command-prompt.)
+
+After you have set the executable flag, run the script.  It is a good
+idea to use the 'script' utility to run it.  This will save all the output from
+the script to a file called 'typescript'.
+
+To do so, type the following at the prompt:
+
+# script -e -c ./install.sh
+
+Note here that it is not a good idea to do this as any user other than root.  The
+script will check that the user is root and you could conceivably use 'sudo' to
+run it, but because the script is designed to accessify a fresh install of Arch,
+before 'sudo' or many other build utilities have been installed, and because the
+script takes a long time to run, you may miss something asking you for the
+sudo password.
+
+Functions and Checkpointing
+---------------------------
+
+Because the script performs a lot of installs and builds a number of packages from
+source, it would be annoying if it was to fail a long way into the script
+making it necessary to start again.
+
+For this reason the script uses a system of 'checkpointing' to save the point
+it has reached at any one moment.
+
+The script generates a file at ~/checkpoint containing a single integer value
+which indicates where the script got to.
+
+If the script fails and is restarted without resetting the checkpoint data,
+it will restart at the failure point.
+
+The script has been thoroughly tested and the reasons for failure are likely
+to be something like a slow connection to online repositories timing-out, or
+one of those repositories being offline for maintenance.
+
+Checking Results
+----------------
+
+If the script fails or when the script has finished the results can be
+checked by looking at the file 'typescript'.
+
+All messages written into the file by the script are prefixed with two dashes.
+
+So it is possible to 'grep out' the messages like this:
+
+cat typescript | grep '^--' > results
+
+Which puts the messages into a file called 'results'.
+
+It may be sufficient to look at the bottom of the 'typescript' file and search
+for a message which tells you everything was installed correctly.
+
+There is a lot of other output in the typescript file which is the product
+of all the package installations and source code builds.
+
+If, for some reason, the script fails in the middle of installing packages,
+such as those which make up the group 'base-devel', on restarting the script
+it will check each package to see if it is already installed and avoid
+re-installing something that was already installed.  This saves a lot of time.
+
+When the Script is Complete
+---------------------------
+
+After the script is complete, you will need to log out as the root user and
+log in as the new user which was created by the script.  This is:
+
+User-name: user
+Password:  password
+
+One of the things the script has done is to add code to this user's
+.bash_profile file to start the pulseaudio server.
+
+It is very likely that on the first attempt to start the server, it will
+seem to take a long time to log in, and the attempt to start pulseaudio
+will fail with messages about not being able to find the cookie file.
+
+Do not worry.
+
+If this happens you can start the server manually like this:
+
+pulseaudio --start
+
+And check if it is running like this:
+
+ps aux | grep '[p]ulseaudio'
+
+(Note the square brackets around the 'p' of pulseaudio will transform the grep
+argument into a regular expression and prevent the grep itself from showing
+up in the results of the 'ps aux'.
+
+Description of Accessible Arch
+==============================
+
+For a long time now we have had a couple of severe problems in using
+text-to-speech on the Raspberry Pi.
+
+In short these problems have been:
+
+1.  Stuttery speech after only a few seconds of clear speech.
+
+2.  Kernel 'oopses' caused by a mechanism called the 'video core hardware
+interface queue' passing a null pointer to the kernel.
+
+These problems have been identified as being connected with latency problems in the audio system.
+
+Until now the Accessible Arch images which we have produced have used the
+default installation of eSpeak for their TTS.
+
+This default installation uses the portaudio library.
+
+It is the portaudio sub-system which appears to be so broken on the Raspberry Pi.
+
+Note however this does not mean there is anything fundamentally wrong with
+portaudio, but rather that it just is not working right on the Pi, and is
+causing some problems with audio latency.
+
+A number of attempts have been made to solve this by changing the priority of
+various threads etc., but nothing has worked.
+
+Enter pulseaudio
+----------------
+
+pulseaudio has a reputation for being hard to configure.  A reputation which
+is not totally deserved.  nevertheless it has taken me some time to realise
+exactly how to configure eSpeak to solve the latency issues by using pulseaudio.
+
+In it's default compilation in the Arch repository, eSpeak will use portaudio
+if there is no pulseaudio server running, but switch to using pulseaudio as
+soon as there is an available server.
+
+It is not recommended to run pulseaudio as a system-wide process.
+
+If we are too use the console-mode screen-reader SpeakUp, this leaves us with a dilemma:
+
+If the log-in screen is not to be totally silent, how can we use pulseaudio,
+started after a user logs in, to make the screen-reader speak BEFORE we log in?
+
+The answer is that eSpeak, used as the synthesiser by SpeakUp, will use
+portaudio until a user has logged in.  After this point the pulseaudio server will start and we will have nice clear audio.
+
+This means that at first the suspect TTS configuration is used,
+but none of the text spoken at the log-in screen is likely to be long enough
+to make eSpeak stutter or make the VCHIQ crash the kernel.
+
+But this is still a small danger.
+
+Emacspeak
+---------
+
+Emacspeak also uses eSpeak in the image created by this install script, and
+as Emacspeak is never started until after a user has logged in, it should
+not stutter.
+
+Caveats
+-------
+
+1.  pulseaudio is not loaded in the root user's .bash_profile file.  This is because
+it is not recommended to run pulseaudio as root.
+
+2.  Emacspeak will probably not work correctly as root.
+
+3.  For the above reasons you should do any administrative tasks using 'sudo' to elevate your permissions while you work.
+
+You could also log in as 'root' over an SSH connection from a computer running another screen-reader or Braille display.
+
+Skeleton
+--------
+
+The script configures files in /etc/skel so that if you add another user after
+everything is correctly installed, that user will be setup correctly to start
+the pulseaudio server and for Emacspeak to work correctly.
+
+Expanding the root file-system
+==============================
+
+There are two scripts contained in the tarball for expanding the root
+file-system to occupy your entire memory card.  These are:
+
+expand-arch-rootfs-2.0.sh
+resize-arch-rootfs-2.0.sh
+
+These two scripts should be run in that order, with a reboot in between.  So the sequence is:
+
+1.  Log in.
+2.  As root, or using sudo, execute the first scrippt to expand the root file-system.
+3.  Reboot.
+4.  Log in again.
+5.  Execute the second script to resize the expanded file-system.
+
+The expand script will expand the file-system to within about thirty megabytes
+of the end of the card.
+
+This is so that if 'dd' is used in another Linux computer to keep a backup .img file
+from the card, the file will be created with a size which writes past the end of
+the file-system.  This will ensure that when the .img file is written
+back to an SD card, the end of the file-system will not be clipped and the image
+will correctly boot.
+
+
+
+
+

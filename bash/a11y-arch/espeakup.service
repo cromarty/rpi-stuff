@@ -1,0 +1,18 @@
+[Unit]
+Description=Speakup/espeak connector
+After=syslog.target
+
+[Service]
+EnvironmentFile=-/etc/default/espeakup
+PIDFile=/var/run/espeakup.pid
+Environment="LOGDIR=/var/log/espeakup"
+TimeoutStartSec=2
+TimeoutStopSec=10
+ExecStart=/usr/bin/espeakup --default-voice=${VOICE}
+Type=forking
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+WantedBy=sound.target
