@@ -1,0 +1,19 @@
+#!/bin/bash
+
+
+
+echo "Checking to see if cower is installed..."
+which cower &> /dev/null
+if [ $? -eq 0 ]; then
+	echo "-- cower is already installed"
+	return 0
+fi
+echo "Installing cower..."
+wget https://aur.archlinux.org/packages/co/cower-git/cower-git.tar.gz
+tar -zxf cower-git.tar.gz
+cd cower-git
+sed -i-old "s:^arch=(\(.*\)):arch=(\1 'armv6h'):" PKGBUILD
+makepkg -s -i --noconfirm --noprogressbar
+
+
+
