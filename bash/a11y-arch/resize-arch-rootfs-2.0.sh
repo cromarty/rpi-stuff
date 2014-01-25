@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DEVICE=/dev/sdc
+DEVICE=/dev/mmcblk0p5
 
 if [ $(id -u) -ne 0 ]; then
 	echo "Script must be run as root. Try: 'sudo $0'"
