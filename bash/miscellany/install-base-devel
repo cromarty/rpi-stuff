@@ -14,7 +14,7 @@ check_errs() {
 install_pkg() {
 	echo "Checking whether ${1} is already installed..."
 	if [ ! -z "$(pacman -Ss $1 | grep "/$1 " | grep '[i]nstalled')" ]; then
-		echo "-- ${1} is already installed, continuing with the next package"
+		echo "${1} is already installed, continuing with the next package"
 		return 0
 	fi
 	echo "Installing ${1}..."
