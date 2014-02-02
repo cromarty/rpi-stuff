@@ -1,19 +1,4 @@
 #!/bin/bash
-#
-# This script is designed to take a Raspberry Pi Arch Linux image as downloaded
-# from the Raspberry Pi Foundation web-site and make it accessible by doing the following:
-#
-#  1.  Installing the SpeakUp! console-mode screen-reader.
-#  2.  Installing Emacspeak, the complete audio desktop extension to Emacs.
-#  3.  Installing brltty, the soft-Braille display driver.
-#
-# In all cases, dependancies are also installed as well as some other utilities.
-#
-# The script is completely re-startable from a failure point by using the 'checkpoint' mechanism written in.
-#
-# See the file: a11y-arch.html for detailed instructions.
-#
-#
 
 # Save the path from which we run the script. gwd = global working directory
 gwd=$(pwd)
@@ -164,9 +149,57 @@ install_cower() {
 	pkgbuild_edit &&
 	makepkg -s -i --asroot --noconfirm --noprogressbar
 	check_errs $? "failed in install_cower"
+	cd "${BUILD_PATH}" && rm -rf cower-git/
+	check_errs $? "Failed to remove cower build directory after successful build"
 	echo "-- Successfully installed cower"
 	cd "${wd}"
 } # install_cower
+
+
+install_espeak_rpi() {
+	checkpoint $1
+	local wd=$(pwd)
+	echo "-- Installing espeak-rpi..."
+	mkdir espeak-rpi &&
+	cd espeak-rpi &&
+	cat <<EOF > PKGBUILD &&
+# Copied and hacked from espeak-pulse PKGBUILD by Mike Ray <mike.ray@btinternet.com>
+basename=espeak
+pkgname=\${basename}-rpi
+pkgver=1.47.11
+pkgrel=1
+pkgdesc="Text to Speech engine for good quality English, with support for other languages"
+arch=('armv6h')
+url="http://espeak.sourceforge.net/"
+license=('GPL')
+depends=('gcc-libs')
+conflicts=("\${basename}")
+provides=("\${basename}")
+source=(http://downloads.sourceforge.net/sourceforge/\${basename}/\${basename}-\${pkgver}-source.zip)
+md5sums=('541c1a8f2c198ccda098f53f9f61a66a')
+
+build() {
+  cd \${startdir}/src/\${basename}-\${pkgver}-source/src
+  sed -i 's/AUDIO = portaudio/AUDIO = runtime/g' Makefile
+  make CXXFLAGS="\$CXXFLAGS"
+}
+
+package() {
+  cd \${startdir}/src/\${basename}-\${pkgver}-source/src
+  make DESTDIR=\${pkgdir} install
+  chmod 644 \${pkgdir}/usr/lib/libespeak.a
+  cd \${startdir}/src/\${basename}-\${pkgver}-source
+  install -Dm644 License.txt "\${pkgdir}/usr/share/licenses/\${pkgname}/LICENSE"
+}
+
+EOF
+
+	makepkg --asroot -i
+	check_errs $? "Failed in install_espeak-rpi"
+	echo "-- Successfully installed espeak-rpi"
+	cd "${wd}"
+} # install_espeak_rpi
+
 
 
 install_espeak_pulse() {
@@ -201,6 +234,8 @@ install_tclx() {
 	makepkg -s -i --asroot --noconfirm --noprogressbar &&
 	cp -r pkg/usr/lib/tclx8.4/ /usr/lib
 	check_errs $? "Failed in install_tclx"
+	cd "${BUILD_PATH}" && rm -rf tclx/
+	check_errs $? "Failed to remove tclx build directory after successful build"
 	echo "-- Successfully installed tclx"
 	cd "${wd}"
 } # install_tclx
@@ -225,6 +260,8 @@ install_emacspeak() {
 	emacspeak_pkgbuild_edit &&
 	makepkg -s -i --asroot --noconfirm --noprogressbar
 	check_errs $? "Failed in install_emacspeak"
+	cd "${BUILD_PATH}" && rm -rf emacspeak/
+	check_errs $? "Failed to remove emacspeak build directory after successful build"
 	echo "Successfully installed emacspeak"
 	cd "${wd}"
 } # install_emacspeak
@@ -287,10 +324,11 @@ edit_user_files() {
 	echo "-- Adding export DTK_PROGRAM=espeak to the new user's .bashrc..."
 	echo "-- Adding pulseaudio --start to the new user's .bash_profile..."
 	echo "export DTK_PROGRAM=espeak" >> /home/user/.bashrc &&
-	cat <<EOF > /home/user/.bash_profile
+	cat <<EOF >> /home/user/.bash_profile
 
-if [ -z \$(ps aux | grep '[p]ulseaudio') ]; then
-	pulseaudio --start
+pa=\$(ps aux | grep '[p]ulseaudio')
+if [ -z "\${pa}" ]; then
+	pulseaudio --start --resampling-method=trivial
 fi
 
 EOF
@@ -303,10 +341,11 @@ edit_skel_files() {
 	echo "-- Adding export DTK_PROGRAM=espeak to /etc/skel/.bashrc..."
 	echo "-- Adding pulseaudio --start to /etc/skel/.bash_profile..."
 	echo "export DTK_PROGRAM=espeak" >> /etc/skel/.bashrc &&
-	cat <<EOF > /etc/skel/.bash_profile
+	cat <<EOF >> /etc/skel/.bash_profile
 
-if [ -z \$(ps aux | grep '[p]ulseaudio') ]; then
-	pulseaudio --start
+pa=\$(ps aux | grep '[p]ulseaudio')
+if [ -z "\${pa}" ]; then
+	pulseaudio --start --resampling-method=trivial
 fi
 
 EOF
@@ -382,6 +421,14 @@ blacklist_packages() {
 	check_errs $? "Failed in blacklist_packages"
 } # blacklist_packages
 
+suppress_boot_messages() {
+	checkpoint $1
+	echo "-- Editing /boot/cmdline.txt to suppress stuttery boot messages..."
+	check_errs $? "Failed in suppress_boot_messages"
+} # suppress_boot_messages
+
+	sed -i 's:\(.*\):\1 quiet:' /boot/cmdline.txt
+
 ### start of main code
 
 
@@ -436,38 +483,42 @@ case "${cp}" in
 		install_cower 4
 ;&
 	5)
-		install_tclx 5
+		install_espeak_rpi 5
 ;&
 	6)
-		install_emacspeak 6
+		install_tclx 6
 ;&
 	7)
-		edit_usr_bin_emacspeak 7
+		install_emacspeak 7
 ;&
 	8)
-		config_emacspeak_skel 8
+		edit_usr_bin_emacspeak 8
 ;&
 	9)
-		install_brltty_minimal 9
+		config_emacspeak_skel 9
 ;&
 	10)
-		PKGS=( espeakup )
-		install_packages 10
+		install_brltty_minimal 10
 ;&
 	11)
-		config_emacspeak_skel 11
+		echo
+		#PKGS=( espeakup )
+		#install_packages 11
 ;&
 	12)
-		add_new_user 12
+		config_emacspeak_skel 12
 ;&
 	13)
-		edit_user_files 13
+		add_new_user 13
 ;&
 	14)
-		edit_skel_files 14
+		edit_user_files 14
 ;&
 	15)
-		load_speakup_modules_file 15
+		edit_skel_files 15
+;&
+	16)
+		load_speakup_modules_file 16
 ;&
 	17)
 		espeakup_defaults_file 17
@@ -482,7 +533,10 @@ case "${cp}" in
 		chmod_filesystem_scripts 20
 ;&
 	21)
-		blacklist_packages
+		blacklist_packages 21
+;&
+	22)
+		suppress_boot_messages 22
 ;;
 esac
 
