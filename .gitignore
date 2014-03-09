@@ -10,4 +10,5 @@ res
 # ignore anything ending with ~
 *~
 
-
+# ignore any zips
+*.zip
