@@ -11,21 +11,15 @@
 #     --build-path
 #     --config-path
 #     --utils-path
+#     --relative
 #
 # The prefix "export " is only included if the --export argument is included
 # The dashes in the middle of arguments are transformed into underscores.
 #
 # An argument of --help will cause the usage text to be displayed and no output to be printed.
 #
-# Relative paths are expanded to absolute paths.
-#
-# It is used in conjunction with the a11y-tools created by Mike Ray.
-#
-# These tools comprise a number of bash scripts which install a controlled
-# selection of packages, perform configuration and perform compilations from
-# source of some programs to transform a bog-standard Linux distro into an accessible one.
-#
-# The system could be used to do stuff other than these specific accessibility tasks.
+# Relative paths are expanded to absolute paths unless the '--relative' 
+switch is included.
 #
 
 
@@ -37,6 +31,7 @@ my $buildpath = "";
 my $configpath = "";
 my $utilspath = "";
 my $export = "";
+my $relative = "";
 my %args;
 my $key;
 my $env;
@@ -47,6 +42,7 @@ GetOptions(
 	'config-path=s' => \&saveargs,
 	'utils-path=s' => \&saveargs,
 	'log-file=s' => \&saveargs,
+	'relative' => \&saveargs,
 	'help' => \&saveargs,
 	'export' => \&saveargs
 ) || die &usage;
@@ -79,7 +75,12 @@ foreach $key (keys %args) {
 	}
 	$env = "SM_$key";
 	$env =~ s/-/_/g;
-	$line .= uc($env)."=\"".File::Spec->rel2abs($args{$key})."\"";
+	$line .= uc($env)."=\"";
+if ( $relative ) {
+$line .= $args{$key};
+} else {
+$line .= File::Spec->rel2abs($args{$key})."\"";
+}
 	print "$line\n";
 }
 
