@@ -114,7 +114,7 @@ sausage-machine documentation to discuss Perl regular expressions in detail.
 
 Display help (usage) text and exit.
 
-export-generator.pl
+exports-generator.pl
 
 This script writes to standard output a number of lines in the format:
 
@@ -149,14 +149,14 @@ seperately to packages managed in those or other scripts.
 
 --relative
 
-If present, this switch causes export-generator to write the three variables 
+If present, this switch causes exports-generator to write the three variables 
 which represent paths with relative, e.g. not absolute path format.
 
 --export
 
 If present, prepends 'export ' onto each line written.
 
-When export-generator.pl writes it's output it prepends each variable with 'SM_' 
+When exports-generator.pl writes it's output it prepends each variable with 'SM_' 
 to make it obvious what the variables are for.
 
 The output from this script is typically included at the top of bash scripts in 
@@ -218,7 +218,7 @@ installed.
 
 The observant reader will have noticed that the three directories detailed above 
 correspond to the three command-line parameters which can be given to the 
-'export-generator.pl' script.  This is because this script controls where the 
+'exports-generator.pl' script.  This is because this script controls where the 
 'hand-crank.pl' script, and other scripts called by it, can find these paths.
 
 *.conf files in this directory
@@ -278,12 +278,12 @@ paths to absolute paths.  You could also supply a regular expression to provide
 filtering of scripts to those with names that match, using the 'rx=<regular 
 expression>' switch.
 
-3.  Run 'export-generator.pl
+3.  Run 'exports-generator.pl
 
-Running 'export-generator.pl will write the three paths to config, script and 
+Running 'exports-generator.pl will write the three paths to config, script and 
 utils directories to stdout.  Run it like this:
 
-./export-generator.pl --build-path=. --config-path=./config --utils-path=./utils 
+./exports-generator.pl --build-path=. --config-path=./config --utils-path=./utils 
 > common-code
 
 The above line generates a file called common-code which can be included in 
@@ -337,9 +337,9 @@ Tips
 1.  Name each of your scripts with a numeric prefix and a name which adequately 
 describes what it does.
 
-2.  Use the output from export-generator.pl and name it in the top of each 
+2.  Use the output from exports-generator.pl and name it in the top of each 
 script to closely control the build environment, or use the '--export' switch 
-with export-generator.pl and pipe the output to the bottom of your .bashrc file.
+with exports-generator.pl and pipe the output to the bottom of your .bashrc file.
 
 3.  It is a good idea to choose a value for the '--build-path' parameter (and 
 hence the 'BUILD_PATH' variable in it's output which will place builds outside 
