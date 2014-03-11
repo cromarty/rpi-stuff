@@ -12,3 +12,6 @@ res
 
 # ignore any zips
 *.zip
+
+# ignore SciTE properties files
+*.properties
