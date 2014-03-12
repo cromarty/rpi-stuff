@@ -1,6 +1,3 @@
-# ignore anything in bin
-bin/
-
 # ignore anything intarget
 target/
 
