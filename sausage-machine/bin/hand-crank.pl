@@ -8,15 +8,11 @@ use Getopt::Long;
 my $config = "";
 my $logfile = "sausages.log";
 my $help = "";
-my $cfh = new IO::File;
-my $lfh = new IO::File;
-
-my @steps;
-my $step;
-my $i;
-my $flag;
-my $code;
-my $script;
+my $configfilehandle = new IO::File;
+my $logfilehandle = new IO::File;
+#my $code;
+#my $script;
+my $args;
 
 GetOptions(
 	'config=s' => \$config,
@@ -26,27 +22,27 @@ GetOptions(
 
 &usage if $help;
 
-$cfh->open("< $config") || die "Failed to open file $config: $!\n";
+$configfilehandle->open("< $config") || die "Failed to open file $config: $!\n";
 
 if ( ( $ENV{SM_BUILD_PATH} ) && ( -d $ENV{SM_BUILD_PATH} ) ) {
 	$logfile = join("/", (File::Spec->rel2abs($ENV{SM_BUILD_PATH}), $logfile));
 }
 
-$lfh->open("> $logfile") || die "Failed to open file $logfile: $!\n";
+$logfilehandle->open("> $logfile") || die "Failed to open file $logfile: $!\n";
 
-while (<$cfh>) {
+while (<$configfilehandle>) {
 	chomp;                  # no newline
 	s/#.*//;                # no comments
 	s/^\s+//;               # no leading white
 	s/\s+$//;               # no trailing white
 	next unless length;     # anything left?
-	$lfh->print("Run $_\n");
+	($script, $args) = split("??");
+	$logfilehandle->print("Run $_\n");
 	#system("$_");
 	#die "\n" if $?;
 }
 
-$cfh->close;
-
+undef $configfilehandle;
 
 #--- subs
 
