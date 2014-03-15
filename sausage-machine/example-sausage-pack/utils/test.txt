@@ -1,3 +1,0 @@
-
-This is a test document which will be 'installed' to our home
-directory by the script '100-install-docs.sh'
