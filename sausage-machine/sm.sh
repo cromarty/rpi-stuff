@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+/#!/usr/bin/env bash
 
 
 EXPORT_FLAG=
@@ -72,6 +72,11 @@ echo "$UTILS_PATH"
 
 [ "$1" ] &&  cd "$1"
 
-ls -1
+set -e
+shopt -s extglob
 
+for SCRIPT_NAME in +([0-9])*.sh
+do
+	[ ./${SCRIPT_NAME} ]] || { echo "${SCRIPT_NAME}"returned non-zero code, aborting" ; exit 1 ; }
+done
 
