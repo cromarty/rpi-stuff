@@ -1,4 +1,5 @@
-/#!/usr/bin/env bash
+#!/bin/bash
+
 
 
 EXPORT_FLAG=
@@ -77,7 +78,11 @@ shopt -s extglob
 
 for SCRIPT_NAME in +([0-9])*.sh
 do
-	[ ./${SCRIPT_NAME} ] || { echo "${SCRIPT_NAME}"returned non-zero code, aborting" ; exit 1 ; }
+	./${SCRIPT_NAME}
+	if [ $? ]; then
+		echo "${SCRIPT_NAME} returned non-zero code, aborting"
+		exit 1
+	fi
 	echo "${SCRIPT_NAME} completed successfully"
 done
 
