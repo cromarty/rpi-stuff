@@ -10,6 +10,8 @@ CONFIG_PATH="$CONFIG_PATH"
 UTILS_PATH_FLAG=
 UTILS_PATH="$UTILS_PATH"
 
+
+
 usage() {
 	printf "Usage: %s [OPTIONS...]\n" $(basename $0)
 	printf "\t -h %s\n" "Show this help text and exit"
@@ -73,16 +75,19 @@ echo "$UTILS_PATH"
 
 [ "$1" ] &&  cd "$1"
 
+LOG_FILE="${BUILD_PATH}/sausage-machine.log"
+
 set -e
 shopt -s extglob
 
 for SCRIPT_NAME in +([0-9])*.sh
 do
+	echo "Starting ${SCRIPT_NAME}" | tee -a "${LOG_FILE}"
 	./${SCRIPT_NAME}
 	if [ $? ]; then
-		echo "${SCRIPT_NAME} returned non-zero code, aborting"
+		echo "${SCRIPT_NAME} returned non-zero code, aborting" | tee -a "${LOG_FILE}"
 		exit 1
 	fi
-	echo "${SCRIPT_NAME} completed successfully"
+	echo "${SCRIPT_NAME} completed successfully" | tee -a "${LOG_FILE}"
 done
 
