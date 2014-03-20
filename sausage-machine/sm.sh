@@ -75,7 +75,9 @@ echo "$UTILS_PATH"
 
 [ "$1" ] &&  cd "$1"
 
-LOG_FILE="${BUILD_PATH}/sausage-machine.log"
+LOG_FILE=~/sausage-machine.log
+
+echo "Starting the sausage-machine..." | tee "${LOG_FILE}"
 
 set -e
 shopt -s extglob
@@ -84,7 +86,7 @@ for SCRIPT_NAME in +([0-9])*.sh
 do
 	echo "Starting ${SCRIPT_NAME}" | tee -a "${LOG_FILE}"
 	./${SCRIPT_NAME}
-	if [ $? ]; then
+	if [ $? -gt 0 ]; then
 		echo "${SCRIPT_NAME} returned non-zero code, aborting" | tee -a "${LOG_FILE}"
 		exit 1
 	fi
