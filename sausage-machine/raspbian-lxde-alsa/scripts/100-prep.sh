@@ -10,7 +10,7 @@ fi
 if [ -f /etc/profile.d/raspi-config.sh ]; then
 	echo "-- Deleting the file /etc/profile.d/raspi-config.sh"
 	rm /etc/profile.d/raspi-config.sh
-	fi
+fi
 
 if [ ! -d "${BUILD_PATH}" ]; then
 	echo "-- Makeing the build path"
