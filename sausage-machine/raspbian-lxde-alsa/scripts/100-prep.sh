@@ -2,10 +2,21 @@
 
 set -e
 
-RCPID=$(pgrep raspi-config)
-[ "${RCPID}" ] && { echo "-- Killing the raspi-config process" ; kill -9 "${RCPID}" ; }
-[ -f/etc/profile.d/raspi-config.sh ] && { echo "-- Deleting the file /etc/profile.d/raspi-config.sh" ; rm /etc/profile.d/raspi-config.sh ; }
-[ -d "${BUILD_PATH}" ] || { echo "-- Makeing the build path" ; mkdir -p "${BUILD_PATH}" ; }
+if [ $(pgrep raspi-config) ]; then
+	echo "-- Killing the nasty raspi-config process"
+	kill -9 $(pgrep raspi-config)
+fi
+
+if [ -f/etc/profile.d/raspi-config.sh ]; then
+	echo "-- Deleting the file /etc/profile.d/raspi-config.sh"
+	rm /etc/profile.d/raspi-config.sh
+	fi
+
+if [ ! -d "${BUILD_PATH}" ];
+	echo "-- Makeing the build path"
+	mkdir -p "${BUILD_PATH}"
+	fi
+
 cd "${BUILD_PATH}"
 echo "-- Add sources repo to /etc/apt/sources.list..."
 echo "deb-src http://archive.raspbian.org/raspbian wheezy main contrib non-free rpi" >> /etc/apt/sources.list
