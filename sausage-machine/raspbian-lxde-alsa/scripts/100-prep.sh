@@ -7,15 +7,15 @@ if [ $(pgrep raspi-config) ]; then
 	kill -9 $(pgrep raspi-config)
 fi
 
-if [ -f/etc/profile.d/raspi-config.sh ]; then
+if [ -f /etc/profile.d/raspi-config.sh ]; then
 	echo "-- Deleting the file /etc/profile.d/raspi-config.sh"
 	rm /etc/profile.d/raspi-config.sh
 	fi
 
-if [ ! -d "${BUILD_PATH}" ];
+if [ ! -d "${BUILD_PATH}" ]; then
 	echo "-- Makeing the build path"
 	mkdir -p "${BUILD_PATH}"
-	fi
+fi
 
 cd "${BUILD_PATH}"
 echo "-- Add sources repo to /etc/apt/sources.list..."
