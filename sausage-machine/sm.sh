@@ -77,6 +77,7 @@ shopt -s extglob
 
 for SCRIPT_NAME in +([0-9])*.sh
 do
-	[ ./${SCRIPT_NAME} ]] || { echo "${SCRIPT_NAME}"returned non-zero code, aborting" ; exit 1 ; }
+	[ ./${SCRIPT_NAME} ] || { echo "${SCRIPT_NAME}"returned non-zero code, aborting" ; exit 1 ; }
+	echo "${SCRIPT_NAME} completed successfully"
 done
 
