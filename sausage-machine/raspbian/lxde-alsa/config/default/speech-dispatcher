@@ -1,0 +1,6 @@
+# Defaults for the speech-dispatcher init script from speech-dispatcher
+
+# Set to yes to start system wide speech-dispatcher
+RUN_SPEECHD=yes
+
+  
