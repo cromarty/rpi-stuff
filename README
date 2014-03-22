@@ -1,0 +1,65 @@
+
+Here's what is in this repo:
+===========================
+
+
+Top-level directory
+
+In here there is a shell-script called chmodx-shell-scripts.sh.  This script can 
+be executed to recursively set all *.sh scripts in the repo to mode 755.  This 
+is here because I have used a combination of Linux and Windows in developeing 
+these scripts and Windows git does not preserve the executable flag when a 
+branch is pushed from there.
+
+a11y-configs/
+
+This directory contains a mechanism I have called the 'Sausage-machine' and a 
+bunch of scripts which can configure a Raspberry Pi running a number of 
+different versions of Linux for accessibility.
+
+In here you will find a shell-script called main-menu.sh.  When executed this 
+script will present you with a menu of options for configuring your Raspberry Pi 
+for accessibility.
+
+Currently it is recommended you start with a fresh install of Raspbian, or 
+whichever version of Linux the menu items suggest.  You will find more README 
+files in the sub-directories of this directory.
+
+main-menu.sh calls sm.sh, the actual sausage-machine.  I called it 
+sausage-machine because it is designed to execute a series of scripts in order.
+
+Note that security purists might be unhappy with the way in which this mechanism 
+executes the scripts, but then this is a Raspberry Pi, not a life-support 
+machine on a space-ship.
+ 
+bash/
+
+This directory contains a mix of different bash scripts for doing stuff on a 
+Raspberry Pi.  The script names should be descriptive enough.  There is also a 
+README in this directory which gives more detail.  Most of them relate to Arch 
+Linux and some may be useful on a desktop or laptop machine.
+
+notes/
+
+Contains textual notes of my experiences with the Pi.  For my use more than 
+yours but you may find them useful.  Don't expect too much order in here, it's a 
+bit chaotic.
+
+file-conv-utils/
+
+File conversion utilities.  May contain some scripts not really relevant to the 
+Pi.
+
+music-utils/
+
+Various utilities to do with music files.  May contain some scripts not really 
+relevant to the Pi.
+
+Mike Ray <mike.ray@btinternet.com>
+March 2014.
+
+For Raspberry Pi accessibility-related info, visit:
+http://www.raspberryvi.org/
+
+
+

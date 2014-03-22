@@ -1,0 +1,17 @@
+
+This sausage-pack will configure a default installation of Raspbian to add 
+accessibility tools in the following way:
+
+1.  Compile eSpeak for pulseaudio support incorporating some latency tweaks which are 
+needed on the Pi to stop the speech from stuttering.
+2.  Compile speech-dispatcher for pulseaudio support and to use eSpeak.
+3.  Compile speechd-up to connect the SpeakUp console-mode screen-reader to 
+speech-dispatcher.
+4.  Install gnome-orca for GUI accessibility.
+5.  Remove unequivicably inaccessible applications such as paint programs 
+from Raspbian.
+
+Note that unlike some other Linux distros for the Pi, Raspbian, at the time of 
+writing includes the SpeakUp console-mode screen-reader but it is not currently 
+enabled by default.
+
