@@ -11,7 +11,6 @@ UTILS_PATH_FLAG=
 UTILS_PATH="$UTILS_PATH"
 
 
-
 usage() {
 	printf "Usage: %s [OPTIONS...]\n" $(basename $0)
 	printf "\t -h %s\n" "Show this help text and exit"
@@ -64,22 +63,22 @@ else
 [ "$CONFIG_PATH" ] || { echo "CONFIG_PATH is not set" ; exit 1 ; }
 [ "$UTILS_PATH" ] || { echo "UTILS_PATH is not set" ; exit 1 ; }
 fi
+
 export BUILD_PATH="$BUILD_PATH"
 export CONFIG_PATH="$CONFIG_PATH"
 export UTILS_PATH="$UTILS_PATH"
-
-echo "$BUILD_PATH"
-echo "$CONFIG_PATH"
-echo "$UTILS_PATH"
-
 
 [ "$1" ] &&  cd "$1"
 
 LOG_FILE=~/sausage-machine.log
 
-echo "Starting the sausage-machine..." | tee "${LOG_FILE}"
+echo 'Starting the sausage-machine...' | tee "${LOG_FILE}"
+echo "The build-path is: $BUILD_PATH" | tee -a "${LOG_FILE}"
+echo "The config-path is: $CONFIG_PATH" | tee -a "${LOG_FILE}"
+echo "The utils-path is: $UTILS_PATH" | tee -a "${LOG_FILE}"
 
 set -e
+
 shopt -s extglob
 
 for SCRIPT_NAME in +([0-9])*.sh
@@ -87,7 +86,8 @@ do
 	echo "Starting ${SCRIPT_NAME}" | tee -a "${LOG_FILE}"
 	./${SCRIPT_NAME}
 	if [ $? -gt 0 ]; then
-		echo "${SCRIPT_NAME} returned non-zero code, aborting" | tee -a "${LOG_FILE}"
+		echo "${SCRIPT_NAME} returned non-zero code, 
+aborting..." | tee -a "${LOG_FILE}"
 		exit 1
 	fi
 	echo "${SCRIPT_NAME} completed successfully" | tee -a "${LOG_FILE}"

@@ -1,0 +1,55 @@
+
+In this directory:
+
+sm.sh*
+
+The sausage-machine script.
+
+About the sausage-machine:
+
+While I was attempting to get some accessibility tools to work on the Pi, I 
+found myself running the same configuration tasks over and over again.  So I 
+wrote this mechanism, which I have christened the 'Sausage-machine'.
+
+What this does is to execute a defined series of scripts in a 
+controlled order.  An example of what these scripts might do is:
+
+1.  Install some packages in preparation.
+2.  Get some source files.
+3.  Build the sources.
+4.  Create packages from the builds.
+5.  Install the created packages.
+6.  Run some configuration tasks.
+7.  Tidy up behind itself.
+
+The script collections have been grouped into what I am calling 'sausage-packs'.
+
+See the README in, and sub-directories of, ../a11y-configs.
+
+Creating a 'sausage-pack':
+
+All the scripts in my sausage-packs begin with a three digit number and end with 
+'.sh'.  The numeric prefix ensures the scripts run in the correct order and the 
+script 'sm.sh' will glob all files which match the pattern +([0-9])*.sh
+
+If you need an explanation of the logic of the name, maybe because in your 
+culture you are not sure what a sausage is, read on.  If you're a vegetarian, 
+quick, close the file...
+
+A sausage in this context is a cylindrical meat product which contains either 
+good meat, or ground offal, or a combination of both and other material like 
+rusk or bread crumbs.  They are made by filling long 'skins' typically formed 
+from the cleaned intestines of a pig.  As sausages are filled the skins are 
+twisted to form a characteristic string of sausages, where each sausage is a few 
+centimetres in length.
+
+Machines which mechanise this process produce sausages in a long string, hence 
+the analogy of running a bunch of scripts in controlled order.
+
+In the UK, sausages are mass produced in packs of approximately half a kilogram, 
+containing typically eight sausages still strung together.  Hence 
+'sausage-pack'.
+
+
+
+
