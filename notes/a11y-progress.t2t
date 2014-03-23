@@ -1,0 +1,446 @@
+Accessibility and the Raspberry PI
+Progress to date
+%%date(dd-mm-yyyy)
+
+''<center>''
+= Accessibility and the Raspberry Pi =
+''</center>''
+
+----------------------------------------------------
+''<center>''
+==== Table of Contents====
+''</center>''
+    - [Introduction #intro]
+  - [# Beginnings #begins]
+  - [First switch on #switchon]
+  - [Problem number 1: The configuration menu #p1]
+  - [Problem number 2: The process of writing an SD card #p2]
+  - [Tools #tools]
+  - [SpeakUp! #speakup]
+  - [The YASR screen-reader #yasr]
+  - [Climbing the Linux learning curve #learning]
+  - [Problem number 3: A show-stopper #p3]
+  - [Jason Miller and Emacspeak #emacspeak]
+  - [Problem number 4: DMA changes to the sound driver #p4]
+  - [Problem number 5: Firmware changes and audio 'clipping' #p5]
+  - [Problem number 6: Changes to the Arch Linux directories #p6]
+  - [So why these audio problems? #why]
+  - [Solving the latency issue #latency]
+  - [Back to square one #back]
+  - [Hynix chipped Raspberry PI boards #hynix]
+  - [Will we ever get an accessible graphical desktop? #desktop]
+  - [Conclusion and appeal #conclusion]
+                  - [Glossary of terms #glossary]
+  - [Links #links]
+  - [Disclaimer #disclaimer]
+
+
+----------------------------------------------------
+
+
+''<a name="intro">''
+=== Introduction ===
+
+This document is an attempt to detail the efforts made by members of the Raspberry VI community to bring accessibility tools to the Raspberry Pi single-board computer.
+
+By community I mean the members of the raspberry-vi email list on freelists.org.
+
+Please understand that although I created the email list and have written much of the content of the web site, everything detailed below has been a group effort.  Particular thanks have to go to Jason, Mo and Rill, avid Pi users and Linux-heads.  Four blind geeks, see how they run.
+
+The list was created on the 31st of December 2012 while I was waiting for the arrival, in the post, of my first Raspberry Pi.
+
+At that point, my knowledge of Linux was by no stretch of the imagination particularly great.  So the process of trying to get some of the better known accessibility tools running on this minimal but remarkable platform was equally a process of learning for me.
+
+I hope any non-community members reading this and who are not familiar with computer accessibility might be better able to understand the needs of the visually impaired hacker and know where to refer the curious after reading it.
+
+In reading this document you might be forgiven for thinking it has an overall negative sound to it.  That is certainly not the intention.  While many hours of midnight oil have been burned in the efforts to achieve advancements in accessibility on the Pi, there has been an immense amount of pleasure in the doing of it, and in the acquisition of knowledge of Linux hacking.
+
+
+Thomas Edison tried two thousand times to create an incandescent light bulb.  When he was asked about this he famously said he hadn't failed, but had discovered two thousand ways how not to make a light bulb.
+
+''<a name="begin">''
+=== Beginnings ===
+
+When my first Raspi dropped onto the doormat on or about the 3rd of January 2013 I had no idea what to expect from the physical board.  As I am totally blind, I had to seek a description of the board online from the forum pages of the Raspberry Pi Foundation.  I could not positively identify the USB connector, and I had never seen or felt an HDMI connector.  And the SD card holder was a total mystery.
+
+Luckily I found somebody who was willing to reply to my questions with a textual description of the board and it's connections to the outside world.  That description, in expanded form, later became the 'Physical Description' section of the 
+the [http://www.raspberryvi.org/getting-started">Getting Started] 
+page on our Web site.
+
+I knew that to begin with, my only way of using the Pi would be to connect to it with an SSH client from another computer.  One provided with good accessibility tools installed and running.  In my case this is usually a Windows 7 PC running the Tera-Term SSH client.
+
+But nowhere could I find the answer to one of my earliest questions; 'is there an SSH server running on the Pi out-of-the-box'.
+
+At that time I also had no idea about the serial bus on the Pi as a means of connecting to a client running a serial terminal program.
+
+I thought if there was no SSH client running, and I not only can't see but I also don't have a display, I would not get off square one.  Stuck in a kind of high-tech chicken and egg dilemma.  Even if I did have a display, I am very stubborn about doing as much as I can without falling back on sighted assistance.
+
+It was the initially inconsistent answers to the SSH question and others asked on the forum pages, which prompted me to create the email list.  I figured there must be other visually impaired users out there with similar questions.  And if there weren't, I hoped the list might encourage them to have a go.
+
+''<a name="switchon">''
+=== First switch-on ===
+
+Because my knowledge of the Pi and Linux in general at that time was minimal, I bought an SD card from Amazon pre-loaded with what I hoped would be the latest version of the Raspbian operating system.  Raspbian is a version of Debian Linux especially configured to run on the Raspberry Pi.
+
+I also ordered a power supply and a transparant snap-together case.
+
+I wired up my first Raspi using a wired network, booted it up and used the popular PuTTY terminal program to log in.
+
+''<a name="p1">''
+=== Problem #1: The Configuration Menu ===
+
+The Raspbian version of Linux is configured with a script called raspi-config, designed to run at first boot.  It presents the user with a menu-driven way of setting some operating conditions.  These settings include display configuration, localisation, over-clocking speed (if any) and several other things which it is only necessary to change occasionally.
+
+This on-screen menu is not very accessible.  And at that time I didn't know how to disable this script from running every time I booted.
+
+The menu includes an option to exit and stop it from running again at next boot.
+
+One menu option that is vital is one which expands the operating system disk partitions to occupy the full size of the SD card it is written on.  This is because when an SD card is first written, the operating system will only occupy the minimum sized portion of the card necessary to contain the initial software.  This doesn't leave much space for expansion of installed stuff.
+
+Later on I would learn how to do this without the menu and learn also how to delete the script so it didn't bother me again with it's inaccessible interface.
+
+Initially I had to poke around the menu with the keyboard and mouse and just hope I was landing on the right options.
+
+I must have done so several times because I was able to progress.
+
+Since then I have written Bash scripts which will do the expansion and circumvent the need for the semi-inaccessible raspi-config menu.  Problem #1 solved.
+
+''<a name="p2">''
+=== Problem #2: The Process of Writing an SD Card ===
+
+That is, getting an operating system onto a card.  This is not just as simple as copying, or dragging and dropping a file onto a card mounted in either a Windows or a Linux machine. Mac users, I am not ignoring you, I just have no experience with Macs.
+
+The Windows program recommended by the Raspberry Pi Foundation is WindowsDiskImager.
+
+Unfortunately, this program is written using the Qt GUI toolkit, which at the time of writing, is notorious for producing inaccessible applications on Windows.  I think this is because Qt does not expose control properties to the Microsoft Active Accessibility layer (MSAA).
+
+And while it is possible using screen review mode, to get a card written using it with my screen-reader of choice, NVDA, it is not very easy.
+
+Fortunately I was able to create a Linux virtual machine on my Windows 7 PC.  For this I used VMWare and a copy of Vinux.
+
+Using this virtual machine I was able to use the 'dd' command to write cards from a Linux terminal window.  A process I needed soon because I trashed my only operating system card sooner than I had hoped and, as we will see later, I would begin to write cards more often than I change my socks.
+
+Problem #2 solved for me by using other Linux machines to write cards.  Other VI users are probably still struggling with WindowsDiskImager.
+
+''<a name="tools">''
+=== Popular Linux Accessibility Tools ===
+
+Right, so we've now got a Raspberry Pi, and a bootable operating system.  Let's look at some accessibility tools.
+
+The absolute ground-level accessibility tool for Linux is the SpeakUp! screen-reader.  This is a screen-reader which is written as part of the kernel.  It works in the console.  That is, it works in a text-mode command-line environment and does not run in a GUI.  SpeakUp! is a wonderful piece of genius which renders the Linux console accessible to thousands of visually impaired Linux users world-wide.
+
+Probably the second most popular accessibility tool for use in the command-line is brltty.  This is a soft-Braille display driver for Linux.  brltty has what has to be the most impressive set of documentation I have ever seen from a Open Source software system.  brltty works perfectly on a Raspberry Pi, but I would not recommend using a soft-Braille display without using a powered USB hub.  This is a recommendation commonly seen online when talking about other types of USB peripherals and the Pi.
+
+For a GUI, there is the Orca screen-reader.  See later comments about the potential for an accessible graphical desktop on the Pi.
+
+When I was considering jumping into the Raspberry Pi world with both feet I sifted my way through the Foundation forum pages and found only a few references to any of these tools, primarily to Orca.
+
+A few forum posters claimed to have got Orca working with Raspbian, but any attempts by anybody to get any of these people to explain how they did it, got no response.
+
+My cynicism now came to the fore.  It seems that very few people are happy with the command-line interface any more.  It appeared to me that the lack of a talking desktop stopped most people dead in their tracks.
+
+At the beginning of 2013 I knew about SpeakUp!, because I have used it on several Linux desktop and laptop machines.  But I did not at that time know that the SpeakUp! source was included in the Raspberry Pi kernel source-tree.
+
+By early February 2013 the email list Raspberry-vi was attracting list joiners.  I started talking on email, and later on VOIP, with Mobeen Iqbal.  Mo had been the project manager for the Vinux project until just before Christmas 2012.  Mo was now interested in the Raspberry Pi and he joined the list.  Jason Miller, also formerly of the Vinux project and based in the USA, joined the list and the three of us began to talk about accessibility and the Pi.
+
+It is Mo who is the primary web-master and his skill with web stuff including Drupal has been crucial in the creation of our web pages.  Jason's knowledge of Linux, and his determination, was very useful in the earlier part of the year when we took our first steps.
+
+''<a name="speakup">''
+=== SpeakUp! ===
+
+Because I didn't realise at the early stages that the SpeakUp! source was in the source-tree provided for download by the Raspberry Pi Foundation, we began talking about how to compile it into the kernel for the Pi.
+
+Jason thought there was a problem with some vital headers having been removed from the source so I set about trying to gather the SpeakUp! source and get it compiled.
+
+''<a name="yasr">''
+=== The YASR Screen-reader ===
+
+At that time my lack of knowledge of kernel stuff and my failure to realise the SpeakUp! source was already there, meant I was struggling with SpeakUp! for a while.  A process not helped by broken links and a home page which doesn't seem to have had any maintenance or changes for some years, I asked the question; 'why not a screen-reader which sits between the terminal screen and the operating system at the back?'.  And somebody on the SpeakUp! email list mentioned YASR.  This screen-reader, the name of which stands for 'Yet Another Screen-reader', works in exactly that way.
+
+I set about trying to get YASR going on Raspbian.
+
+I got the components necessary for YASR installed and configured on it, and although I got it to talk with both the 'eSpeak' synthesiser and 'Festival', it crashed the kernel again and again, and always within a couple of minutes of booting.
+
+I didn't realise at that time the reason for these crashes, and until I got a serial cable for the Pi, to connect to it's serial bus and until I learned about the kernel debugger, that these crashes were a serious problem and one which would not be easily solved.  Or not at all.
+
+I abandoned attempts to get YASR running when I realised that the SpeakUp! source was part of the kernel source tree.
+
+Now I needed to know about kernel compilations and how to do it.
+
+''<a name="learning">''
+=== Climbing the Linux Learning Curve ===
+
+By March 2013 my knowledge of Linux was increasing at a pace.  Configuration, Linux commands and kernel internals and operation were all coming at me thick and fast.
+
+To try to learn about how to compile a Linux kernel, and kernel modules, I spent some time with Google, reading all sorts of pages.  In particular the pages of the embedded Linux site (e-linux).
+
+There is a lot of very useful Raspberry Pi stuff on that site including some detailed information about kernel compilation.
+
+Another site I found to be very useful and to have a lot of very concise and no-nonsense content is 'Linux Chix'.  As the name suggests, a site written by female Linux hackers.
+
+I began to get my ducks in a row in preparation to compile a kernel.  Initially I didn't realise it is actually possible to compile loadable kernel modules without compiling a kernel.  I set up a Raspberry Pi with a fresh install of Raspbian and the necessary tools to do the job, including the latest stable kernel source from the Foundation.
+
+Another problem of accessibility is the process of setting up the kernel build.  One stage is to configure which options to include in the kernel, which to leave out and how other things are to be tweaked.
+
+There are a number of ways of doing this.  One is to run a purely question and answer session where the configuration asks every concievable option about how to configure the kernel.  As this process asks thousands of questions it is clearly not an easy choice and would be prone to error, even if I knew the answer to every question, which I don't.
+
+The second tool uses a graphical mechanism for dividing the configuration process into sections and makes it easy to ignore rarely changed or irrelevant questions and to concentrate on those parts you want to change.  But of course there is no accessible graphical desktop running on the Pi yet.  And as I was doing this on a Pi, this option was not available (see later for cross-compiling!).
+
+A third tool uses an 'ncurses' application to do the config.  This is a text-based application which uses the 'ncurses' library to produce a full-screen and menu-driven application.  Not perfectly accessible but usable with care and after some familiarisation.
+
+But I committed a sin.  I manually edited the configuration file because I only had a couple of things to change, to include the SpeakUp! soft-synthesis and main modules in the kernel build.  This approach is not recommended because it is easy to completely screw up the configuration file by making edits which don't make sense to the build process.  Luckily it is easy to get a fresh config file from a running Raspberry Pi because the kernel kindly puts one in /proc/config.gz for you.  Using this file as a starting point it is easy to compile a kernel with all the options preset to your current kernel configuration.  Without it you might struggle to build a kernel with what it contained before.
+
+Finally, after a lot of reading and learning, I was ready to compile a kernel on a Raspberry Pi.  Some of what I had read warned me this would be a lengthy process.  Because of the low power of the Pi a kernel compile would take several hours.
+
+No kidding...
+
+After fifteen hours it was done.
+
+Clearly I couldn't do this again.  I knew it was likely I would have to compile things again and again.
+
+So I set up a cross-compile environment on a Vinux virtual machine on my Windows 7 PC.  The Raspberry Pi Foundation provide a cross-compiler tool-chain tuned for theARM processor used on the Pi and it is relatively easy to set this up to run on an x86 or i686 Linux computer.
+
+Even then, on the Windows machine, the compile took forty-five minutes.
+
+It worked!  I had SpeakUp! running on Raspbian.  But it crashed all the time, just like YASR.
+
+''<a name="p3">''
+=== Problem #3: A show-stopper ===
+
+And this problem is a biggy!
+
+Using a serial cable connected to the Raspi's GPIO bus, and monitoring this connection with PuTTY, I was able to trap and inspect an effect called a 'kernel oops'.  That's 'oops' as in 'oops I slipped on a banana skin'.  When you use a screen-reader it's easy to think it is saying 'kernel loops', as in 'continuous loops'.
+
+This is an error, a bit like a Windows general protection fault, which happens when the kernel identifies an error which it needs to flag-up to the user and to trap to prevent incorrect operation of some kernel functionality.
+
+On the Raspberry Pi, and indeed on other Linux machines, when a 'kernel oops' occurs, if the kernel is configured for it, a detailed report, in the form of a stream of text is spat out over the serial console.  This text shows register contents and conditions at the time of the fault and, to those who understand such things (not me), provides a way of diagnosing the cause of the problem.
+
+It was connecting a serial cable in this way which made it possible for me to see that the crashes were being caused in connection with the Raspi's 'VCHIQ' mechanism.  More about this in a moment.
+
+So now I had tried to get both YASR and SpeakUp! running, and both crashed.  And while I have never again tried YASR since getting the serial cable connected, I suspect the crashes in YASR were the same as SpeakUp!
+
+The Raspberry Pi has on it a GPU, a 'Graphics Processing Unit'.  A slight misnomer because this chip is responsible for both the graphics and the sound.
+
+To 'queue' sound into this GPU, the firmware contains a process called the 'VCHIQ'.  This stands for 'Video Core Hardware Interface Queue' and it is this process which takes input from any and every source of sound and graphics from all programs running on the Pi.
+
+The text which is spat out by the 'kernel oops' which occurs every time SpeakUp! crashes shows that the oops is caused by an attempt to de-reference a pointer which contains 'null'.  Basically this means that the VCHIQ is being fed a chunk of data pointed to in a memory address, but this memory pointer contains nothing.  The kernel does not like to try to dereference null pointers, oh no, that's a bad idea.  It could cause all sorts of problems.
+
+So now we come to a dead stop.  I didn't at that time know why a null pointer was finding it's way into the queued data, and whether there was a way to stop it.
+
+''<a name="emacspeak">''
+=== Jason Miller and Emacspeak ===
+
+Jason came to the rescue, in a way, with Emacspeak.
+
+He managed, after many hours of tirelessly tinkering, to get Emacspeak to run reliably on Arch linux on his Pi.
+
+And it didn't crash.  I still don't know why, but Emacspeak, running on Arch Linux, and using the same speech synthesiser as I had tried to use with SpeakUp! did not crash.
+
+So it was now possible to use Emacspeak on Arch Linux, although because there was no screen-reader in the console, it was necessary to log in 'blindly' as it were and launch Emacspeak before any speech was available.
+
+Trying SpeakUp! on Arch
+
+At about the end of March or early April, I retried getting SpeakUp! to run, but this time on Arch Linux.  And it worked.  Finally we were able to create an image of Arch Linux with Jason's configuration of Emacspeak and with SpeakUp! both running and working fine.  We also put brltty on it for good measure.
+
+Enter another ex-member of the Vinux team (see a pattern yet?); Rill, also from the USA.  Rill has taken Emacspeak to her heart and is now using it day-to-day.  Plainly demonstrating that Emacspeak deserves it's own tag-line of 'The Complete Audio Desktop'.  Emacspeak is a fully accessible, speaking version of the mature and vast Emacs 'editor'.  I say 'editor' in quotes because it is so much more than just an editor, and is well worth spending some time on getting to grips with it.  Rill is writing tens of thousands of words on her Pi using Emacspeak.
+
+''<a name="p4">''
+=== Problem #4: DMA Changes to the Sound Driver===
+
+It was on about the 25th of April that somebody made a change to the code of the Broadcom sound driver in use in the Raspi kernel.
+
+Until then, the sound driver did not have true DMA (direct memory access), but used an ALSA DMA plug-in to provide simulated DMA.
+
+Unfortunately this change to the sound driver broke text-to-speech in a big way.
+
+Now with this new version of the sound driver, text-to-speech was stuttery and all but unusable.
+
+So the accessible Arch Linux we created would have to blacklist the new driver, by blacklisting kernel updates and thus stop the newer sound driver from breaking tts.
+
+It was necessary at the time to blacklist the alsa-utils package because the new change also made a change to the alsa package and updating it stopped eSpeak from speaking at all.
+
+''<a name="p5">''
+=== Problem #5: Firmware Changes and Audio 'Clipping' ===
+
+Some time in early July 2013, a change was made to the Raspberry Pi firmware which caused text-to-speech to be clipped severely on the last syllable of any utterance.
+
+So we had to add the firmware to the blacklist.
+
+So now we had:
+
+  -the kernel
+  -The alsa-utils package
+  -The new firmware
+
+
+All blacklisted.  Not good.
+
+''<a name="p6">''
+=== Problem #6: Changes to the Arch Linux Directories ===
+
+Not really an accessibility issue but one which delayed efforts to develop solutions to any of the above problems.  In Arch Linux, the /bin, /sbin and /usr/sbin directories were being merged into /usr/bin.  This caused me a lot of headache when I managed to completely wreck my Arch install and had to re-create the Accessible Arch image with these merges incorporated to prevent it from presenting any problems when users did an upgrade.  It was necessary to do some updates in the correct order to make it all work.
+
+''<a name="why">''
+=== So why these audio problems?===
+
+We've seen how a number of changes and problems with the Raspberry Pi is having a negative effect on efforts to get good and stable text-to-speech tools to work.
+
+But why these problems.  Why, for example, did Emacspeak not crash the kernel on Arch like it did on Raspbian?  And why did SpeakUp! work on Arch and not on Raspbian?  And what is causing the stuttery text-to-speech and the clipping evident since the DMA changes to the sound driver and the firmware changes?
+
+The easy answer is a single word, <b>latency</b>.
+
+What is latency?
+
+Wikipaedia has this to say about audio latency:
+
+//"Audio latency is the delay between when an audio signal enters and when it emerges from a system. Potential contributors to latency in an audio system include analog-to-digital conversion, buffering, digital signal processing, transmission time, digital-to-analog conversion and the speed of sound in air."//
+
+Of particular relevance here is the buffering of audio between it's source, or creator, and the mechanisms which take the wave-form data and produce the actual sound.
+
+In all of our efforts to configure accessibility tools so far we have used the eSpeak and the Festival speech synthesisers.
+
+Both of these tools provide a mechanism for text-to-speech.  That is they take text and turn it into a recognisable speaking voice.  This does not happen instantaneously.  There must be a delay between text being fed to the convertor and the sound, in the form of pulse-code modulated wave data being available to input to the mechanism which produces the sound.
+
+When a man shovels coal into a furnace, there is a short delay between each shovel-full of coal.  There the analogy breaks down because of course there isn't enough time between each shovelling for the furnace to go out and go cold.
+
+But if the consumer (the furnace) is working faster than the provider (the man shovelling coal), the effect in our analogy would be alternating spikes and troughs of hot and cold.
+
+Before the April change to the Broadcom sound driver to introduce DMA, the text-to-speech engines we were using were fast enough to take text and convert it into sound PCM at a rate sufficient to keep up with the furnace consuming it.  This was because the sound driver was slow enough for the text-to-speech engine to keep up.
+
+But after the change, the stuttery effect we heard was caused by audio latency as sound was fed to the consumer too slowly for it to sound like a continuous and uninterrupted stream.  Each small break  in the sound is created by the furnace having burnt the shovel-full of coal and waiting for another.  Ironically one effect of this is to make the overall speed of the speech seem slower as well as broken.
+
+I don't know for sure, but I suspect it is latency which caused the VCHIQ mechanism to occasionally try to throw an empty shovel of coal into the furnace and for the kernel to get upset with being given a null pointer.
+
+This might entirely explain why I was able to get SpeakUp! to work on Arch, which is a much more lean and mean Linux, than Raspbian, which is juggling a lot more balls and, as a consequence, has a lot more processes demanding processing time from the kernel, and interrupting execution of our text-to-speech tools.
+
+''<a name="latency">''
+=== Solving the Latency Issue===
+
+There are ways to make changes which should help the latency problems.
+
+I have tried recompiling the eSpeak speech-synthesiser to use pulseaudio instead of portaudio (two different audio libraries) and this does stop eSpeak from stuttering or clipping when it is used to speak the contents of a file or textual stream, such as when the boot messages are piped to it.
+
+Unfortunately it also causes Emacspeak to crash.  Presumably because the Emacspeak sound server is no longer able to keep up with the stream of wave data and is again feeding a null pointer to the kernel.  But it may be because the Emacspeak sound server is causing eSpeak to crash in a pulseaudio function call.
+
+And with pulse, I have not yet been able to get SpeakUp! to work at all.  This is using the 'eSpeakup' connector program which connects the kernel-mode speakup soft-synth module to eSpeak.
+
+I have also tried to increase the priority of any operation on Arch Linux running in the 'audio' group.  I have tried increasing the priority of the 'ksoftirq' thread and have tried juggling pulseaudio settings and SHM parameters.
+
+Luckily I now have a desktop Arch Linux machine fast enough to compile a kernel in about fifteen minutes, and to cross-compile other components very quickly.  So I no longer drink too much coffee and I've been able to try a lot of different options.
+
+''<a name="back">''
+=== Back to Square One===
+
+So Where are we at the Moment?
+
+At the time of writing (end of October 2013):
+
+We have Emacspeak and SpeakUp! working on Arch, but for this to continue to work we have to blacklist the kernel, alsa-utils and the firmware to stop them upgrading.  The same image also includes brltty.
+
+All efforts so far to fix latency problems have failed.
+
+''<a name="hynix">''
+=== Hynix Chipped Raspberry Pi Boards===
+
+A problem not related to the latency issues mentioned above is the introduction of a new build of Raspberry Pi boards.
+
+Some time in approximately April this year, Raspberry Pi boards made by Radiospares switched from using RAM chips by Samsung to Hynix chips.
+
+This caused our Accessible Arch image to fail to boot.
+
+It is possible to get it to boot by replacing the firmware files in the boot sector with those from the newest Arch image from the Foundation, but Emacspeak then crashes.
+
+One step forward and one back.
+
+''<a name="desktop">''
+=== Will we ever get an accessible graphical desktop?===
+
+The Raspberry Pi is such a phenomenon that it is easy to forget what it is and to compare it to other computers which we might be used to using on a daily basis.
+
+I don't think it is fair to compare the Pi, with it's 512MB of RAM and it's 700MHz ARM processor to even low-end netbook computers running either Windows or Linux.
+
+When we are so used to GUI environments like Windows being made accessible by the variety of adaptive technology we have at our disposal, it is easy to want the same on the Pi.
+
+And we are now so used to our online lifestyle that it is uncomfortable to use a computer which does not have even the most basic of web browsers capable of accessing complex sites rich in Javascript, Java, Flash and other content.  Even if you can't see the screen.
+
+Even the lowliest intel-compatible Linux machine, made accessible by the use of the Orca screen-reader is probably considerably more powerful than our little friend.  But the additional burdens placed on the system by Orca and all the mechanisms in the background which interface it to the desktop are probably too much to ask a Raspberry Pi to cope with without turning up it's toes.
+
+We must remember why the Pi was created.  The intention was to provide a low-cost platform which school children and students might be more willing to tinker with than the family PC.  The fact that it has gathered a following among the wider Linux hacking community is a pleasant surprise.
+
+In an interview with the BBC, Linus Torvalds said the Raspberry Pi makes failure affordable.  This it does admirably.  I have lost count of the times I have 'bricked' a Raspberry Pi and had to start again, a process which only takes a few minutes and is relatively trivial, especially when compared to the parental wrath a kid might face if he/she trashed the sole family computer.
+
+If some visually impaired users drift away from the Pi because it doesn't have an accessible graphical desktop, then there is really little difference between them using a Pi or a low cost computer such as a netbook.  Tinkering with the GPIO bus to drive electric circuits such as motors, or using a combination of code and electronics to monitor the temperature of the water and switch on your aquarium heater to stop your fish getting too cold doesn't need a graphical desktop, so I think tinkerers will stay even if it never happens.
+
+My efforts to bring more accessibility to the Pi will not cease.  Not because I have any great or saintly determination or mission to accomplish it, but because it is fun and educational.  Twelve months ago you could have written what I knew about Linux on a beer mat.  Now you might need both sides of the same beer mat (or another beer)  and much smaller writing.
+
+Before I've got bored with it I hope you will need several sheets of paper.
+
+''<a name="conclusion">''
+=== Conclusion and Appeal ===
+
+There are several motivations for writing this document:
+
+  -Firstly because in the past year the membership of our email list has been steadily growing and some of the members who have joined more recently may not be familiar with the efforts which have been made already, because they were not on the list to see my earlier bleats and the occasional victory.  The list is often quiet and it might appear nothing is happening.
+  -Also in the hope that somebody with a greater knowledge of Linux and in particular embedded Linux might read this and offer us some help.  I promise not to suck your brain out through your ears.
+  -And finally because I think the Raspberry Pi Foundation, while I have every admiration for what they have created, have so far paid scant attention to accessibility as an issue.  Maybe if they read this they might think about at least testing text-to-speech next time a change is made to sound drivers or firmware.  However I understand that no platform, whether it be the Raspberry Pi or the latest desktop machine from another planet is ever tested with, or guaranteed to work with every piece of free software out there.
+
+''<a name="glossary">''
+=== Glossary of Terms===
+
+==== Table 1 ====
+
+|  Term  | Explanation  |
+| Accessibility  | Term generally used to describe both the adaptation to an object or process, such as a gadget like a computer, a place or facility to make it usable by those of different ability, and the effectiveness of adaptive changes.  In this context adaption of software used on the Raspberry Pi to make it usable to blind and visually impaired users.  Accessibility is often abbreviated to 'A11Y', where the eleven in the middle replaces eleven letters.  |
+| Brick, bricking, bricked  | A condition whereby a device, typically a computer, is rendered inoperative and useless by accident or omission.  With particular reference to a Raspberry Pi, some kind of corruption of the contents of your SD card which renders it unbootable.  Easy to recover from by re-writing the card.  Back up that valuable work!  I've bricked my Raspis enough times to build a community centre.  |
+| brltty  | A refreshable Braille display driver for Linux.  See 'Soft-Braille' further down this table.  |
+| DMA  | Direct Memory Access.  A technique used by some software to access memory without interrupting the central processor to ask it for reads and writes.  Much faster than having to interrupt the CPU and then wait for the service you have requested.  Stuff the CPU is doing which is unconnected with the process using DMA must also suspend while it furnishes the interrupting process.  This slows everything down, not just the process in question.  |
+| eSpeak  | A very popular speech synthesiser with impressive language support.  |
+| Festival  | Another speech-synthesiser.  Not as many languages supported as eSpeak but some like the voice.  |
+| GPIO  | General Purpose Input/Output. The collection of prickly spines in two rows of thirteen in one corner of the Raspberry Pi board.  Used for a variety of things like driving electronic circuits to make interesting things.  One of the things which make the Pi so great for tinkering.  |
+| GPU  | Graphics Processing Unit.  That part of the Pi which processes and generates both sound and video graphics.  |
+| Kernel  | The business part of Linux.  The stuff you see on the screen (metaphorically) is all just programs you use to communicate with the heart of the operating system, the part that does the magic, the kernel.  As an aside, this is why you will often see the operating system referred to as 'GNU/Linux'.  Strictly it is only the kernel that is Linux.  All the tools that make it usable are, for the most part, released under the GNU General Public Licence.  |
+| Kernel module  | A piece of executable code that gets loaded into the memory space of the kernel, making the kernel modular and giving the option of flexibility by either omitting un-needed functionality or including bespoke operations.   |
+| Kernel oops  | If you're reading this with a screen-reader be careful to understand that this is 'kernel space oops' and not kernel loops', as in 'a continuous loop.  An event detected by the kernel when something bad that might affect operation, or some kind of illegal operation has occurred, like trying to write to protected memory or trying to read a memory location pointed to by a null pointer.  |
+| NVDA  | The best screen-reader available for Windows.  Free and Open Source.  Another of my heart-felt opinions.  |
+| Orca  | GUI-mode screen-reader in common use on Gnome desktops on Linux.  Quite resource hungry.  |
+| PuTTY  | A popular Windows terminal program with SSH capabilities.  |
+| Screen-reader  | A program which detects what part of the screen a user is focused on and which reads what is there in a synthesised voice.  Providing accessibility to those who can't see the screen.  |
+| Soft-Braille display  | A piece of hardware, which typically connects to the USB port of a computer, and which provides a line of Braille cells formed by small electronically actuated 'pins' which pop up and down to form refreshable Braille letters.  Typically it follows the screen focus and displays a line of Braille matching or interpreting what is on the screen.  |
+| SpeakUp!  | Linux console-mode screen-reader which can be built either as part of the kernel or as loadable kernel modules.  SpeakUp! makes it possible for blind users to get console access when all else has failed and makes it possible for us to perform many of the tasks of a system administrator.  |
+| SSH  | Secure Shell.  A protocol for connecting to a remote machine from the one you are sitting at, typically.  |
+| Tera Term  | Another Windows terminal program.  One that, in my opinion, is more accessible than PuTTY.  |
+| Vinux  | A spin of Ubuntu Linux with accessibility tools running out-of-the-box.  The origin of the name is obvious.  |
+| YASR  | Yet Another Screen-reader.  Alternative console-mode screen-reader.  Not as widely used as SpeakUp! and because it is not part of the kernel, perhaps not as available for low-level tasks.  |
+
+
+''<a name="links">''
+=== Links===
+
+  - [The Raspberry VI Web pages http:www.raspberryvi.org/]
+  - [Our download page http://www.raspberryvi.org/]
+  - [The Raspberry PI Foundation pages http://www.raspberrypi.org/]
+  - [e-Linux http://elinux.org/]
+  - [Linux Chix http://www.linuxchix.org/]
+
+
+''<a name="disclaimer">''
+=== Disclaimer ===
+
+This document reflects my opinions only.  It details my thoughts and activities with a Raspberry Pi over the months of 2013.
+
+Neither the content herein, opinions expressed either in emails submitted to the email list, nor the content of the web site are in any way connected with, or endorsed by, the Raspberry Pi Foundation.
+
+The lexical and aural proximity of Raspberrypi and Raspberryvi are unfortunate circumstances of trade-mark and common parlance.  They are in no way efforts to deceive readers or web surfers.  P and V are far apart on a QWERTY keyboard.
+
+Please read all content from the Raspberry VI community in the spirit of Open Source and the wider community of Linux hackers.
+
+
+  - Mike Ray
+  - October 30, 2013
+  - mike@raspberryvi.org
+  
+''<center>''
+//"I can't see, but if you're a giant, can I stand on your shoulders?"//
+''</center>''
+
+
