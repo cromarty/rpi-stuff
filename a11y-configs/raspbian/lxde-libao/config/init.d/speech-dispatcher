@@ -1,0 +1,76 @@
+#! /bin/sh
+
+### BEGIN INIT INFO
+# Provides:          speech-dispatcher
+# Required-Start:    
+# Required-Stop:     
+# Should-Start:      festival
+# Should-Stop:       festival
+# Default-Start:     2 3 4 5
+# Default-Stop:      1
+# Short-Description: Speech Dispatcher
+# Description:       Common interface to speech synthesizers
+### END INIT INFO
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+DAEMON=/usr/bin/speech-dispatcher
+PIDFILE=/var/run/speech-dispatcher/speech-dispatcher.pid
+NAME=speech-dispatcher
+DESC='Speech Dispatcher'
+USER=speech-dispatcher
+
+[ -r /etc/default/speech-dispatcher ] && . /etc/default/speech-dispatcher
+
+. /lib/lsb/init-functions
+
+if [ "$RUN_SPEECHD" != "yes" ] && [ "$2" != "spawn" ]; then
+	log_warning_msg "Speech-dispatcher configured for user sessions"
+	exit 0
+fi
+
+test -f $DAEMON || exit 0
+if ! test -d /var/run/speech-dispatcher ; then
+	mkdir -p /var/run/speech-dispatcher
+	chown speech-dispatcher.audio /var/run/speech-dispatcher
+fi
+
+. /lib/lsb/init-functions
+
+set -e
+
+case "$1" in
+  start)
+	log_daemon_msg "Starting $DESC" "speech-dispatcher"
+	start-stop-daemon --start --quiet --chuid $USER --pidfile $PIDFILE \
+          --exec $DAEMON
+	log_end_msg $?
+	;;
+  stop)
+	log_daemon_msg "Stopping $DESC" "speech-dispatcher"
+	start-stop-daemon --oknodo --stop --quiet --user $USER \
+          --pidfile $PIDFILE --exec $DAEMON
+	log_end_msg $?
+	;;
+  reload|force-reload)
+	log_daemon_msg "Reloading $DESC configuration files" "speech-dispatcher"
+	start-stop-daemon --oknodo --stop --signal 1 --quiet --user $USER \
+          --pidfile $PIDFILE --exec $DAEMON
+        log_end_msg $?
+        ;;
+  restart)
+	log_daemon_msg "Restarting $DESC" "speech-dispatcher"
+	start-stop-daemon --oknodo --stop --quiet --user $USER \
+          --pidfile $PIDFILE --exec $DAEMON
+	sleep 3
+	start-stop-daemon --start --quiet --chuid $USER --pidfile $PIDFILE \
+          --exec $DAEMON
+	log_end_msg $?
+	;;
+  *)
+	N=/etc/init.d/$NAME
+	echo "Usage: $N {start|stop|restart|reload|force-reload}" >&2
+	exit 1
+	;;
+esac
+
+exit 0
