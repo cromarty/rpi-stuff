@@ -1,14 +1,30 @@
 #!/bin/bash
+
+sausage_machine() {
+	CONFIG_PATH="${SAUSAGE_PACK}/config"
+	SCRIPT_PATH="${SAUSAGE_PACK}/scripts"
+	UTILS_PATH="${SAUSAGE_PACK}/utils"
+
+	../sausage-machine/sm.sh
+
+} # sausage_machine
+
 raspbian-lxde-alsa() {
 	echo 'In raspbian-lxde-alsa'
+	SAUSAGE_PACK="${SAUSAGE_PACK_ROOT}/raspbian/lxde-alsa"
+	sausage_machine
 } # raspbian-lxde-alsa
 
 raspbian-lxde-pulse() {
 	echo 'In raspbian-lxde-pulse'
+	SAUSAGE_PACK="${SAUSAGE_PACK_ROOT}/raspbian/lxde-pulse"
+	sausage_machine
 } # raspbian-lxde-pulse
 
 raspbian-lxde-libao() {
 	echo 'In raspbian-lxde-libao'
+	SAUSAGE_PACK="${SAUSAGE_PACK_ROOT}/raspbian/lxde-libao"
+	sausage_machine
 } # raspbian-lxde-libao
 
 
@@ -37,9 +53,9 @@ main_menu() {
 					2)
 						raspbian-lxde-pulse
 					;;
-3)
-raspbian-lxde-libao
-;;
+					3)
+						raspbian-lxde-libao
+					;;
 				esac
 				break
 			else
@@ -48,5 +64,8 @@ raspbian-lxde-libao
 		done # end of select a directory
 	done # end of while not finished
 }
+BUILD_PATH=~/.builds
+SAUSAGE_PACK_ROOT=$( cd $(dirname $0) ; pwd -P )
+cd "${SAUSAGE_PACK_ROOT}"
 
 main_menu
