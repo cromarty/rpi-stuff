@@ -1,12 +1,17 @@
 #!/bin/bash
 
 sausage_machine() {
+	echo 'In sausage_machine'
 	CONFIG_PATH="${SAUSAGE_PACK}/config"
 	SCRIPT_PATH="${SAUSAGE_PACK}/scripts"
 	UTILS_PATH="${SAUSAGE_PACK}/utils"
 
-	../sausage-machine/sm.sh
+	../sausage-machine/sm.sh \
+	-b "${BUILD_PATH}" \
+	-c "${CONFIG_PATH}" \
+	-u "${UTILS_PATH}"
 
+exit 0
 } # sausage_machine
 
 raspbian-lxde-alsa() {
