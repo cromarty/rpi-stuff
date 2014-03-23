@@ -7,9 +7,13 @@ raspbian-lxde-pulse() {
 	echo 'In raspbian-lxde-pulse'
 } # raspbian-lxde-pulse
 
+raspbian-lxde-libao() {
+	echo 'In raspbian-lxde-libao'
+} # raspbian-lxde-libao
+
 
 main_menu() {
-	MENUCHOICE="Raspbian-lxde-alsa Raspbian-lxde-pulse Exit"
+	MENUCHOICE="Raspbian-lxde-alsa Raspbian-lxde-pulse Raspbian-lxde-libao Exit"
 
 	# Set a useful select prompt
 	PS3='Selection? '
@@ -33,6 +37,9 @@ main_menu() {
 					2)
 						raspbian-lxde-pulse
 					;;
+3)
+raspbian-lxde-libao
+;;
 				esac
 				break
 			else
