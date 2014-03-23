@@ -7,9 +7,10 @@ sausage_machine() {
 	UTILS_PATH="${SAUSAGE_PACK}/utils"
 
 	../sausage-machine/sm.sh \
-	-b "${BUILD_PATH}" \
-	-c "${CONFIG_PATH}" \
-	-u "${UTILS_PATH}"
+		-b "${BUILD_PATH}" \
+		-c "${CONFIG_PATH}" \
+		-u "${UTILS_PATH}" \
+		"${SCRIPT_PATH}"
 
 exit 0
 } # sausage_machine
