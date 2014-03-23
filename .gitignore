@@ -12,3 +12,6 @@ res
 
 # ignore SciTE properties files
 *.properties
+
+# ignore log files
+*.log
