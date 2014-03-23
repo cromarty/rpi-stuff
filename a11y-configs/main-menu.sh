@@ -1,7 +1,6 @@
 #!/bin/bash
 
 sausage_machine() {
-	echo 'In sausage_machine'
 	CONFIG_PATH="${SAUSAGE_PACK}/config"
 	SCRIPT_PATH="${SAUSAGE_PACK}/scripts"
 	UTILS_PATH="${SAUSAGE_PACK}/utils"
@@ -10,31 +9,27 @@ sausage_machine() {
 		-b "${BUILD_PATH}" \
 		-c "${CONFIG_PATH}" \
 		-u "${UTILS_PATH}" \
-		"${SCRIPT_PATH}"
+		"${SCRIPT_PATH}" | tee sausage-machine.log
 
 exit 0
 } # sausage_machine
 
 raspbian_lxde_alsa() {
-	echo 'In raspbian-lxde-alsa'
 	SAUSAGE_PACK="${SAUSAGE_PACK_ROOT}/raspbian/lxde-alsa"
 	sausage_machine
 } # raspbian_lxde_alsa
 
 raspbian_lxde_pulse() {
-	echo 'In raspbian-lxde-pulse'
 	SAUSAGE_PACK="${SAUSAGE_PACK_ROOT}/raspbian/lxde-pulse"
 	sausage_machine
 } # raspbian_lxde_pulse
 
 raspbian_lxde_libao() {
-	echo 'In raspbian_lxde_libao'
 	SAUSAGE_PACK="${SAUSAGE_PACK_ROOT}/raspbian/lxde-libao"
 	sausage_machine
 } # raspbian_lxde_libao
 
 test_pack() {
-	echo 'In test_pack'
 	SAUSAGE_PACK="${SAUSAGE_PACK_ROOT}/test-pack"
 	sausage_machine
 } # test_pack

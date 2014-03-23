@@ -70,26 +70,22 @@ export UTILS_PATH="$UTILS_PATH"
 
 [ "$1" ] &&  cd "$1"
 
-LOG_FILE=~/sausage-machine.log
-
-echo 'Starting the sausage-machine...' | tee "${LOG_FILE}"
-echo "The build-path is: $BUILD_PATH" | tee -a "${LOG_FILE}"
-echo "The config-path is: $CONFIG_PATH" | tee -a "${LOG_FILE}"
+echo 'Starting the sausage-machine...'
+echo "The build-path is: $BUILD_PATH"
+echo "The config-path is: $CONFIG_PATH"
 echo "The script-path is: $(pwd)"
-echo "The utils-path is: $UTILS_PATH" | tee -a "${LOG_FILE}"
-
-set -e
+echo "The utils-path is: $UTILS_PATH"
 
 shopt -s extglob
 
 for SCRIPT_NAME in +([0-9])*.sh
 do
-	echo "Starting ${SCRIPT_NAME}" | tee -a "${LOG_FILE}"
+	echo "Starting ${SCRIPT_NAME}"
 	./${SCRIPT_NAME}
 	if [ $? -gt 0 ]; then
-		echo "${SCRIPT_NAME} returned non-zero code, aborting..." | tee -a "${LOG_FILE}"
-		exit 1
-	fi
-	echo "${SCRIPT_NAME} completed successfully" | tee -a "${LOG_FILE}"
+  echo "${SCRIPT_NAME} returned non-zero code, aborting..."
+  exit 1
+  fi
+	echo "${SCRIPT_NAME} completed successfully"
 done
 
