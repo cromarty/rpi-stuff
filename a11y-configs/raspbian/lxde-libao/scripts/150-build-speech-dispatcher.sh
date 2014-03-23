@@ -17,9 +17,9 @@ cd "${LOCAL_BUILD_PATH}"
   --without-ivona \
   --without-nas \
   --without-oss \
-  --without-libao \
+  --with-libao \
   --with-alsa \
-  --without-pulse
+  --with-pulse
 
 make all
 make install
