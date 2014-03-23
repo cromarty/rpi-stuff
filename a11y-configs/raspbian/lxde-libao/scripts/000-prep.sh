@@ -22,15 +22,15 @@ echo "-- Add sources repo to /etc/apt/sources.list..."
 echo "deb-src http://archive.raspbian.org/raspbian wheezy main contrib non-free rpi" >> /etc/apt/sources.list
 wget http://archive.raspbian.org/raspbian.public.key -O - | apt-key add -
 
-# Add entries in /etc/apt/sources.list for Knoppix repos
-cat <<eof >> /etc/apt/sources.list
-
-# KNOPPIX Sources
-deb-src http://debian-knoppix.alioth.debian.org ./
-# KNOPPIX Precompiled binaries
-deb http://debian-knoppix.alioth.debian.org ./
-
-eof
+## Add entries in /etc/apt/sources.list for Knoppix repos
+#cat <<eof >> /etc/apt/sources.list
+#
+## KNOPPIX Sources
+#deb-src http://debian-knoppix.alioth.debian.org ./
+## KNOPPIX Precompiled binaries
+#deb http://debian-knoppix.alioth.debian.org ./
+#
+#eof
 
 apt-get update
 exit 0
