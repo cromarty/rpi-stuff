@@ -86,8 +86,7 @@ do
 	echo "Starting ${SCRIPT_NAME}" | tee -a "${LOG_FILE}"
 	./${SCRIPT_NAME}
 	if [ $? -gt 0 ]; then
-		echo "${SCRIPT_NAME} returned non-zero code, 
-aborting..." | tee -a "${LOG_FILE}"
+		echo "${SCRIPT_NAME} returned non-zero code, aborting..." | tee -a "${LOG_FILE}"
 		exit 1
 	fi
 	echo "${SCRIPT_NAME} completed successfully" | tee -a "${LOG_FILE}"
