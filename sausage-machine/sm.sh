@@ -75,6 +75,7 @@ LOG_FILE=~/sausage-machine.log
 echo 'Starting the sausage-machine...' | tee "${LOG_FILE}"
 echo "The build-path is: $BUILD_PATH" | tee -a "${LOG_FILE}"
 echo "The config-path is: $CONFIG_PATH" | tee -a "${LOG_FILE}"
+echo "The script-path is: $(pwd)"
 echo "The utils-path is: $UTILS_PATH" | tee -a "${LOG_FILE}"
 
 set -e

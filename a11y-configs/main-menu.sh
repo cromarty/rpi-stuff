@@ -15,27 +15,34 @@ sausage_machine() {
 exit 0
 } # sausage_machine
 
-raspbian-lxde-alsa() {
+raspbian_lxde_alsa() {
 	echo 'In raspbian-lxde-alsa'
 	SAUSAGE_PACK="${SAUSAGE_PACK_ROOT}/raspbian/lxde-alsa"
 	sausage_machine
-} # raspbian-lxde-alsa
+} # raspbian_lxde_alsa
 
-raspbian-lxde-pulse() {
+raspbian_lxde_pulse() {
 	echo 'In raspbian-lxde-pulse'
 	SAUSAGE_PACK="${SAUSAGE_PACK_ROOT}/raspbian/lxde-pulse"
 	sausage_machine
-} # raspbian-lxde-pulse
+} # raspbian_lxde_pulse
 
-raspbian-lxde-libao() {
-	echo 'In raspbian-lxde-libao'
+raspbian_lxde_libao() {
+	echo 'In raspbian_lxde_libao'
 	SAUSAGE_PACK="${SAUSAGE_PACK_ROOT}/raspbian/lxde-libao"
 	sausage_machine
-} # raspbian-lxde-libao
+} # raspbian_lxde_libao
+
+test_pack() {
+	echo 'In test_pack'
+	SAUSAGE_PACK="${SAUSAGE_PACK_ROOT}/test-pack"
+	sausage_machine
+} # test_pack
+
 
 
 main_menu() {
-	MENUCHOICE="Raspbian-lxde-alsa Raspbian-lxde-pulse Raspbian-lxde-libao Exit"
+	MENUCHOICE="Raspbian-lxde-alsa Raspbian-lxde-pulse Raspbian-lxde-libao test-pack Exit"
 
 	# Set a useful select prompt
 	PS3='Selection? '
@@ -54,14 +61,17 @@ main_menu() {
 				# Do something here
 				case "$REPLY" in
 					1)
-						raspbian-lxde-alsa
+						raspbian_lxde_alsa
 					;;
 					2)
-						raspbian-lxde-pulse
+						raspbian_lxde_pulse
 					;;
 					3)
-						raspbian-lxde-libao
+						raspbian_lxde_libao
 					;;
+4)
+test_pack
+;;
 				esac
 				break
 			else
