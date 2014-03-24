@@ -10,7 +10,7 @@ fi
 
 echo '-- Checking to make sure Emacs is installed...'
 if [ ! $(which emacs) ]; then
-	echo '-- Emacs is not installed. Can't proceed'
+	echo '-- Emacs is not installed. Cannot proceed'
 	exit 1
 fi
 
