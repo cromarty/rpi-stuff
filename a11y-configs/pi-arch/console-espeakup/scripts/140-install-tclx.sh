@@ -3,7 +3,7 @@
 set -e
 cd "${BUILD_PATH}"
 echo "-- Checking to see if tclx is already installed..."
-if [ $(which cower) ]; then
+if [ $(which tclx) ]; then
 	echo "-- tclx is already installed"
 	exit 0
 fi

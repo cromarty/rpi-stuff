@@ -15,7 +15,8 @@ if [ ! $(which emacs) ]; then
 fi
 
 echo "-- Getting the PKGBUILD with cower..."
-cower -d emacspeak &&
+cower -d emacspeak
+cd emacspeak
 echo "-- Adding 'armv6h' to the PKGBUILD architectures..."
 sed -i-old "s:^arch=(\(.*\)):arch=(\1 'armv6h'):" PKGBUILD
 makepkg -i --asroot --noconfirm --noprogressbar
