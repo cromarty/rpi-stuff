@@ -18,7 +18,7 @@ echo "-- Getting the PKGBUILD with cower..."
 cower -d emacspeak &&
 echo "-- Adding 'armv6h' to the PKGBUILD architectures..."
 sed -i-old "s:^arch=(\(.*\)):arch=(\1 'armv6h'):" PKGBUILD
-makepkg -s -i --asroot --noconfirm --noprogressbar
+makepkg -i --asroot --noconfirm --noprogressbar
 echo "-- Editing the /usr/bin/emacspeak file to make it possible to save settings in local .emacs files..."
 sed -i-old -e "s:\$HOME:~:" \
 	-e "s:EMACS_UNIBYTE:#EMACS_UNIBYTE:" \

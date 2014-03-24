@@ -13,7 +13,7 @@ wget https://aur.archlinux.org/packages/co/cower-git/cower-git.tar.gz
 tar -zxf cower-git.tar.gz
 cd cower-git
 sed -i-old "s:^arch=(\(.*\)):arch=(\1 'armv6h'):" PKGBUILD
-makepkg -s -i --asroot --noconfirm --noprogressbar
+makepkg -i --asroot --noconfirm --noprogressbar
 exit 0
 
 
