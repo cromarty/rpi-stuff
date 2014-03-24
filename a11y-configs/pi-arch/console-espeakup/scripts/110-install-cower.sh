@@ -3,7 +3,7 @@
 set -e
 cd "${BUILD_PATH}"
 echo "-- Checking to see if cower is installed..."
-if [ $(which cower ]; then
+if [ $(which cower) ]; then
 	echo "-- cower is already installed"
 	exit 0
 fi
