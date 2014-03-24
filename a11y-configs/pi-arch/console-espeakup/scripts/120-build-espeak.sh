@@ -2,9 +2,9 @@
 
 set -e
 cd "${BUILD_PATH}"
-echo "-- Building espeak from source..."
+echo '-- Building espeak from source...'
 mkdir -p espeak
-cd espeak
+pushd espeak
 cat <<eof > PKGBUILD
 # Maintainer:
 
@@ -45,4 +45,8 @@ package() {
 eof
 
 makepkg --asroot -i --noprogressbar --noconfirm
+popd
+echo '-- Finished building and installing espeak, tidying up...'
+set +e
+rm -rf espeak/
 exit 0
