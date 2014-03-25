@@ -29,6 +29,11 @@ raspbian_lxde_libao() {
 	sausage_machine
 } # raspbian_lxde_libao
 
+arch-console-espeakup() {
+	SAUSAGE_PACK="${SAUSAGE_PACK_ROOT}/pi-arch/console-espeakup"
+	sausage_machine
+} # arch-console-espeakup
+
 test_pack() {
 	SAUSAGE_PACK="${SAUSAGE_PACK_ROOT}/test-pack"
 	sausage_machine
@@ -37,7 +42,7 @@ test_pack() {
 
 
 main_menu() {
-	MENUCHOICE="Raspbian-lxde-alsa Raspbian-lxde-pulse Raspbian-lxde-libao test-pack Exit"
+	MENUCHOICE="Raspbian-lxde-alsa Raspbian-lxde-pulse Raspbian-lxde-libao arch-console-espeak test-pack Exit"
 
 	# Set a useful select prompt
 	PS3='Selection? '
@@ -64,9 +69,12 @@ main_menu() {
 					3)
 						raspbian_lxde_libao
 					;;
-4)
-test_pack
-;;
+					4)
+						arch-console-espeakup
+					;;
+					5)
+						test_pack
+					;;
 				esac
 				break
 			else
