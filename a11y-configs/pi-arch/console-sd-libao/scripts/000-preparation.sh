@@ -2,8 +2,7 @@
 
 set -e
 cd "${BUILD_PATH}"
-echo "-- Updating Arch..."
+echo '-- Updating Arch...'
+pacman -Sy
+echo '-- Finished updating Arch'
 exit 0
-pacman -Sy --noconfirm --noprogressbar
-exit 0
-

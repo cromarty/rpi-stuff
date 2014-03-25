@@ -9,6 +9,7 @@ export DTK_PROGRAM=espeak
 
 eof
 
+echo "-- Finished adding 'DTK_PROGRAM=espeak' to /etc/skel/.bashrc"
 exit 0
 
 

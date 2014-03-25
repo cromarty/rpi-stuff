@@ -1,8 +1,8 @@
-!/bin/bash
+#!/bin/bash
 
 set -e
 cd "${BUILD_PATH}"
-echo "-- Fixing /usr/share/alsa/alsa.conf to comment out cards which do not exist..."
+echo '-- Fixing /usr/share/alsa/alsa.conf to comment out devices which do not exist...'
 sed -i-old -e 's:^\(pcm\.front cards\.pcm\.front\):#\1:' \
 	-e 's:^\(pcm\.rear cards\.pcm\.rear\):#\1:' \
 	-e 's:^\(pcm\.center_lfe cards\.pcm\.center_lfe\):#\1:' \
@@ -19,8 +19,8 @@ sed -i-old -e 's:^\(pcm\.front cards\.pcm\.front\):#\1:' \
 	-e 's:^\(pcm\.modem cards\.pcm\.modem\):#\1:' \
 	-e 's:^\(pcm\.phoneline cards\.pcm\.phoneline\):#\1:' /usr/share/alsa/alsa.conf
 
-echo "-- Old alsa.conf file saved to /usr/share/alsa/alsa.conf-old"
-echo "-- Deleting pulse stuff from /usr/share/alsa/* if any exists..."
+echo '-- Old alsa.conf file saved to /usr/share/alsa/alsa.conf-old'
+echo '-- Deleting pulse stuff from /usr/share/alsa/* if any exists...'
 set +e
 rm -rf /usr/share/alsa/alsa.conf.d
 exit 0
