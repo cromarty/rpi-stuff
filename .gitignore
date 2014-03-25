@@ -15,3 +15,6 @@ res
 
 # ignore log files
 *.log
+
+a11y-configs/Menu.pm
+
