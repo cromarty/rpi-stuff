@@ -6,7 +6,7 @@ cd "${BUILD_PATH}"
 echo '-- Getting the speech-dispatcher source...'
 #apt-get -y -q source speech-dispatcher
 wget http://devel.freebsoft.org/pub/projects/speechd/speech-dispatcher-0.7.1.tar.gz
-tar -xzf speech-dispatcher-0.8.tar.gz
+tar -xzf speech-dispatcher-0.7.1.tar.gz
 echo "-- Building speech-dispatcher..."
 pushd $(ls -d speech-dispatcher-*)
 ./configure \
