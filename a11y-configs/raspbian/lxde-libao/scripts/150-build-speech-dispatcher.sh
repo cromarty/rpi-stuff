@@ -2,9 +2,11 @@
 
 set -e
 cd "${BUILD_PATH}"
+## get the source
+echo '-- Getting the speech-dispatcher source...'
+apt-get -y -q source speech-dispatcher
 echo "-- Building speech-dispatcher..."
-LOCAL_BUILD_PATH=$(ls -d speech-dispatcher-*)
-cd "${LOCAL_BUILD_PATH}"
+pushd $(ls -d speech-dispatcher-*)
 ./configure \
   --prefix=/usr \
    --sysconfdir=/etc \
@@ -23,4 +25,6 @@ cd "${LOCAL_BUILD_PATH}"
 
 make all
 make install
+popd
+echo '-- Finished building speech-dispatcher'
 exit 0
