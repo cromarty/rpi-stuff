@@ -10,8 +10,9 @@ res
 # ignore any zips
 *.zip
 
-# ignore SciTE properties files
+# ignore SciTE properties and session files
 *.properties
+*.session
 
 # ignore log files
 *.log
