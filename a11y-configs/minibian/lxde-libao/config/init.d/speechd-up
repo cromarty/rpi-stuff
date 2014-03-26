@@ -1,0 +1,70 @@
+#! /bin/sh
+
+### BEGIN INIT INFO
+# Provides:          speechd-up
+# Required-Start:    
+# Required-Stop:     
+# Should-Start:      speech-dispatcher
+# Should-Stop:       speech-dispatcher
+# Default-Start:     2 3 4 5
+# Default-Stop:      1
+# Short-Description: Speechd-up
+# Description:       Interface between speakup and speech-dispatcher
+### END INIT INFO
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+DAEMON=/usr/bin/speechd-up
+NAME=speechd-up
+DESC='Speechd-up'
+USER=root
+
+[ -r /etc/default/speechd-up ] && . /etc/default/speechd-up
+
+. /lib/lsb/init-functions
+
+if [ "$RUN_SPEECHD_UP" != "yes" ]; then
+	exit 0
+fi
+
+test -f $DAEMON || exit 0
+
+. /lib/lsb/init-functions
+
+set -e
+
+case "$1" in
+  start)
+	log_daemon_msg "Starting $DESC" "speechd-up"
+        # Start speakup
+        if ! modprobe speakup_soft start=1; then
+	    log_daemon_msg "Restart speechd-up after installing speakup"
+	fi
+	start-stop-daemon --start --quiet --chuid $USER --exec $DAEMON
+	log_end_msg $?
+        #speakupconf load
+	;;
+  stop)
+	log_daemon_msg "Stopping $DESC" "speechd-up"
+	start-stop-daemon --oknodo --stop --quiet --user $USER --exec $DAEMON
+	log_end_msg $?
+	;;
+  reload|force-reload)
+	log_daemon_msg "Reloading $DESC" "speechd-up"
+	start-stop-daemon --oknodo --stop --signal 1 --quiet --user $USER --exec $DAEMON
+        log_end_msg $?
+        ;;
+  restart)
+	log_daemon_msg "Restarting $DESC" "speechd-up"
+	start-stop-daemon --oknodo --stop --quiet --user $USER --exec $DAEMON
+	sleep 3
+	start-stop-daemon --start --quiet --chuid $USER --exec $DAEMON
+	log_end_msg $?
+	;;
+  *)
+	N=/etc/init.d/$NAME
+	echo "Usage: $N {start|stop|restart|reload|force-reload}" >&2
+	exit 1
+	;;
+esac
+
+exit 0
