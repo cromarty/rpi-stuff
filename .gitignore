@@ -17,4 +17,7 @@ res
 # ignore log files
 *.log
 
+# ignore windows batch files
+*.bat
+
 
