@@ -1,16 +1,6 @@
 #!/bin/bash
 
 set -e
-#if [ $(pgrep raspi-config) ]; then
-#	echo "-- Killing the nasty raspi-config process"
-#	kill -9 $(pgrep raspi-config)
-#fi
-
-#if [ -f /etc/profile.d/raspi-config.sh ]; then
-#	echo "-- Deleting the file /etc/profile.d/raspi-config.sh"
-#	rm /etc/profile.d/raspi-config.sh
-#fi
-
 if [ ! -d "${BUILD_PATH}" ]; then
 	echo '-- Makeing the build path'
 	mkdir -p "${BUILD_PATH}"
