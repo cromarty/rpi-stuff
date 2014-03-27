@@ -7,7 +7,7 @@ USER_NAME=speech-dispatcher
 USER_GROUP=audio
 HOME_DIR=/var/log/speech-dispatcher
 cd "${BUILD_PATH}"
-echo "-- Setting up configuration stuff for speech-dispatcher and speechd-up..."
+echo '-- Setting up configuration stuff for speech-dispatcher...'
 
 # /etc stuff
 rm -rf /etc/speech-dispatcher
@@ -15,10 +15,7 @@ mkdir /etc/speech-dispatcher
 cp -prf /usr/share/speech-dispatcher/conf/* /etc/speech-dispatcher
 install -m 644 ${CONFIG_PATH}/speechd.conf /etc/speech-dispatcher
  install -m 755 ${CONFIG_PATH}/init.d/speech-dispatcher /etc/init.d
- install -m 755 ${CONFIG_PATH}/init.d/speechd-up /etc/init.d
 install -m 644 ${CONFIG_PATH}/default/speech-dispatcher /etc/default
-install -m 644 ${CONFIG_PATH}/default/speechd-up /etc/default
-install -m 644 ${CONFIG_PATH}/speechd-up.conf /etc/speechd-up.conf
 
 # local config
 mkdir -p ~/.speech-dispatcher/conf
@@ -45,5 +42,7 @@ fi
 
 chown -R $USER_NAME:$USER_GROUP ${HOME_DIR}
 chmod 0775 ${HOME_DIR}
+
+echo '-- Finished configuring speech-dispatcher'
 exit 0
 
