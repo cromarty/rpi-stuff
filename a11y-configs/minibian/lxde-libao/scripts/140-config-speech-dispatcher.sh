@@ -18,10 +18,9 @@ install -m 644 ${CONFIG_PATH}/speechd.conf /etc/speech-dispatcher
 install -m 644 ${CONFIG_PATH}/default/speech-dispatcher /etc/default
 
 # local config
-mkdir -p ~/.speech-dispatcher/conf
-cp -prf /usr/share/speech-dispatcher/conf/* ~/.speech-dispatcher/conf
-install -m 644 ${CONFIG_PATH}/speechd.conf ~/.speech-dispatcher/conf/speechd.conf
- chown -R pi:pi ~/.speech-dispatcher/
+mkdir -p /etc/skel/.speech-dispatcher/conf
+cp -prf /usr/share/speech-dispatcher/conf/* /etc/skel/.speech-dispatcher/conf
+install -m 644 ${CONFIG_PATH}/speechd.conf /etc/skel/.speech-dispatcher/conf/speechd.conf
 
 # create speech-dispatcher user and home directory
 # this code is taken from the Debian package for speech-dispatcher

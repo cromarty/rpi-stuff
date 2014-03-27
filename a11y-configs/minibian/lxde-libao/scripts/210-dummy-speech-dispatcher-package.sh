@@ -3,7 +3,7 @@ set -e
 cd "${BUILD_PATH}"
 echo "-- Creating and installing a dummy speech-dispatcher package..."
 
-VER=$(ls -d speech-dispatcher-* | cut -f 3 --delimiter=-)
+VER=$(ls -d */ | sed 's:/::' | grep speech-dispatcher | cut -f 3 -d-)
 
 cat <<eof > speech-dispatcher
 Section: misc
