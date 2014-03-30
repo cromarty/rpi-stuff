@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo "fuck off and die"
+exit 0
+

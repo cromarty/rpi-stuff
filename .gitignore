@@ -20,4 +20,7 @@ res
 # ignore windows batch files
 *.bat
 
+# ignore auto-generated bash scripts
+*.run.sh
+
 
