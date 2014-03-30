@@ -109,37 +109,21 @@ sub sausages {
 	$ENV{'SM_LOG_FILE'} = join("/", ($ENV{'BUILD_PATH'}, $cfg->{'log-file'}));
 	$sm = <<eof;
 
+
 sausages() {
-	echo 'Starting the sausage-machine...'
-	echo "The build-path is: $ENV{'BUILD_PATH'}"
-	echo "The config-path is: $ENV{'CONFIG_PATH'}"
-	echo "The script-path is: $ENV{'SCRIPT_PATH'}"
-	echo "The utils-path is: $ENV{'UTILS_PATH'}"
 
-	cd $ENV{'SCRIPT_PATH'}
-
-	shopt -s extglob
-
-	for SCRIPT_NAME in +([0-9][0-9][0-9])*.sh
+	for SCRIPT in $ENV{'SCRIPT_PATH'}/*.sh
 	do
-		echo "Starting \${SCRIPT_NAME}"
-		./\${SCRIPT_NAME}
-		if [ \$? -gt 0 ]; then
-			echo "\${SCRIPT_NAME} returned non-zero code, aborting..."
-			exit 1
+		if [ -f \${SCRIPT} -a -f \${SCRIPT} ]; then
+			\${SCRIPT}
 		fi
-		echo "\${SCRIPT_NAME} completed successfully"
 	done
+ 
 }
-
-sausages | tee -a $ENV{'SM_LOG_FILE'}
+set -e
+sausages | tee -a $ENV{'SM_LOG_FILE'} 
 
 eof
-
-
-
-
-
 
 	print "$sm\n";
 	exit 0;
