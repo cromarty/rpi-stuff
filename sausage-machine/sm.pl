@@ -106,7 +106,8 @@ sub sausages {
 	$ENV{CONFIG_PATH} = join("/", ($cfg->{'sausage-pack-root'},$option, 'config'));;
 	$ENV{SCRIPT_PATH} = join("/", ($cfg->{'sausage-pack-root'}, $option, 'scripts'));;
 	$ENV{UTILS_PATH} = join("/", ($cfg->{'sausage-pack-root'}, $option, 'utils'));;
-	$ENV{'SM_LOG_FILE'} = join("/", ($ENV{'BUILD_PATH'}, $cfg->{'log-file'}));
+	$ENV{'SM_LOG_FILE'} = join("/", ($ENV{'BUILD_PATH'}, 
+$cfg->{'log-file'}));
 	$sm = <<eof;
 
 
@@ -120,8 +121,13 @@ sausages() {
 	done
  
 }
+
 set -e
-mkdir -p $ENV{'BUILD_PATH'}
+export BUILD_PATH=$ENV{'BUILD_PATH'}
+export CONFIG_PATH=$ENV{'CONFIG_PATH'}
+export SCRIPT_PATH=$ENV{'SCRIPT_PATH'}
+export UTILS_PATH=$ENV{'UTILS_PATH'}
+mkdir -p \${BUILD_PATH}
 sausages | tee $ENV{'SM_LOG_FILE'} 
 
 eof
@@ -151,7 +157,7 @@ sub validate_config {
 	my ($cfg) = @_;
 	if ( ! $cfg->{'build-path'} ) {
 		print "Build-path not set in the config file, setting to default of~/.builds\n";
-		$cfg->{'build-path'} = '~/.builds';
+		$cfg->{'build-path'} = "~/.builds";
 	}
 
 	if ( ! $cfg->{'sausage-pack-root'} ) {
