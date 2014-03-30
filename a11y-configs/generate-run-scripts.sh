@@ -31,10 +31,12 @@ eof
 
 for DISTRO in */
 do
+echo "Processing distro: ${DISTRO}..."
 pushd "${DISTRO}" >/dev/null
 for S_PACK in */
 do
 pushd "${S_PACK}" >/dev/null
+echo "Generating run script for: ${S_PACK}..."
 SCRIPT=$(echo "${S_PACK}" | sed 's:/::')
 make_script "${SCRIPT}"
 touch "${SCRIPT}.sh"
