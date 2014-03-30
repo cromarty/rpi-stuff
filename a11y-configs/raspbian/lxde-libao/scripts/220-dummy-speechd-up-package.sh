@@ -3,7 +3,7 @@
 set -e
 cd "${BUILD_PATH}"
 echo "-- Creating and installing a dummy speechd-up package..."
-VER=$(ls speechd-up*/ | sed 's:/::' | cut -f 3 --delimiter=- )
+VER=$(ls -d speechd-up*/ | sed 's:/::' | cut -f 3 --delimiter=- )
 
 cat <<eof > speechd-up
 Section: misc
