@@ -47,10 +47,11 @@ sub main_menu {
 			'raspbian' => sub { return &raspbian_menu($cfg, $answer) },
 			'arch' => sub { return &arch_menu($cfg, $answer) },
 			'minibian' => sub { return &minibian_menu($cfg, $answer) },
-			'exit' => sub { print "Bye bye\n"; return 0 }
+			'exit' => sub { print "Bye bye\n"; exit 1 }
 		}->{$answer}};
 	} else {
 		#print "Answer was undefined\n";
+exit 1;
 	}
 } # main_menu
 
@@ -106,34 +107,20 @@ sub sausages {
 	$ENV{CONFIG_PATH} = join("/", ($cfg->{'sausage-pack-root'},$option, 'config'));;
 	$ENV{SCRIPT_PATH} = join("/", ($cfg->{'sausage-pack-root'}, $option, 'scripts'));;
 	$ENV{UTILS_PATH} = join("/", ($cfg->{'sausage-pack-root'}, $option, 'utils'));;
-	$ENV{'SM_LOG_FILE'} = join("/", ($ENV{'BUILD_PATH'}, 
-$cfg->{'log-file'}));
-	$sm = <<eof;
+	$ENV{'SM_LOG_FILE'} = join("/", ($ENV{'BUILD_PATH'}, $cfg->{'log-file'}));
 
 
-sausages() {
 
-	for SCRIPT in $ENV{'SCRIPT_PATH'}/*.sh
-	do
-		if [ -f \${SCRIPT} -a -f \${SCRIPT} ]; then
-			\${SCRIPT}
-		fi
-	done
+
  
-}
+open EXP, "> exports~";
 
-set -e
-export BUILD_PATH=$ENV{'BUILD_PATH'}
-export CONFIG_PATH=$ENV{'CONFIG_PATH'}
-export SCRIPT_PATH=$ENV{'SCRIPT_PATH'}
-export UTILS_PATH=$ENV{'UTILS_PATH'}
-mkdir -p \${BUILD_PATH}
-sausages | tee $ENV{'SM_LOG_FILE'} 
-
-eof
-
-	#print "$sm\n";
-	system($sm);
+print EXP "export BUILD_PATH=$ENV{'BUILD_PATH'}\n";
+print EXP "export CONFIG_PATH=$ENV{'CONFIG_PATH'}\n";
+print EXP "export SCRIPT_PATH=$ENV{'SCRIPT_PATH'}\n";
+print EXP "export UTILS_PATH=$ENV{'UTILS_PATH'}\n";
+print EXP "export SM_LOG_FILE=$ENV{'SM_LOG_FILE'}\n";
+close EXP;
 	exit 0;
 }
 
