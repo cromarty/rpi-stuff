@@ -126,7 +126,8 @@ sausages | tee $ENV{'SM_LOG_FILE'}
 
 eof
 
-	print "$sm\n";
+	#print "$sm\n";
+	system($sm);
 	exit 0;
 }
 
