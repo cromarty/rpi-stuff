@@ -121,7 +121,8 @@ sausages() {
  
 }
 set -e
-sausages | tee -a $ENV{'SM_LOG_FILE'} 
+mkdir -p $ENV{'BUILD_PATH'}
+sausages | tee $ENV{'SM_LOG_FILE'} 
 
 eof
 
