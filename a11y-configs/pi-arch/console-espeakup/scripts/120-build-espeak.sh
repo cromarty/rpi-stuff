@@ -27,7 +27,7 @@ build() {
 	cp portaudio19.h portaudio.h
 	sed -i -e 's:#define FRAMES_PER_BUFFER 512:#define FRAMES_PER_BUFFER 2048:' \
 		-e 's:paFramesPerBufferUnspecified:FRAMES_PER_BUFFER:' \
-		-e 's:(double)0.1:(double)0.2:' \
+		-e 's:(double)0.1:(double)0.4:' \
 		-e 's:double aLatency = deviceInfo->defaultLowOutputLatency:double aLatency = deviceInfo->defaultHighOutputLatency:' wave.cpp
 
 	make all CXXFLAGS="$CXXFLAGS"
