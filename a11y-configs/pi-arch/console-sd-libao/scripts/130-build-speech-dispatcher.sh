@@ -5,6 +5,51 @@ pushd "${BUILD_PATH}"
 echo '-- Building speech-dispatcher...'
 mkdir -p speech-dispatcher
 pushd speech-dispatcher
+mkdir src
+pushd src
+cat <<eof > speech-dispatcherd.service
+[Unit]
+Description=Speech-Dispatcher an high-level device independent layer for speech synthesis.
+After=syslog.target
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/speech-dispatcher -d 
+
+[Install]
+WantedBy=multi-user.target
+
+
+eof
+popd
+
+cat <<eof > speech-dispatcher.install
+info_dir=usr/share/info
+info_files=('speech-dispatcher.info'
+    'ssip.info'
+    'spd-say.info')
+
+post_install() {
+  [[ -x usr/bin/install-info ]] || return 0
+  for f in \${info_files[@]}; do
+    install-info \${info_dir}/\$f.gz \${info_dir}/dir 2> /dev/null
+  done
+}
+
+post_upgrade() {
+  post_install
+}
+
+pre_remove() {
+  [[ -x usr/bin/install-info ]] || return 0
+  for f in \${info_files[@]}; do
+    install-info --delete \${info_dir}/\$f.gz \${info_dir}/dir 2> /dev/null
+  done
+}
+
+
+eof
+
 cat <<eof > PKGBUILD
 # Maintainer:
 # Contributor:
