@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-pushd "${BUILD_PATH}"
+cd "${BUILD_PATH}"
 echo '-- Building speech-dispatcher...'
 mkdir -p speech-dispatcher
 pushd speech-dispatcher
@@ -74,17 +74,19 @@ build() {
   cd "\${srcdir}/\${pkgname}-\${pkgver}"
   
   ./configure --prefix=/usr \
-    --sysconfdir=/etc \
-    --disable-static \
-    --with-espeak \
-    --without-flite \
-    --without-ibmtts \
-    --without-ivona \
-    --without-pico \
-    --without-pulse \
-    --with-libao \
-    --without-oss \
-    --without-nas     
+	--includedir=/usr/include \
+	--sysconfdir=/etc \
+	--disable-static \
+	--with-espeak \
+	--without-flite \
+	--without-ibmtts \
+	--without-ivona \
+	--without-pico \
+	--without-pulse \
+	--with-libao \
+	--without-oss \
+	--without-nas     
+
   make
 }
 

@@ -19,7 +19,7 @@ source=("http://devel.freebsoft.org/pub/projects/speechd-up/speechd-up-0.4.tar.g
          build() {
   cd "\${srcdir}/\${pkgname}-\${pkgver}"
   
-  ./configure --prefix=/usr --includedir=/usr/include/speech-dispatcher
+  ./configure --prefix=/usr
   make all
   
 }
