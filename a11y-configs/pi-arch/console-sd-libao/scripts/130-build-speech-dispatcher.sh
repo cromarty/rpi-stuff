@@ -64,8 +64,10 @@ provides=("speechd=\${pkgver}" "\$pkgname")
 conflicts=("\$pkgname")
 options=('!libtool') 
 install="\${pkgname}.install"
-source=("http://www.freebsoft.org/pub/projects/speechd/\$pkgname-\$pkgver.tar.gz")
-md5sums=('d88691a64c676122f996230c107c392f')
+source=("http://www.freebsoft.org/pub/projects/speechd/\$pkgname-\$pkgver.tar.gz"
+	'speech-dispatcherd.service')
+md5sums=('d88691a64c676122f996230c107c392f'
+	'd26f52e2e95a30eaa83560f0e63faca5')
 
 build() {
   cd "\${srcdir}/\${pkgname}-\${pkgver}"

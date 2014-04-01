@@ -44,8 +44,8 @@ package() {
 eof
 
 makepkg --asroot -i --noprogressbar --noconfirm
-popd
 echo '-- Finished building and installing espeak, tidying up...'
+popd
 set +e
 rm -rf espeak/
 exit 0
