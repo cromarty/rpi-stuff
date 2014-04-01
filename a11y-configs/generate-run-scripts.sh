@@ -27,6 +27,8 @@ exit 0
 
 eof
 
+chmod +x "${1}.run.sh"
+
 }
 
 for DISTRO in */

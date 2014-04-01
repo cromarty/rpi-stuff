@@ -4,6 +4,22 @@ set -e
 cd "${BUILD_PATH}"
 echo '-- Building speechd-up...'
 mkdir src
+pushd src
+cat <<eof > speechd-upd.service
+[Unit]
+Description=speechd-up, a server to connect SpeakUp to speech-dispatcher
+After=syslog.target
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/speechd-up --start --quiet
+
+[Install]
+WantedBy=multi-user.target
+
+eof
+popd
+
 cat <<eof > PKGBUILD
 # Maintainer:
 pkgname=speechd-up
@@ -29,6 +45,7 @@ package() {
   cd "\${srcdir}/\${pkgname}-\${pkgver}"
   make DESTDIR="\${pkgdir}" install
 
+	install -Dm644 "\${srcdir}"/speechd-upd.service "\${pkgdir}/usr/lib/systemd/system/speech-dispatcherd.service"
 
 
 }
