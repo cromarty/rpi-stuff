@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-cd "${BUILD_PATH}"
+pushd "${BUILD_PATH}"
 echo '-- Checking to see if brltty-minimal is installed...'
 if [ $(which brltty-minimal) ]; then
 	echo '-- brltty-minimal is already installed'
@@ -18,5 +18,6 @@ popd
 echo '-- Finished installing brltty-minimal, tidying up...'
 set +e
 rm -rf brltty-minimal/
+popd
 exit 0
 

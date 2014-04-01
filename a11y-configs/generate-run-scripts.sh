@@ -6,11 +6,11 @@ make_script() {
 
 _run() {
 
-pushd "\${SCRIPT_PATH}" >/dev/null
-for SCR in *.sh
-do
-./\${SCR}
-done
+	pushd "\${SCRIPT_PATH}" >/dev/null
+	for SCR in *.sh
+	do
+		./\${SCR}
+	done
 
 }
 
@@ -31,16 +31,17 @@ eof
 
 for DISTRO in */
 do
-echo "Processing distro: ${DISTRO}..."
-pushd "${DISTRO}" >/dev/null
-for S_PACK in */
-do
-pushd "${S_PACK}" >/dev/null
-echo "Generating run script for: ${S_PACK}..."
-SCRIPT=$(echo "${S_PACK}" | sed 's:/::')
-make_script "${SCRIPT}"
-touch "${SCRIPT}.sh"
-popd >/dev/null
+	echo "Processing distro: ${DISTRO}..."
+	pushd "${DISTRO}" >/dev/null
+	for S_PACK in */
+	do
+			pushd "${S_PACK}" >/dev/null
+		echo "Generating run script for: ${S_PACK}..."
+		SCRIPT=$(echo "${S_PACK}" | sed 's:/::')
+		make_script "${SCRIPT}"
+		popd >/dev/null
+	done
+	popd >/dev/null
 done
-popd >/dev/null
-done
+
+exit 0
