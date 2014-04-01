@@ -1,8 +1,9 @@
 #!/bin/bash
 
 set -e
-pushd "${BUILD_PATH}"
+cd "${BUILD_PATH}"
 echo '-- Building speechd-up...'
+mkdir src
 cat <<eof > PKGBUILD
 # Maintainer:
 pkgname=speechd-up
@@ -25,7 +26,7 @@ source=("http://devel.freebsoft.org/pub/projects/speechd-up/speechd-up-0.4.tar.g
 }
 
 package() {
-  cd "\${srcdir}/\${_pkgname}-\${pkgver}"
+  cd "\${srcdir}/\${pkgname}-\${pkgver}"
   make DESTDIR="\${pkgdir}" install
 
 
@@ -35,5 +36,5 @@ package() {
 eof
 
 makepkg --asroot -i
-
+echo '-- Finished building speechd-up'
 exit 0

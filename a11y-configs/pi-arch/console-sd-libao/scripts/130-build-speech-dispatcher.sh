@@ -3,8 +3,6 @@
 set -e
 cd "${BUILD_PATH}"
 echo '-- Building speech-dispatcher...'
-mkdir -p speech-dispatcher
-pushd speech-dispatcher
 mkdir src
 pushd src
 cat <<eof > speech-dispatcherd.service
@@ -101,7 +99,6 @@ package() {
 eof
 
 makepkg --asroot -i
-popd
-popd
+cp /usr/include/speech-dispatcher/libspeechd.h /usr/include
 echo '-- Finished building speech-dispatcher'
 exit 0
