@@ -100,5 +100,9 @@ eof
 
 makepkg --asroot -i
 cp /usr/include/speech-dispatcher/libspeechd.h /usr/include
-echo '-- Finished building speech-dispatcher'
+echo '-- Finished building speech-dispatcher, tidying up...'
+set +e
+rm -rf src
+rm -rf speech-dispatcher*/
+rm speech-dispatcher-*.tar.gz
 exit 0

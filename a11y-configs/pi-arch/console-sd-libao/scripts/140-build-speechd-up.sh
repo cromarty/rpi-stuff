@@ -45,7 +45,7 @@ package() {
   cd "\${srcdir}/\${pkgname}-\${pkgver}"
   make DESTDIR="\${pkgdir}" install
 
-	install -Dm644 "\${srcdir}"/speechd-upd.service "\${pkgdir}/usr/lib/systemd/system/speech-dispatcherd.service"
+	install -Dm644 "\${srcdir}"/speechd-upd.service "\${pkgdir}/usr/lib/systemd/system/speechd-upd.service"
 
 
 }

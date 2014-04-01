@@ -18,6 +18,7 @@ echo '-- Finished making and installing cower, tidying up...'
 popd
 set +e
 rm -rf cower-git/
+rm cower-git.tar.gz
 exit 0
 
 
