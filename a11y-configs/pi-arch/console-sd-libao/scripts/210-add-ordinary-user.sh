@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 
 SUPPL_GROUPS="audio,lp,storage,video,wheel,games,power"
 [ $(cat /etc/group | grep brlapi | cut -f 1 -d: ) ] && SUPPL_GROUPS="${SUPPL_GROUPS},brlapi"
