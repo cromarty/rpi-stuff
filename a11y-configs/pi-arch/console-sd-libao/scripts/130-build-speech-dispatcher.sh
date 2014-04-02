@@ -99,7 +99,7 @@ package() {
 eof
 
 makepkg --asroot -i
-cp /usr/include/speech-dispatcher/libspeechd.h /usr/include
+ln -s /usr/include/speech-dispatcher/libspeechd.h /usr/include
 echo '-- Finished building speech-dispatcher, tidying up...'
 set +e
 rm -rf src
