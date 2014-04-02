@@ -1,7 +1,6 @@
 #!/bin/bash
 
-set -e
-cd "${BUILD_PATH}"
-echo "-- Currently this script does nothing"
+echo '-- Finished everything, removing the build path directory...'
+rm -rf "${BUILD_PATH}
 exit 0
 
