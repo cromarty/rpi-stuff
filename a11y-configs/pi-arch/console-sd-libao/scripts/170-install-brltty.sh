@@ -20,7 +20,7 @@ sed -i-old "s:^arch=(\(.*\)):arch=(\1 'armv6h'):" PKGBUILD
 makepkg --asroot -i --noconfirm --noprogressbar
 echo '-- Finished installing brltty-minimal, tidying up...'
 popd
-if [ !${SM_TIDY}" ]; then
+if [ "${SM_TIDY}" ]; then
 	set +e
 	rm -rf brltty-minimal/
 fi
