@@ -3,11 +3,11 @@
 set -e
 echo '-- Installing emacspeak...'
 echo '-- Checking whether we have a pre-built package...'
-PBPKG=$( ls "${SM_PACKAGE_PATH}/emacspeak*.pkg.tar.xz" }
+PBPKG=$( ls "${SM_PACKAGE_PATH}"/emacspeak*.pkg.tar.xz )
 if [ "${PBPKG}" ]; then
 	echo '-- Found a pre-built package, installing it with pacman -U...'
-	pacman -U "${PBPKG}"
-	echo '-- Finished installing the pre-built tclx package'
+	pacman -U --noconfirm --noprogressbar "${PBPKG}"
+	echo '-- Finished installing the pre-built emacspeak package'
 	exit 0
 fi
 echo '-- There was no pre-built package, building it...'

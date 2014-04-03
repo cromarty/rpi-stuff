@@ -3,10 +3,10 @@
 set -e
 echo '-- Installing tclx...'
 echo '-- Checking whether we have a pre-built package...'
-PBPKG=$( ls "${SM_PACKAGE_PATH}/tclx*.pkg.tar.xz" }
+PBPKG=$( ls "${SM_PACKAGE_PATH}"/tclx*.pkg.tar.xz )
 if [ "${PBPKG}" ]; then
 	echo '-- Found a pre-built package, installing it with pacman -U...'
-	pacman -U "${PBPKG}"
+	pacman -U --noconfirm --noprogressbar "${PBPKG}"
 	echo '-- Finished installing the pre-built tclx package'
 	exit 0
 fi
