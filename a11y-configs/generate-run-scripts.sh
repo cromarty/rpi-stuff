@@ -7,8 +7,7 @@ make_script() {
 _run() {
 
 	pushd "\${SCRIPT_PATH}" >/dev/null
-	shopt -s extglob
-	for SCR in *+(.sh|.pl)
+	for SCR in *.sh
 	do
 		./\${SCR}
 	done
