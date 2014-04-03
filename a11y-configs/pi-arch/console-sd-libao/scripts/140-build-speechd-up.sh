@@ -12,7 +12,7 @@ After=syslog.target
 
 [Service]
 Type=forking
-ExecStart=/usr/bin/speechd-up --start --quiet
+ExecStart=/usr/bin/speechd-up -d
 
 [Install]
 WantedBy=multi-user.target

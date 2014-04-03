@@ -2,12 +2,7 @@
 
 set -e
 cd "${BUILD_PATH}"
-echo '-- Checking to see if emacspeak is already installed...'
-if [ $(which emacspeak) ]; then
-	echo '-- Emacspeak is already installed'
-	exit 0
-fi
-
+echo '-- Building and installing Emacspeak...'
 echo '-- Checking to make sure Emacs is installed...'
 if [ ! $(which emacs) ]; then
 	echo '-- Emacs is not installed. Cannot proceed'

@@ -2,12 +2,6 @@
 
 set -e
 pushd "${BUILD_PATH}"
-echo '-- Checking to see if brltty-minimal is installed...'
-if [ $(which brltty-minimal) ]; then
-	echo '-- brltty-minimal is already installed'
-	exit 0
-fi
-
 echo '-- Installing brltty-minimal from the AUR...'
 cower -d brltty-minimal
 pushd brltty-minimal

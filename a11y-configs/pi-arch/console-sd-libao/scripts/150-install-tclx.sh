@@ -2,12 +2,6 @@
 
 set -e
 cd "${BUILD_PATH}"
-echo '-- Checking to see if tclx is already installed...'
-if [ $(which tclx) ]; then
-	echo '-- tclx is already installed'
-	exit 0
-fi
-
 echo '-- Installing tclx from the AUR...'
 cower -d tclx
 pushd tclx
