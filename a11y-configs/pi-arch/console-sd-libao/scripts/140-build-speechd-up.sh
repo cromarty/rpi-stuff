@@ -1,6 +1,16 @@
 #!/bin/bash
 
 set -e
+echo '-- Installing speechd-up...'
+echo '-- Checking whether we have a pre-built package...'
+PBPKG=$( ls "${SM_PACKAGE_PATH}/speechd-up*.pkg.tar.xz" }
+if [ "${PBPKG}" ]; then
+	echo '-- Found a pre-built package, installing it with pacman -U...'
+	pacman -U "${PBPKG}"
+	echo '-- Finished installing the pre-built speechd-up package'
+	exit 0
+fi
+echo '-- There was no pre-built package, building it...'
 cd "${BUILD_PATH}"
 echo '-- Building speechd-up...'
 mkdir speechd-up
