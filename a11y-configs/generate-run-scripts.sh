@@ -20,6 +20,7 @@ export CONFIG_PATH=$(pwd)/config
 export SCRIPT_PATH=$(pwd)/scripts
 export UTILS_PATH=$(pwd)/utils
 export SM_LOG_FILE=\${BUILD_PATH}/\${1}.log
+export SM_TIDY=yes
 mkdir -p "\${BUILD_PATH}"
 _run | tee "\${SM_LOG_FILE}"
 

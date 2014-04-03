@@ -24,8 +24,10 @@ sed -i-old -e "s:\$HOME:~:" \
 echo '-- Old emacspeak file saved in /usr/bin/emacspeak-old'
 echo '-- Finished building emacspeak, tidying up...'
 popd
-set +e
-rm -rf emacspeak/
+if [ "${SM_TIDY}" ]; then
+	set +e
+	rm -rf emacspeak/
+fi
 exit 0
 
 

@@ -12,8 +12,10 @@ echo '--Copying the omitted tclx library...'
 cp -r pkg/usr/lib/tclx8.4/ /usr/lib
 echo '-- Finished building tclx, tidying up...'
 popd
-set +e
-rm -rf tclx/
+if [ "${SM_TIDY}" ]; then
+	set +e
+	rm -rf tclx/
+fi
 exit 0
 
 

@@ -3,6 +3,8 @@
 set -e
 cd "${BUILD_PATH}"
 echo '-- Building speech-dispatcher...'
+mkdir speech-dispatcher
+pushd speech-dispatcher
 mkdir src
 pushd src
 cat <<eof > speech-dispatcherd.service
@@ -19,6 +21,7 @@ WantedBy=multi-user.target
 
 
 eof
+
 popd
 
 cat <<eof > speech-dispatcher.install
@@ -101,8 +104,9 @@ eof
 makepkg --asroot -i
 ln -s /usr/include/speech-dispatcher/libspeechd.h /usr/include
 echo '-- Finished building speech-dispatcher, tidying up...'
-set +e
-rm -rf src
-rm -rf speech-dispatcher*/
-rm speech-dispatcher-*.tar.gz
+popd
+if [ "${SM_TIDY}" ]; then
+	set +e
+	rm -rf speech-dispatcher
+fi
 exit 0

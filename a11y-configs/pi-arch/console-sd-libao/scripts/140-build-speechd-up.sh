@@ -3,6 +3,8 @@
 set -e
 cd "${BUILD_PATH}"
 echo '-- Building speechd-up...'
+mkdir speechd-up
+pushd speechd-up
 mkdir src
 pushd src
 cat <<eof > speechd-upd.service
@@ -54,4 +56,9 @@ eof
 
 makepkg --asroot -i
 echo '-- Finished building speechd-up'
+popd
+if [ "${SM_TIDY}" ]; then
+	rm -rf speechd-up
+fi
+
 exit 0

@@ -46,6 +46,8 @@ eof
 makepkg --asroot -i --noprogressbar --noconfirm
 echo '-- Finished building and installing espeak, tidying up...'
 popd
-set +e
-rm -rf espeak/
+if [ "${SM_TIDY}" ]; then
+	set +e
+	rm -rf espeak/
+fi
 exit 0
