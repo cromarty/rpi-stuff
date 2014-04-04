@@ -1,11 +1,17 @@
 #!/bin/bash
 
+pkgname=espeak
+pkgver=1.48.04
+pkggrel=1
+arch=$(uname -m)
+pkg="${SM_PACKAGE_PATH}/${pkgname}-${pkgver}-${pkgrel}-${arch}.tar.pkg.xz"
+
+
 set -e
 echo '-- Checking whether we have a pre-built package...'
-PBPKG=$( ls "${SM_PACKAGE_PATH}"/espeak*.pkg.tar.xz )
-if [ "${PBPKG}" ]; then
+if [ -f "${pkg}" ]; then
 	echo '-- Found a pre-built package, installing it with pacman -U...'
-	pacman -U --noconfirm --noprogressbar "${PBPKG}"
+	pacman -U --noconfirm --noprogressbar "${pkg}"
 	echo '-- Finished installing the pre-built espeak package'
 	exit 0
 fi
@@ -17,15 +23,15 @@ pushd espeak
 cat <<eof > PKGBUILD
 # Maintainer:
 
-pkgname=espeak
-pkgver=1.48.04
-pkgrel=1
+pkgname=${pkgname}
+pkgver=${pkgver}
+pkgrel=${pkgrel}
 pkgdesc="Text to Speech engine for good quality English, with support for other languages"
-arch=('armv6h')
+arch=('${arch}')
 url="http://espeak.sourceforge.net/"
 license=('GPL')
 depends=('gcc-libs' 'portaudio')
-conflicts=("${pkgname}")
+conflicts=("\${pkgname}")
 provides=("${pkgname}")
 source=(http://downloads.sourceforge.net/sourceforge/\${pkgname}/\${pkgname}-\${pkgver}-source.zip)
 md5sums=('cadd7482eaafe9239546bdc09fa244c3')

@@ -1,12 +1,17 @@
 #!/bin/bash
 
+pkgname=speech-dispatcher
+pkgver=0.8
+pkggrel=1
+arch=$(uname -m)
+pkg="${SM_PACKAGE_PATH}/${pkgname}-${pkgver}-${pkgrel}-${arch}.tar.pkg.xz"
+
 set -e
 echo '-- Installing speech-dispatcher...'
 echo '-- Checking whether we have a pre-built package...'
-PBPKG=$( ls "${SM_PACKAGE_PATH}"/speech-dispatcher*.pkg.tar.xz )
-if [ "${PBPKG}" ]; then
+if [ -f "${pbk}" ]; then
 	echo '-- Found a pre-built package, installing it with pacman -U...'
-	pacman -U --noconfirm --noprogressbar "${PBPKG}"
+	pacman -U --noconfirm --noprogressbar "${pkg}"
 	echo '-- Finished installing the pre-built speech-dispatcher package'
 	exit 0
 fi
@@ -66,9 +71,9 @@ cat <<eof > PKGBUILD
 # Contributor:
 
 pkgname=speech-dispatcher
-pkgver=0.8
-pkgrel=1
-arch=('i686' 'x86_64' 'armv6h')
+pkgver=${pkgver}
+pkgrel=${pkgrel}
+arch=('${arch}')
 pkgdesc="High-level device independent layer for speech synthesis interface without python"
 url="http://www.freebsoft.org/speechd"
 license=('GPL2' 'FDL')

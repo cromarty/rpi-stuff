@@ -1,12 +1,17 @@
 #!/bin/bash
 
+pkgname=speechd-up
+pkgver=0.4
+pkggrel=1
+arch=$(uname -m)
+pkg="${SM_PACKAGE_PATH}/${pkgname}-${pkgver}-${pkgrel}-${arch}.tar.pkg.xz"
+
 set -e
 echo '-- Installing speechd-up...'
 echo '-- Checking whether we have a pre-built package...'
-PBPKG=$( ls "${SM_PACKAGE_PATH}"/speechd-up*.pkg.tar.xz )
-if [ "${PBPKG}" ]; then
+if [ -f "${pkg}" ]; then
 	echo '-- Found a pre-built package, installing it with pacman -U...'
-	pacman -U --noconfirm --noprogressbar "${PBPKG}"
+	pacman -U --noconfirm --noprogressbar "${pkg}"
 	echo '-- Finished installing the pre-built speechd-up package'
 	exit 0
 fi
@@ -34,10 +39,10 @@ popd
 
 cat <<eof > PKGBUILD
 # Maintainer:
-pkgname=speechd-up
-pkgver=0.4
-pkgrel=1
-arch=('i686' 'x86_64' 'armv6h')
+pkgname=${pkgname}
+pkgver=${pkgver}
+pkgrel=${pkgrel}
+arch=('${arch}')
 pkgdesc="Connection between SpeakUp and speech-dispatcher"
 url="http://www.freebsoft.org/speechd"
 license=('GPL2' 'FDL')

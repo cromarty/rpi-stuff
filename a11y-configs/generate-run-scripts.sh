@@ -16,7 +16,7 @@ _run() {
 
 set -e
 export BUILD_PATH=~/.builds
-export SM_PACKAGE_PATH="${BUILD_PATH}/packages"
+export SM_PACKAGE_PATH="\${BUILD_PATH}/packages"
 export CONFIG_PATH=$(pwd)/config
 export SCRIPT_PATH=$(pwd)/scripts
 export UTILS_PATH=$(pwd)/utils

@@ -1,12 +1,16 @@
 #!/bin/bash
+pkgname=tclx
+pkgver=8.4
+pkggrel=1
+arch=$(uname -m)
+pkg="${SM_PACKAGE_PATH}/${pkgname}-${pkgver}-${pkgrel}-${arch}.tar.pkg.xz"
 
 set -e
 echo '-- Installing tclx...'
 echo '-- Checking whether we have a pre-built package...'
-PBPKG=$( ls "${SM_PACKAGE_PATH}"/tclx*.pkg.tar.xz )
-if [ "${PBPKG}" ]; then
+if [ -f "${pkg}" ]; then
 	echo '-- Found a pre-built package, installing it with pacman -U...'
-	pacman -U --noconfirm --noprogressbar "${PBPKG}"
+	pacman -U --noconfirm --noprogressbar "${pkg}"
 	echo '-- Finished installing the pre-built tclx package'
 	exit 0
 fi
@@ -18,13 +22,13 @@ pushd tclx
 cat <<eof > PKGBUILD
 # Maintainer:
 # Contributor:
-pkgname=tclx
-pkgver=8.4
+pkgname=${pkgname}
+pkgver=${pkgver}
 _tclsrcver=8.4.12
-pkgrel=1
+pkgrel=${pkgrel}
 pkgdesc="Provides OS primitives, file scanning, data records etc. for Tcl"
 url="http://tclx.sourceforge.net"
-arch=('i686' 'x86_64' 'armv6h')
+arch=('${arch}')
 license="BSD"
 depends=('tcl' 'tk')
 source=("http://downloads.sourceforge.net/sourceforge/tclx/tclx\${pkgver}.tar.bz2" \
