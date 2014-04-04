@@ -2,8 +2,8 @@
 
 pkgname=espeak
 pkgver=1.48.04
-pkggrel=1
-arch=$(uname -m)
+pkgrel=1
+arch=armv6h
 pkg="${SM_PACKAGE_PATH}/${pkgname}-${pkgver}-${pkgrel}-${arch}.tar.pkg.xz"
 
 

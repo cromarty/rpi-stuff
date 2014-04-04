@@ -1,8 +1,8 @@
 #!/bin/bash
 pkgname=emacspeak
 pkgver=38.0
-pkggrel=1
-arch=$(uname -m)
+pkgrel=1
+arch=armv6h
 pkg="${SM_PACKAGE_PATH}/${pkgname}-${pkgver}-${pkgrel}-${arch}.tar.pkg.xz"
 
 set -e
@@ -24,6 +24,28 @@ if [ ! $(which emacs) ]; then
 fi
 mkdir emacspeak
 pushd emacspeak
+cat <<eof > emacspeak.install
+INFO_DIR=/usr/share/info
+info_files=(emacspeak)
+
+post_install() {
+  for f in \${info_files[@]}; do
+    install-info \${INFO_DIR}/\$f.info.gz \${INFO_DIR}/dir 2> /dev/null
+  done
+}
+
+post_upgrade() {
+  post_install \$1
+}
+
+pre_remove() {
+  for f in \${info_files[@]}; do
+    install-info --delete \${INFO_DIR}/\$f.info.gz \${INFO_DIR}/dir 2> /dev/null
+  done
+}
+
+eof
+
 cat <<eof > PKGBUILD
 # Maintainer:
 pkgname=${pkgname}

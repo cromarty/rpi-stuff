@@ -2,6 +2,7 @@
 pkgname=brltty-minimal
 pkgver=5.0
 pkgrel=1
+arch=armv6h
 pkg="${SM_PACKAGE_PATH}/${pkgname}-${pkgver}-${pkgrel}-${arch}.tar.pkg.xz"
 
 set -e

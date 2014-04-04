@@ -2,8 +2,8 @@
 
 pkgname=speechd-up
 pkgver=0.4
-pkggrel=1
-arch=$(uname -m)
+pkgrel=1
+arch=armv6h
 pkg="${SM_PACKAGE_PATH}/${pkgname}-${pkgver}-${pkgrel}-${arch}.tar.pkg.xz"
 
 set -e
