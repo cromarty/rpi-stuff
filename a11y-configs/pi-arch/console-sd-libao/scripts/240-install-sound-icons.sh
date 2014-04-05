@@ -1,18 +1,32 @@
 #!/bin/bash
 
-set -e
-cd "${BUILD_PATH}"
-echo '-- Installing speech-dispatcher sound icons...'
-mkdir -p sound-icons
-pushd sound-icons
-cat <<eof > PKGBUILD
-# Maintainer:
-
 pkgname=speechd-sound-icons
 pkgver=0.1
 pkgrel=1
+arch=any
+pkg="${SM_PACKAGE_PATH}/${pkgname}-${pkgver}-${pkgrel}-${arch}.tar.pkg.xz"
+
+set -e
+cd "${BUILD_PATH}"
+echo '-- Installing speech-dispatcher sound icons...'
+echo '-- Checking whether we have a pre-built package...'
+if [ -f "${pkg}" ]; then
+	echo '-- Found a pre-built package, installing it with pacman -U...'
+	pacman -U --noconfirm --noprogressbar "${pkg}"
+	echo '-- Finished installing the pre-built speechd sound icons package'
+	exit 0
+fi
+echo '-- There was no pre-built package, creating it...'
+mkdir -p sound-icons
+pushd sound-icons >/dev/null
+cat <<eof > PKGBUILD
+# Maintainer:
+
+pkgname=${pkgname}
+pkgver=${pkgver}
+pkgrel=1
 pkgdesc="FreeBSoft sound icons for speech-dispatcher"
-arch=(any)
+arch=("${arch}")
 url="http://devel-freebsoft.org/"
 license=('GPL2')
 source=("http://devel.freebsoft.org/pub/projects/sound-icons/sound-icons-0.1.tar.gz")
@@ -28,7 +42,7 @@ eof
 
 makepkg --asroot -i
 echo '-- Finished installing sound icons'
-popd
+popd >/dev/null
 if [ "${SM_TIDY}" ]; then
 	rm -rf sound-icons
 fi

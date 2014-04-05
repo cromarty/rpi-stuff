@@ -19,7 +19,7 @@ echo '-- There was no pre-built package, building it...'
 cd "${BUILD_PATH}"
 echo '-- Building espeak from source...'
 mkdir -p espeak
-pushd espeak
+pushd espeak >/dev/null
 cat <<eof > PKGBUILD
 # Maintainer:
 
@@ -60,7 +60,7 @@ eof
 
 makepkg --asroot -i --noprogressbar --noconfirm
 echo '-- Finished building and installing espeak, tidying up...'
-popd
+popd >/dev/null
 if [ "${SM_TIDY}" ]; then
 	set +e
 	rm -rf espeak/

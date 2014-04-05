@@ -23,7 +23,7 @@ if [ ! $(which emacs) ]; then
 	exit 1
 fi
 mkdir emacspeak
-pushd emacspeak
+pushd emacspeak >/dev/null
 cat <<eof > emacspeak.install
 INFO_DIR=/usr/share/info
 info_files=(emacspeak)
@@ -102,7 +102,7 @@ sed -i-old -e "s:\$HOME:~:" \
 
 echo '-- Old emacspeak file saved in /usr/bin/emacspeak-old'
 echo '-- Finished building emacspeak, tidying up...'
-popd
+popd >/dev/null
 if [ "${SM_TIDY}" ]; then
 	set +e
 	rm -rf emacspeak/

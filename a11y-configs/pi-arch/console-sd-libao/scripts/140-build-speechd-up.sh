@@ -19,9 +19,9 @@ echo '-- There was no pre-built package, building it...'
 cd "${BUILD_PATH}"
 echo '-- Building speechd-up...'
 mkdir speechd-up
-pushd speechd-up
+pushd speechd-up >/dev/null
 mkdir src
-pushd src
+pushd src >/dev/null
 cat <<eof > speechd-upd.service
 [Unit]
 Description=speechd-up, a server to connect SpeakUp to speech-dispatcher
@@ -35,7 +35,8 @@ ExecStart=/usr/bin/speechd-up -d
 WantedBy=multi-user.target
 
 eof
-popd
+
+popd >/dev/null
 
 cat <<eof > PKGBUILD
 # Maintainer:
@@ -71,7 +72,7 @@ eof
 
 makepkg --asroot -i
 echo '-- Finished building speechd-up'
-popd
+popd >/dev/null
 if [ "${SM_TIDY}" ]; then
 	rm -rf speechd-up
 fi

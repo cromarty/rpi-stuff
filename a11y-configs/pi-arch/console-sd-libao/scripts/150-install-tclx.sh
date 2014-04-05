@@ -18,7 +18,7 @@ echo '-- There was no pre-built package, building it...'
 cd "${BUILD_PATH}"
 echo '-- Installing tclx...'
 mkdir tclx
-pushd tclx
+pushd tclx >/dev/null
 cat <<eof > PKGBUILD
 # Maintainer:
 # Contributor:
@@ -54,7 +54,7 @@ eof
 
 makepkg -s -i --asroot --noconfirm --noprogressbar
 echo '-- Finished building tclx, tidying up...'
-popd
+popd >/dev/null
 if [ "${SM_TIDY}" ]; then
 	set +e
 	rm -rf tclx/

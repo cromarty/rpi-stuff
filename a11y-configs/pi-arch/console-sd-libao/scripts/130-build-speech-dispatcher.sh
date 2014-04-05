@@ -19,9 +19,9 @@ echo '-- There was no pre-built package, building it...'
 cd "${BUILD_PATH}"
 echo '-- Building speech-dispatcher...'
 mkdir speech-dispatcher
-pushd speech-dispatcher
+pushd speech-dispatcher >/dev/null
 mkdir src
-pushd src
+pushd src >/dev/null
 cat <<eof > speech-dispatcherd.service
 [Unit]
 Description=Speech-Dispatcher an high-level device independent layer for speech synthesis.
@@ -37,7 +37,7 @@ WantedBy=multi-user.target
 
 eof
 
-popd
+popd >/dev/null
 
 cat <<eof > speech-dispatcher.install
 info_dir=usr/share/info
@@ -119,7 +119,7 @@ eof
 makepkg --asroot -i
 ln -s /usr/include/speech-dispatcher/libspeechd.h /usr/include
 echo '-- Finished building speech-dispatcher, tidying up...'
-popd
+popd >/dev/null
 if [ "${SM_TIDY}" ]; then
 	set +e
 	rm -rf speech-dispatcher
