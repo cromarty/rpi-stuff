@@ -3,11 +3,12 @@ pkgname=brltty-minimal
 pkgver=5.0
 pkgrel=1
 arch=armv6h
-pkg="${SM_PACKAGE_PATH}/${pkgname}-${pkgver}-${pkgrel}-${arch}.tar.pkg.xz"
+pkg="${SM_PACKAGE_PATH}/${pkgname}-${pkgver}-${pkgrel}-${arch}.pkg.tar.xz"
 
 set -e
 echo '-- Installing brltty...'
 echo '-- Checking whether we have a pre-built package...'
+echo "-- Package name: ${pkg}"
 if [ -f "${pkg}" ]; then
 	echo '-- Found a pre-built package, installing it with pacman -U...'
 	pacman -U --noconfirm --noprogressbar "${pkg}"

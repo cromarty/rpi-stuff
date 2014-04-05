@@ -4,11 +4,12 @@ pkgname=speech-dispatcher
 pkgver=0.8
 pkgrel=1
 arch=armv6h
-pkg="${SM_PACKAGE_PATH}/${pkgname}-${pkgver}-${pkgrel}-${arch}.tar.pkg.xz"
+pkg="${SM_PACKAGE_PATH}/${pkgname}-${pkgver}-${pkgrel}-${arch}.pkg.tar.xz"
 
 set -e
 echo '-- Installing speech-dispatcher...'
 echo '-- Checking whether we have a pre-built package...'
+echo "-- Package name: ${pkg}"
 if [ -f "${pbk}" ]; then
 	echo '-- Found a pre-built package, installing it with pacman -U...'
 	pacman -U --noconfirm --noprogressbar "${pkg}"
