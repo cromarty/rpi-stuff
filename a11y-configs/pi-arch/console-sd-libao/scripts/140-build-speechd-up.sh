@@ -70,7 +70,7 @@ package() {
 
 eof
 
-makepkg --asroot -i
+makepkg --asroot -i --noconfirm --noprogressbar
 echo '-- Finished building speechd-up'
 popd >/dev/null
 if [ "${SM_TIDY}" ]; then

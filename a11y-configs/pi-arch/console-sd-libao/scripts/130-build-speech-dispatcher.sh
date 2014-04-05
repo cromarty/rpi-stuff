@@ -116,7 +116,7 @@ package() {
 
 eof
 
-makepkg --asroot -i
+makepkg --asroot -i --noconfirm --noprogressbar
 ln -s /usr/include/speech-dispatcher/libspeechd.h /usr/include
 echo '-- Finished building speech-dispatcher, tidying up...'
 popd >/dev/null
