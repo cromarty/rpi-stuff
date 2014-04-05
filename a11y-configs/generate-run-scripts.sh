@@ -7,9 +7,12 @@ make_script() {
 _run() {
 
 	pushd "\${SCRIPT_PATH}" >/dev/null
-	for SCR in *.sh
+	[ -f run.list ] || cp script.list run.list
+	cat run.list | \
+	while read  SCR
 	do
 		./\${SCR}
+		sed -i '1d' run.list
 	done
 
 }
@@ -43,6 +46,9 @@ do
 		echo "Generating run script for: ${S_PACK}..."
 		SCRIPT=$(echo "${S_PACK}" | sed 's:/::')
 		make_script "${SCRIPT}"
+		pushd scripts >/dev/null
+		ls -1 *.sh > script.list
+		popd >/dev/null
 		popd >/dev/null
 	done
 	popd >/dev/null

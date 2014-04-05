@@ -18,6 +18,8 @@ echo '-- There was no pre-built package, building it...'
 cd "${BUILD_PATH}"
 mkdir brltty-minimal
 pushd brltty-minimal >/dev/null
+mkdir src
+pushd src >/dev/null
 cat <<eof > brltty.service
 [Unit]
 Description=Braille Console Driver
@@ -33,6 +35,8 @@ PIDFile=/run/brltty.pid
 WantedBy=sysinit.target
 
 eof
+
+popd >/dev/null
 
 cat <<eof > brltty.install
 post_install () {
