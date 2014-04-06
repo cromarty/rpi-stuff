@@ -28,7 +28,7 @@ export SM_LOG_FILE=\${BUILD_PATH}/\${1}.log
 export SM_TIDY=yes
 
 mkdir -p "\${BUILD_PATH}"
-mkdir -p "${SM_PACKAGE_PATH}"
+mkdir -p "\${SM_PACKAGE_PATH}"
 _run | tee "\${SM_LOG_FILE}"
 
 exit 0
