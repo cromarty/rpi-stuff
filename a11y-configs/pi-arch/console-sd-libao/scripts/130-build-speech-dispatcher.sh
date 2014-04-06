@@ -30,6 +30,7 @@ After=syslog.target
 
 [Service]
 Type=forking
+User=speech-dispatcher
 ExecStart=/usr/bin/speech-dispatcher -d 
 
 [Install]

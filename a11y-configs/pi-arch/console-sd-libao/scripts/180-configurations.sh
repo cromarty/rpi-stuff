@@ -12,10 +12,16 @@ install -m644 "${CONFIG_PATH}/speech-dispatcher/speechd.conf" /etc/speech-dispat
 echo '-- Installing speechd-up.conf into /etc/speechd-up.conf...'
 install -m644 "${CONFIG_PATH}/speechd-up/speechd-up.conf" /etc
 
-echo '-- Duplicating default speech-dispatcher configuration for user pi...'
-mkdir -p /home/pi/.speech-dispatcher/conf
-cp -r /etc/speech-dispatcher/* /home/pi/.speech-dispatcher/conf
-chown -R pi:users /home/pi/.speech-dispatcher
+
+echo "-- Creating the speech-dispatcher user and it's home directory..."
+
+echo '-- Creating the speech-dispatcher user...'
+useradd --system \
+	--comment 'speech-dispatcher' \ 
+	--gid audio \
+	--no-log-init \
+	--no-user-group \
+	--gecos 'speech-dispatcher' speech-dispatcher
 
 exit 0
 
