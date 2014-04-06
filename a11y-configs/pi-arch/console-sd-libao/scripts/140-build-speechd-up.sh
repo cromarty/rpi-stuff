@@ -56,6 +56,7 @@ source=("http://devel.freebsoft.org/pub/projects/speechd-up/speechd-up-0.4.tar.g
   cd "\${srcdir}/\${pkgname}-\${pkgver}"
   
   ./configure --prefix=/usr
+    sed -i-old 's:SPD_CAP_SPELL:0:' speechd-up.c
   make all
   
 }
