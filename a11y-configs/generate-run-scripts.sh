@@ -29,6 +29,7 @@ export SM_TIDY=yes
 
 mkdir -p "\${BUILD_PATH}"
 mkdir -p "\${SM_PACKAGE_PATH}"
+
 _run | tee "\${SM_LOG_FILE}"
 
 exit 0
