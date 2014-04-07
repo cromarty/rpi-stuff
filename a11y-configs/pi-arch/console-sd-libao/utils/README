@@ -9,6 +9,12 @@ Password: raspberry
 
 Hostname: alarmpi
 
+Time-zone: Europe/London (GMT)
+Keyboard: UK
+
+sshd: Running
+ntpd: Running
+
 This is the latest version of our accessible Arch Linux for the Raspberry Pi.
 
 Please note that if you have followed some of the other images we have released 
@@ -156,4 +162,10 @@ from where you can join our list and find more stuff about the Pi and
 accessibility.
 
 Mike Ray <mike@raspberryvi.org>
+
+
+
+
+
+
 
