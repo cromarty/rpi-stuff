@@ -10,7 +10,7 @@ set -e
 echo '-- Installing speech-dispatcher...'
 echo '-- Checking whether we have a pre-built package...'
 echo "-- Package name: ${pkg}"
-if [ -f "${pbk}" ]; then
+if [ -f "${pgk}" ]; then
 	echo '-- Found a pre-built package, installing it with pacman -U...'
 	pacman -U --noconfirm --noprogressbar "${pkg}"
 	echo '-- Finished installing the pre-built speech-dispatcher package'

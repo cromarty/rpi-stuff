@@ -24,13 +24,23 @@ export PACKAGE_URL=aurora/packages
 export CONFIG_PATH=$(pwd)/config
 export SCRIPT_PATH=$(pwd)/scripts
 export UTILS_PATH=$(pwd)/utils
-export LOG_NAME=$(basename $0 | cut -f 1 -d. ).log
-export LOG_FILE=${BUILD_PATH}/${LOG_NAME}
+export LOG_NAME=\$(basename \$0 | cut -f 1 -d. ).log
+export LOG_FILE=\${BUILD_PATH}/\${LOG_NAME}
+
+date | tee "\${LOG_FILE}"
+echo "Build path: \${BUILD_PATH}" | tee -a "\${LOG_FILE}"
+echo "Config path: \${CONFIG_PATH}" | tee -a "\${LOG_FILE}"
+echo "Script path: \${SCRIPT_PATH}" | tee -a "\${LOG_FILE}"
+echo "Utils path: \${UTILS_PATH}" | tee -a "\${LOG_FILE}"
 
 mkdir -p "\${BUILD_PATH}"
 mkdir -p "\${PACKAGE_PATH}"
 
-_run | tee "\${LOG_FILE}"
+_run | tee -a "\${LOG_FILE}"
+
+echo "-- \$0 finished" | tee -a "\${LOG_FILE}"
+
+date | tee -a "\${LOG_FILE}"
 
 exit 0
 
