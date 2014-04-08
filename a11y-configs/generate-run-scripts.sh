@@ -25,7 +25,6 @@ export CONFIG_PATH=$(pwd)/config
 export SCRIPT_PATH=$(pwd)/scripts
 export UTILS_PATH=$(pwd)/utils
 export SM_LOG_FILE=\${BUILD_PATH}/\${1}.log
-export SM_TIDY=yes
 
 mkdir -p "\${BUILD_PATH}"
 mkdir -p "\${SM_PACKAGE_PATH}"
