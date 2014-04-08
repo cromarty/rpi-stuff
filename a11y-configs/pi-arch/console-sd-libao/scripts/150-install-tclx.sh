@@ -3,7 +3,7 @@ pkgname=tclx
 pkgver=8.4
 pkgrel=1
 arch=armv6h
-pkg="${SM_PACKAGE_PATH}/${pkgname}-${pkgver}-${pkgrel}-${arch}.pkg.tar.xz"
+pkg="${PACKAGE_PATH}/${pkgname}-${pkgver}-${pkgrel}-${arch}.pkg.tar.xz"
 
 set -e
 echo '-- Installing tclx...'
@@ -56,7 +56,7 @@ eof
 makepkg -s -i --asroot --noconfirm --noprogressbar
 echo '-- Finished building tclx, tidying up...'
 popd >/dev/null
-if [ "${SM_TIDY}" ]; then
+if [ "${TIDY}" ]; then
 	set +e
 	rm -rf tclx/
 fi

@@ -2,7 +2,7 @@
 
 set -e
 echo "-- Getting packages from: ${PACKAGE_URL}..."
-cd "${SM_PACKAGE_PATH}"
+cd "${PACKAGE_PATH}"
 
 wget http://${PACKAGE_URL}/get-packages.sh
 chmod +x get-packages.sh

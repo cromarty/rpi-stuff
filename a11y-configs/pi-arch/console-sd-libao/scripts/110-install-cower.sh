@@ -10,7 +10,7 @@ sed -i-old "s:^arch=(\(.*\)):arch=(\1 'armv6h'):" PKGBUILD
 makepkg -i --asroot --noconfirm --noprogressbar
 popd >/dev/null
 echo '-- Finished making and installing cower, tidying up...' 
-if [ "${SM_TIDY}" ]; then
+if [ "${TIDY}" ]; then
 	set +e
 	rm -rf cower-git/
 	rm cower-git.tar.gz

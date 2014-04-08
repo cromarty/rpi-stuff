@@ -4,7 +4,7 @@ pkgname=speechd-sound-icons
 pkgver=0.1
 pkgrel=1
 arch=any
-pkg="${SM_PACKAGE_PATH}/${pkgname}-${pkgver}-${pkgrel}-${arch}.pkg.tar.xz"
+pkg="${PACKAGE_PATH}/${pkgname}-${pkgver}-${pkgrel}-${arch}.pkg.tar.xz"
 
 set -e
 cd "${BUILD_PATH}"
@@ -44,7 +44,7 @@ eof
 makepkg --asroot -i --noconfirm --noprogressbar
 echo '-- Finished installing sound icons'
 popd >/dev/null
-if [ "${SM_TIDY}" ]; then
+if [ "${TIDY}" ]; then
 	rm -rf sound-icons
 fi
 

@@ -4,7 +4,7 @@ pkgname=speech-dispatcher
 pkgver=0.8
 pkgrel=1
 arch=armv6h
-pkg="${SM_PACKAGE_PATH}/${pkgname}-${pkgver}-${pkgrel}-${arch}.pkg.tar.xz"
+pkg="${PACKAGE_PATH}/${pkgname}-${pkgver}-${pkgrel}-${arch}.pkg.tar.xz"
 
 set -e
 echo '-- Installing speech-dispatcher...'
@@ -122,7 +122,7 @@ makepkg --asroot -i --noconfirm --noprogressbar
 ln -s /usr/include/speech-dispatcher/libspeechd.h /usr/include
 echo '-- Finished building speech-dispatcher, tidying up...'
 popd >/dev/null
-if [ "${SM_TIDY}" ]; then
+if [ "${TIDY}" ]; then
 	set +e
 	rm -rf speech-dispatcher
 fi

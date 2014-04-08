@@ -4,7 +4,7 @@ pkgname=espeak
 pkgver=1.48.04
 pkgrel=1
 arch=armv6h
-pkg="${SM_PACKAGE_PATH}/${pkgname}-${pkgver}-${pkgrel}-${arch}.pkg.tar.xz"
+pkg="${PACKAGE_PATH}/${pkgname}-${pkgver}-${pkgrel}-${arch}.pkg.tar.xz"
 
 
 set -e
@@ -63,7 +63,7 @@ eof
 makepkg --asroot -i --noprogressbar --noconfirm
 echo '-- Finished building and installing espeak, tidying up...'
 popd >/dev/null
-if [ "${SM_TIDY}" ]; then
+if [ "${TIDY}" ]; then
 	set +e
 	rm -rf espeak/
 fi

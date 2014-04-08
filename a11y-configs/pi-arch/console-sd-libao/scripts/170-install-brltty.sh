@@ -3,7 +3,7 @@ pkgname=brltty-minimal
 pkgver=5.0
 pkgrel=1
 arch=armv6h
-pkg="${SM_PACKAGE_PATH}/${pkgname}-${pkgver}-${pkgrel}-${arch}.pkg.tar.xz"
+pkg="${PACKAGE_PATH}/${pkgname}-${pkgver}-${pkgrel}-${arch}.pkg.tar.xz"
 
 set -e
 echo '-- Installing brltty...'
@@ -111,7 +111,7 @@ eof
 makepkg --asroot -i --noconfirm --noprogressbar
 echo '-- Finished installing brltty-minimal, tidying up...'
 popd >/dev/null
-if [ "${SM_TIDY}" ]; then
+if [ "${TIDY}" ]; then
 	set +e
 	rm -rf brltty-minimal/
 fi

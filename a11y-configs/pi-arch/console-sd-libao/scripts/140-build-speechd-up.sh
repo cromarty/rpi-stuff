@@ -4,7 +4,7 @@ pkgname=speechd-up
 pkgver=0.4
 pkgrel=1
 arch=armv6h
-pkg="${SM_PACKAGE_PATH}/${pkgname}-${pkgver}-${pkgrel}-${arch}.pkg.tar.xz"
+pkg="${PACKAGE_PATH}/${pkgname}-${pkgver}-${pkgrel}-${arch}.pkg.tar.xz"
 
 set -e
 echo '-- Installing speechd-up...'
@@ -76,7 +76,7 @@ eof
 makepkg --asroot -i --noconfirm --noprogressbar
 echo '-- Finished building speechd-up'
 popd >/dev/null
-if [ "${SM_TIDY}" ]; then
+if [ "${TIDY}" ]; then
 	rm -rf speechd-up
 fi
 
