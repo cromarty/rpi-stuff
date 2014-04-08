@@ -24,7 +24,8 @@ export PACKAGE_URL=aurora/packages
 export CONFIG_PATH=$(pwd)/config
 export SCRIPT_PATH=$(pwd)/scripts
 export UTILS_PATH=$(pwd)/utils
-export LOG_FILE=\${BUILD_PATH}/\${1}.log
+export LOG_NAME=$(basename $0 | cut -f 1 -d. ).log
+export LOG_FILE=${BUILD_PATH}/${LOG_NAME}
 
 mkdir -p "\${BUILD_PATH}"
 mkdir -p "\${PACKAGE_PATH}"
