@@ -101,7 +101,7 @@ eof
 makepkg -s -i --asroot --noconfirm --noprogressbar
 echo '-- Editing the /usr/bin/emacspeak file to make it possible to save settings in local .emacs files...'
 sed -i-old -e "s:\$HOME:~:" \
-	-e "s:EMACS_UNIBYTE:#EMACS_UNIBYTE:" \
+	-e "s:^EMACS_UNIBYTE:#EMACS_UNIBYTE:" \
 	-e "s:export EMACS_UNIBYTE:#export EMACS_UNIBYTE:" \
 	-e "s:-q ::" /usr/bin/emacspeak
 
