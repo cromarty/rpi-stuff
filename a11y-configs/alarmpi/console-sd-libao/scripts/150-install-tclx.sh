@@ -48,12 +48,15 @@ build() {
 	make \$_tclsrc || return 1
 	make \$_tclsrc prefix=\$startdir/pkg/usr \
 		exec_prefix=\$startdir/pkg/usr install
-	cp -r \$pkgdir/usr/lib/tclx8.4/ /usr/lib
+
 }
 
 eof
 
 makepkg -s -i --asroot --noconfirm --noprogressbar
+
+cp -r ${BUILD_PATH}/tclx/pkg/usr/lib/tclx8.4/ /usr/lib
+
 echo '-- Finished building tclx, tidying up...'
 popd >/dev/null
 if [ "${TIDY}" ]; then
