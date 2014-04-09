@@ -63,6 +63,10 @@ install='emacspeak.install'
 source=("http://\$pkgname.googlecode.com/files/\$pkgname-\$pkgver.tar.bz2")
 
 build() {
+	sed -i 's:, 512,:, 3072,:' \
+		\${srcdir}/emacspeak-\${pkgver}/servers/linux-espeak/tclespeak.cpp
+
+
   cd "\$srcdir/\$pkgname-\$pkgver"
   sed -i -e 's, /etc/info-dir, \$(DESTDIR)/etc/info-dir,g' info/Makefile
   make config
