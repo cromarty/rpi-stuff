@@ -48,7 +48,7 @@ build() {
 	make \$_tclsrc || return 1
 	make \$_tclsrc prefix=\$startdir/pkg/usr \
 		exec_prefix=\$startdir/pkg/usr install
-	cp -r \$startdir/pkg/usr/lib/tclx8.4/ /usr/lib
+	cp -r \$pkgdir/usr/lib/tclx8.4/ /usr/lib
 }
 
 eof
