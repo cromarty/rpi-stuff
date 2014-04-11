@@ -6,7 +6,7 @@ echo "-- Adding speakupconf and DTK_PROGRAM stuff to .bashrc..."
 cat <<eof >> /etc/skel/.bashrc
 
 if [ -d ~/.speakup ]; then
-	speakupconf load
+	speakupconf load >/dev/null
 fi
 
 export DTK_PROGRAM=espeak

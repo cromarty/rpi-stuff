@@ -22,6 +22,7 @@ export BUILD_PATH=~/.builds
 export PACKAGE_PATH="\${BUILD_PATH}/packages"
 export PACKAGE_URL=aurora/packages
 export CONFIG_PATH=$(pwd)/config
+export RELEASE_PATH=$(pwd)/release
 export SCRIPT_PATH=$(pwd)/scripts
 export UTILS_PATH=$(pwd)/utils
 export LOG_NAME=\$(basename \$0 | cut -f 1 -d. ).log
@@ -32,6 +33,7 @@ mkdir -p "\${PACKAGE_PATH}"
 date | tee "\${LOG_FILE}"
 echo "Build path: \${BUILD_PATH}" | tee -a "\${LOG_FILE}"
 echo "Config path: \${CONFIG_PATH}" | tee -a "\${LOG_FILE}"
+echo "Release path: \${RELEASE_PATH}" | tee -a "\${LOG_FILE}"
 echo "Script path: \${SCRIPT_PATH}" | tee -a "\${LOG_FILE}"
 echo "Utils path: \${UTILS_PATH}" | tee -a "\${LOG_FILE}"
 

@@ -10,6 +10,7 @@ install -m644 "${CONFIG_PATH}/emacspeak/package.el" /etc/skel/.emacs.d/elpa
 echo '-- Installing speech-dispatcher configuration file in /etc/speech-dispatcher...'
 install -m 644 "${CONFIG_PATH}/speech-dispatcher/speechd.conf" /etc/speech-dispatcher
 echo '-- Installing espeak.conf in /etc/speech-dispatcher/modules...'
+rm -f /etc/speech-dispatcher/modules/*.conf
 install -m 644 "${CONFIG_PATH}/speech-dispatcher/modules/espeak.conf" /etc/speech-dispatcher/modules
 
 echo '-- Installing speechd-up.conf into /etc/speechd-up.conf...'

@@ -10,10 +10,10 @@ useradd -m -g users -G ${SUPPL_GROUPS} -s /bin/bash pi
 echo -e "raspberry\nraspberry\n" | /usr/bin/passwd pi
 echo "-- Added new user 'pi' successfully"
 
-echo '-- Duplicating default speech-dispatcher configuration for user pi...'
-mkdir -p /home/pi/.speech-dispatcher/conf
-cp -r /etc/speech-dispatcher/* /home/pi/.speech-dispatcher/conf
-chown -R pi:users /home/pi/.speech-dispatcher
+#echo '-- Duplicating default speech-dispatcher configuration for user pi...'
+#mkdir -p /home/pi/.speech-dispatcher/conf
+#cp -r /etc/speech-dispatcher/* /home/pi/.speech-dispatcher/conf
+#chown -R pi:users /home/pi/.speech-dispatcher
 
 exit 0
 

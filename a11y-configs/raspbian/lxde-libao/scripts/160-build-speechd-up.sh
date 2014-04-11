@@ -10,6 +10,7 @@ echo "-- Building speechd-up..."
 LOCAL_BUILD_PATH="speechd-up-0.4"
 pushd "${LOCAL_BUILD_PATH}"
 ./configure --prefix=/usr
+sed -i-old 's:ret = spd_set_capital_letters://ret = spd_set_capital_letters:' speechd-up.c
 make all
 make install
 popd
