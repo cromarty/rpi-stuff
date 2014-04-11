@@ -2,6 +2,9 @@
 
 set -e
 cd "${BUILD_PATH}"
+echo '-- Editing /etc/sudoers to grant usual privileges...'
+sed -i 's:# %wheel ALL=(ALL) ALL: %wheel ALL=(ALL) ALL:' /etc/sudoers
+
 echo '-- Installing some emacspeak stuff into /etc/skel...'
 install -m644 ${CONFIG_PATH}/emacspeak/.emacs /etc/skel
 mkdir -p /etc/skel/.emacs.d/elpa

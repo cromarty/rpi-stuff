@@ -74,6 +74,16 @@ keyboard.
 Doing so will kill SpeakUp so that you do not get two voices inside Emacspeak.  
 Press SysRq again when you exit Emacspeak.
 
+Important note about current Emacspeak:
+
+Currently Emacspeak is not using speech-dispatcher.  This unfortunately means 
+the audio is still extremely choppy and stuttery.  To the extent that currently 
+Emacspeak on the Pi should be regarded as broken and unusable.
+
+I am trying to write a program to connect the Emacspeak text-to-speech protocol 
+to speech-dispatcher so that we can use the same quality of speech there as in 
+the console.
+
 brltty
 
 This has not been configured because so few people have a Braill display.  There 
@@ -162,6 +172,7 @@ from where you can join our list and find more stuff about the Pi and
 accessibility.
 
 Mike Ray <mike@raspberryvi.org>
+March/April 2014
 
 
 
