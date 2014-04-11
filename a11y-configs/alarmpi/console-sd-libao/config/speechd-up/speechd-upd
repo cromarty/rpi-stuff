@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+# This script is called from the speechd-upd.service service file.
+# It loads speakup settings from /etc/speakup if the path exists before it
+# launches the speechd-up server
+#
+
+[ -d /etc/speakup ] && speakupconf load /etc/speakup >/dev/null
+
+/usr/bin/speechd-up -d
+
+
+

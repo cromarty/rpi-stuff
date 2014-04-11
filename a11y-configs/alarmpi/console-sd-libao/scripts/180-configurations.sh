@@ -22,6 +22,9 @@ install -m 644 "${CONFIG_PATH}/speechd-up/speechd-up.conf" /etc
 echo '-- Installing speakupconf...'
 install -m 755 "${UTILS_PATH}/speakupconf" /usr/bin
 
+echo '-- Installing the systemd script that is called from speechd-upd.service...'
+install -m 755 "${CONFIG_PATH}/speechd-up/speechd-upd" /usr/lib/systemd/scripts
+
 
 echo '-- Creating some soft links to fool sd...'
 mkdir /usr/lib/arm-linux-gnueabihf

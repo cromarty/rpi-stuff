@@ -30,7 +30,7 @@ After=syslog.target
 
 [Service]
 Type=forking
-ExecStart=/usr/bin/speechd-up -d
+ExecStart=/usr/lib/systemd/scripts/speechd-upd
 
 [Install]
 WantedBy=multi-user.target
