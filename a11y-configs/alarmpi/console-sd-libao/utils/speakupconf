@@ -73,15 +73,15 @@ case "$1" in
 		exit 1
 	fi
 	cd $SAVEDIR
-	if [ -d i18n -a -d $SPEAKUPDIR/i18n ]; then
-		cd i18n
-		for f in *; do
-			if [ -w $SPEAKUPDIR/i18n/$f ]; then
-				cp $f $SPEAKUPDIR/i18n
-			fi
-		done
-		cd ..
-	fi
+#	if [ -d i18n -a -d $SPEAKUPDIR/i18n ]; then
+#		cd i18n
+#		for f in *; do
+#			if [ -w $SPEAKUPDIR/i18n/$f ]; then
+#				cp $f $SPEAKUPDIR/i18n
+#			fi
+#		done
+#		cd ..
+#	fi
 	for f in *; do
 		if [ -w $SPEAKUPDIR/$f  -a -f $SPEAKUPDIR/$f ]; then
 			cp $f $SPEAKUPDIR
