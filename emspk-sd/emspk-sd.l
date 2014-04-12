@@ -243,7 +243,7 @@ void sync_state_flags(char *token)
 	switch(nArg)
 	{
 		case CA_SYNC_STATE_PUNC_LEVEL:
-			case CA_SYNC_STAT_PITCH_RISE:
+			case CA_SYNC_STATE_CAP_PITCH_RISE:
 			nArg++;
 			break;
 		case CA_SYNC_STATE_CAP_TICK:
@@ -289,7 +289,7 @@ void tone_args(char *token)
 	if (nArg < CA_TONE_LAST_ARG)
 		return;
 
-	'* play the tone */
+	/* play the tone */
 
 	return;
 
