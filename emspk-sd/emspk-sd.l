@@ -1,304 +1,84 @@
-/*
-
-Flex lexer which implements an Emacspeak to speech-dispatcher connector 
-by parsing the Emacspeak protocol read from *stdin and calling 
-speech-dispatcher via it's API
-
-*/
-
 %{
 
-#include <stdio.h>
-#include <stdlib.h>
+enum yytokens {
+	TTS_ALLCAPS_BEEP				= 258,
+	TTS_CAPITALIZE				= 259,
+TTS_INITIALIZE = 260,
+	TTS_PAUSE				= 261,
+	TTS_RESET				= 262,
+	TTS_RESUME				= 263,
+	TTS_SAY				= 264,
+	TTS_SET_CHARACTER_SCALE				= 265,
+	TTS_SET_PUNCTUATIONS				= 266,
+	TTS_SET_SPEECH_RATE				= 267,
+	TTS_SPLIT_CAPS				= 268,
+	TTS_SYNC_STATE				= 269,
+	LEFTBRACE				= 270,
+	RIGHTBRACE				= 271,
+	NUMBER				= 272,
+	NEWLINE				= 273,
+	CTEXT = 274,
+QSPEECH = 275,
+SHUDDUP = 276,
+LETTER = 277,
+SILENCE = 278,
+FLUSH = 279,
+PUNCTLEVEL = 280,
+};
 
-#include "emspk-sd.h"
-
-
-int nArg;
+int yylval;
 
 %}
 
-
-%x TTS_SET_PUNCTUATIONS QCMD TCMD TTS_SET_CHARACTER_SCALE TTS_SYNC_STATE TTS_SPLIT_CAPS IBRACES TTS_SET_SPEECH_RATE LCMD TTS_CAPITALIZE QBRACES CSH TTS_ALLCAPS_BEEP ISAY
+%x INBRACES
 
 
 %%
 
- /* queue command */
-<INITIAL>"q"			{ 
-					BEGIN(QCMD);
-					printf("Entered QCMD\n");
-		}
-
-<QCMD>"{"			{
-					BEGIN(QBRACES);
-					printf("Entering QBRACES\n");
-		}
-
-<QBRACES>[^}]*			{
-					printf("Data: %s\n", yytext);
-		}
-
-<QBRACES>"}"			{
-					BEGIN(INITIAL); printf("Exiting INBRACES\n");
-		}  
-
- /* letter command */ 
-<INITIAL>"l"			{
-					BEGIN(LCMD);
-					printf("Entered LCMD\n");
-		}
-
-<LCMD>[^ \t\n]			{
-					BEGIN(INITIAL);
-					printf("Letter data: %s\n", yytext);
-		}
-
- /* tts_* commands  with args */
-
- /* tts_sync_state */
-<INITIAL>"tts_sync_state"			{
-					BEGIN(TTS_SYNC_STATE);
-					printf("sync state\n");
-					nArg = 0;
-		}
-
-<TTS_SYNC_STATE>(all|some|none)			{
-					sync_state_flags(yytext);
-		}
-
-<TTS_SYNC_STATE>[0-9]+			{
-					sync_state_flags(yytext);
-		} 
-
-<TTS_SYNC_STATE>"\n"			{
-					BEGIN(INITIAL);
-		}
- 
- /* set punctuation mode */
-<INITIAL>"tts_set_punctuations"			{
-					BEGIN(TTS_SET_PUNCTUATIONS);
-					printf("Found set punct mode\n");
-		}
-
-<TTS_SET_PUNCTUATIONS>(all|some|none)			{
-					printf("found the mode to set punctuation to: %s\n", yytext);
-		}
-
-<TTS_SET_PUNCTUATIONS>"\n"			{
-					BEGIN(INITIAL);
-		}
-
- /* set speech rate */
-<INITIAL>"tts_set_speech_rate"			{
-					BEGIN(TTS_SET_SPEECH_RATE);
-					printf("Found set speech rate\n");
-		}
-
-<TTS_SET_SPEECH_RATE>[0-9]+			{
-					printf("Found the rate to set the speeech\n");
-		}
-
-<TTS_SET_SPEECH_RATE>"\n"			{
-					BEGIN(INITIAL);
-		}
-
- /* set scale factor */
-<INITIAL>"tts_set_character_scale"			{
-					BEGIN(TTS_SET_CHARACTER_SCALE);
-		}
-
-<TTS_SET_CHARACTER_SCALE>[0-9]+			{
-					printf("found the character scale factor\n");
-		}
-
-<TTS_SET_CHARACTER_SCALE>"\n"			{
-					BEGIN(INITIAL);
-		}
-
- /* say immediate */
-<INITIAL>"tts_say"			{
-					BEGIN(ISAY);
-					printf("Entered ISAY\n");
-		}
-
-<ISAY>"{"			{
-					BEGIN(IBRACES);
-					printf("Entering IBRACES\n");
-		}
-
-<IBRACES>[^}]*			{
-					printf("Data: %s\n", yytext);
-		}
-
-<IBRACES>"}"			{
-					BEGIN(INITIAL);
-					printf("Exiting INBRACES\n");
-		}
-
- /* split cap (horrible 'capital' all the time */ 
-<INITIAL>"tts_split_caps"			{
-					BEGIN(TTS_SPLIT_CAPS);
-					printf("Found split caps command\n");
-		}
-
-<TTS_SPLIT_CAPS>[0-9]			{
-					printf("found split caps flag\n");
-		}
-		
-<TTS_SPLIT_CAPS>"\n"			{
-					BEGIN(INITIAL);
-		}
-
- /* I think this is the tick thing */
-<INITIAL>"tts_capitalize"			{
-					BEGIN(TTS_CAPITALIZE);
-		}
-
-<TTS_CAPITALIZE>[0-9]			{
-					printf("found the capitalize flag\n");
-		}
-
-<TTS_CAPITALIZE>"\n"			{
-					BEGIN(INITIAL);
-		}
-
- /* I think this beeps when an all caps word is spoken */
-<INITIAL>"tts_allcaps_beep"			{
-					BEGIN(TTS_ALLCAPS_BEEP);
-		}
-
-<TTS_ALLCAPS_BEEP>[0-9]			{
-					printf("found the allcaps beep flag\n");
-		}
-
-<TTS_ALLCAPS_BEEP>"\n"			{
-					BEGIN(INITIAL);
-		}
-
- /* tts_* commands with no args */
-<INITIAL>"tts_pause"			{
-					printf("Found a pause\n");
-		}
-
-<INITIAL>"tts_resume"			{
-					printf("Found a resume\n");
-		}
-
-<INITIAL>"tts_reset"			{
-					printf("found a reset\n");
-		}
-
-<INITIAL>"tts_initialize"			{
-					printf("found an initialize\n");
-		}
-
- /* shut up! */
-<INITIAL>"s"			{
-					printf("found a shut up\n");
-		}
-
- /* insert silence */
-<INITIAL>"sh"			{
-					BEGIN(CSH);
-					printf("found silence command\n");
-		}
-
-<CSH>[0-9]+			{
-					printf("found the duration of silence to insert\n");
-		}
-
-<CSH>"\n"			{
-					BEGIN(INITIAL);
-		}
- 
- /* say version immediately */
-<INITIAL>"version"			{
-					printf("found a version command\n");
-		}
-  
- /* tone command */
-<INITIAL>"t"			{
-					BEGIN(TCMD); printf("found tone command\n"); nArg = 0;
-		}
-
-<TCMD>[0-9]+			{
-					tone_args(yytext);
-		}
-
-<TCMD>"\n"			{
-					BEGIN(INITIAL);
-		}
-
- /* end of line */
-\n			{ BEGIN(INITIAL); }
-
- /* nothing interesting */
-. { }
+"tts_allcaps_beep"			{ return TTS_ALLCAPS_BEEP; }
+"tts_capitalize"			{ return TTS_CAPITALIZE; }
+"tts_initialize" { return TTS_INITIALIZE; }
+"tts_pause"			{ return TTS_PAUSE; }
+"tts_reset"			{ return TTS_RESET; }
+"tts_resume"			{ return TTS_RESUME; }
+"tts_say"			{ return TTS_SAY; }
+"tts_set_character_scale"			{ return TTS_SET_CHARACTER_SCALE; }
+"tts_set_punctuations"			{ return TTS_SET_PUNCTUATIONS; }
+"tts_set_speech_rate"			{ return TTS_SET_SPEECH_RATE; }
+"tts_split_caps"			{ return TTS_SPLIT_CAPS; }
+"tts_sync_state"			{ return TTS_SYNC_STATE; }
+"{"				{ BEGIN(INBRACES); return LEFTBRACE; }
+"}"				{ BEGIN(INITIAL); return RIGHTBRACE; }
+[0-9]+				{ yylval = atoi(yytext); return NUMBER; }
+"\n"				{ return NEWLINE; }
+[ \t]				{ /* Ignore whitespace */ }
+<INBRACES>[^\n]*	{ yyless(yyleng-1); BEGIN(INITIAL); return CTEXT; } 
+(all|some|none)		{ return PUNCTLEVEL; }
+"sh"  { return SILENCE; }
+"d"   { return FLUSH; }
+"q"			{return QSPEECH; }
+"s"  { return SHUDDUP; }
+"l"   { return LETTER; }
 
 %%
-
-void sync_state_flags(char *token)
-{
-	switch(nArg)
-	{
-		case CA_SYNC_STATE_PUNC_LEVEL:
-			case CA_SYNC_STAT_PITCH_RISE:
-			nArg++;
-			break;
-		case CA_SYNC_STATE_CAP_TICK:
-			printf("Its the capital tick thing\n");
-			nArg++;
-			break;
-		case CA_SYNC_STATE_CAP_SPLIT:
-				printf("Its the capital painful thing\n");
-			nArg++;
-			break;
-		case CA_SYNC_STATE_SPEECH_RATE:
-			printf("Its the speech rate\n");
-			nArg++;
-			break;
-	}
-
-	if (nArg < CA_SYNC_STATE_LAST_ARG)
-		return;
-	
-	/* we have all args */
-	return;
-
- }
-
-void tone_args(char *token)
-{
-	static int tone_pitch;
-	static int tone_duration;
-	switch(nArg)
-	{
-		case CA_TONE_PITCH:
-			printf("found the tone pitch\n");
-			tone_pitch = atoi(token);
-			nArg++;
-			break;
-		case CA_TONE_DURATION:
-			printf("found the tone duration\n");
-			tone_duration = atoi(token);
-			nArg++;
-			break;
-	}
-
-	if (nArg < CA_TONE_LAST_ARG)
-		return;
-
-	'* play the tone */
-
-	return;
-
-}
-
-
 
 main(int argc, char **argv) 
 {
-nArg = 0;
-yylex();
-}
+
+
+ int tok;
+
+ while(tok = yylex()) { 
+printf("%d %s", tok, yytext); 
+if(tok == NUMBER) 
+printf(" = %d\n", yylval); 
+else 
+printf("\n");
+
+
+ } 
+} 
+
+
+
+
