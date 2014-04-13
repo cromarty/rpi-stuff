@@ -1,32 +1,11 @@
+
 %{
 
-enum yytokens {
-	TTS_ALLCAPS_BEEP				= 258,
-	TTS_CAPITALIZE				= 259,
-TTS_INITIALIZE = 260,
-	TTS_PAUSE				= 261,
-	TTS_RESET				= 262,
-	TTS_RESUME				= 263,
-	TTS_SAY				= 264,
-	TTS_SET_CHARACTER_SCALE				= 265,
-	TTS_SET_PUNCTUATIONS				= 266,
-	TTS_SET_SPEECH_RATE				= 267,
-	TTS_SPLIT_CAPS				= 268,
-	TTS_SYNC_STATE				= 269,
-	LEFTBRACE				= 270,
-	RIGHTBRACE				= 271,
-	NUMBER				= 272,
-	NEWLINE				= 273,
-	CTEXT = 274,
-QSPEECH = 275,
-SHUDDUP = 276,
-LETTER = 277,
-SILENCE = 278,
-FLUSH = 279,
-PUNCTLEVEL = 280,
-};
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-int yylval;
+#include "emspk-sd.tab.h"
 
 %}
 
@@ -47,38 +26,21 @@ int yylval;
 "tts_set_speech_rate"			{ return TTS_SET_SPEECH_RATE; }
 "tts_split_caps"			{ return TTS_SPLIT_CAPS; }
 "tts_sync_state"			{ return TTS_SYNC_STATE; }
-"{"				{ BEGIN(INBRACES); return LEFTBRACE; }
-"}"				{ BEGIN(INITIAL); return RIGHTBRACE; }
-[0-9]+				{ yylval = atoi(yytext); return NUMBER; }
-"\n"				{ return NEWLINE; }
-[ \t]				{ /* Ignore whitespace */ }
+"{"				{ BEGIN(INBRACES); }
+"}"				{ BEGIN(INITIAL); }
+[0-9]+				{ yylval = atoi(yytext); return NUM; }
+"\n"				{ return EOL; }
+[ \t]				{ /* eat whitespace */ }
 <INBRACES>[^\n]*	{ yyless(yyleng-1); BEGIN(INITIAL); return CTEXT; } 
 (all|some|none)		{ return PUNCTLEVEL; }
 "sh"  { return SILENCE; }
-"d"   { return FLUSH; }
+"a" { return PLAYFILE; }
+"d"   { return DISPATCH; }
 "q"			{return QSPEECH; }
-"s"  { return SHUDDUP; }
+"s"  { return FLUSH; }
+"t" { return TONE; }
 "l"   { return LETTER; }
+"version"			{ return VERSION; }
 
 %%
-
-main(int argc, char **argv) 
-{
-
-
- int tok;
-
- while(tok = yylex()) { 
-printf("%d %s", tok, yytext); 
-if(tok == NUMBER) 
-printf(" = %d\n", yylval); 
-else 
-printf("\n");
-
-
- } 
-} 
-
-
-
 

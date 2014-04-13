@@ -23,8 +23,10 @@ res
 # ignore auto-generated bash scripts
 *.run.sh
 
-# ignore generated lexer files
+# ignore generated lexer and bison output
 lex.yy.c
+*.tab.c
+*.tab.h
 
 
 
