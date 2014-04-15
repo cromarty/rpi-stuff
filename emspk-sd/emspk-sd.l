@@ -6,6 +6,12 @@
 #include <string.h>
 
 #include "emspk-sd.tab.h"
+#include "emspk-sd.h"
+
+extern sync_punct_level;
+extern sync_dtk_caps_pitch_rise;
+extern sync_dtk_allcaps_beep;
+extern sync_dtk_split_caps;
 
 %}
 
@@ -32,7 +38,9 @@
 "}"				{ BEGIN(INITIAL); }
 [0-9]+				{ yylval.number = atoi(yytext); return NUM; }
 <INBRACES>.*/\}\n	{ BEGIN(INITIAL); yylval.string = yytext; return CTEXT; } 
-(all|some|none){1}		{ yylval.string = yytext; return NAME; }
+all		{ sync_punct_level = PUNCT_LEVEL_ALL; return PUNCTLEVEL; }
+some		{ sync_punct_level = PUNCT_LEVEL_SOME; return PUNCTLEVEL; }
+none		{ sync_punct_level = PUNCT_LEVEL_NONE; return PUNCTLEVEL; }
 "sh"  { return SILENCE; }
 "a" { return PLAYFILE; }
 "d"   { return DISPATCH; }
