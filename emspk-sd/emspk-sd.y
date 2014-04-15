@@ -26,6 +26,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <speech-dispatcher/libspeechd.h>
+
 
 #include "emspk-sd.h"
 
@@ -75,7 +77,7 @@ int sync_speech_rate;
 %token <number> PUNCTLEVEL
 %token <number> LANGUAGE
 %token <number> VOICE
-
+%token <number> CODE
 
 %%
 
@@ -105,13 +107,14 @@ command : EOL { /* do nothing */ }
 					tts_sync_state(sync_punct_level, sync_dtk_caps_pitch_rise, sync_dtk_allcaps_beep, sync_dtk_split_caps, sync_speech_rate);
 				}
 		| FLUSH					{ tts_flush(); }
-		| SILENCE NUM					{ tts_silence($2);; }
+		| SILENCE NUM					{ tts_silence($2); }
 		| QSPEECH CTEXT					{ tts_q($2); }
 		| LETTER CTEXT					{ tts_letter($2); }
 		| DISPATCH					{ tts_dispatch(); }
 		| TONE NUM NUM					{ tts_tone($2, $3); }
 		| PLAYFILE CTEXT					{ tts_play_file($2); }
 		| VERSION					{ tts_version(); }
+		| CODE CTEXT			{ tts_code($2); }
 ;
 
 identifier : PUNCTLEVEL
@@ -134,7 +137,7 @@ yyerror(char *s)
 	fprintf(stderr, "error: %s\n", s); 
 } 
 
-##2
+
 /* called when we get tts_all_caps_beep */
 int tts_allcaps_beep(void)
 {
@@ -149,7 +152,7 @@ int tts_set_character_scale(int scale)
 	return 0;
 } /* end tts_set_character_scale */
 
-#* called when we get a tts_split_caps */
+/* called when we get a tts_split_caps */
 int tts_split_caps(int split)
 {
 	printf("Called tts_split_caps: %d\n", split);
@@ -164,14 +167,14 @@ int tts_sync_state(
 		int split_caps,
 		int speech_rate)
 {
-		printf("Sync state: %d %d %d %d %d\n", punct_level, pitch_rise, caps_beep, split_caps, speech_rate);
+		printf("Called Sync state: %d %d %d %d %d\n", punct_level, pitch_rise, caps_beep, split_caps, speech_rate);
 		return 0;
 } /* end tts_sync_state */
 
 /* called to set the speech rate */
 int tts_set_speech_rate(int speech_rate)
 {
-		printf("Got a tts_set_speech_rate: %d\n", speech_rate);
+		printf("Called tts_set_speech_rate: %d\n", speech_rate);
 	return 0;
 } /* end tts_set_speech_rate */
 
@@ -236,14 +239,14 @@ int tts_dispatch(void)
 /* silence function.  called to queue a chunk of silence */
 int tts_silence(int duration_milliseconds)
 {
-		printf("Called silence\n");
+		printf("Called silence: %d\n", duration_milliseconds);
 		return 0;
 } /* end tts_silence */
 
 /* play a tone of pitch and duration */
 int tts_tone(int pitch, int duration)
 {
-		printf("Called tone function\n");
+		printf("Called tone function: %d %d\n", pitch, duration);
 		return 0;
 } /* end tts_tone */
 
@@ -255,12 +258,30 @@ int tts_flush(void)
 } /* end tts_flush */
 
 /* say a single character */
-int tts_letter(char c)
+int tts_letter(char *c)
 {
 		printf("Called tts_letter\n");
 			return 0;
 } /* end tts_letter */
 
+/* called to play a wav file */
+int tts_play_file(char *filename)
+{
+		printf("Called tts_play_file: %s\n", filename);
+		return 0;
+} /* end tts_play_file */
+
+int tts_version(void)
+{
+		printf("Called tts_version\n");
+		return 0;
+} /* end tts_version */
+
+int tts_code(char *code)
+{
+		printf("Called tts_code: %s\n", code);
+		return 0;
+}
 
 
 

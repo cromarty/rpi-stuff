@@ -65,6 +65,7 @@ some		{ sync_punct_level = PUNCT_LEVEL_SOME; return PUNCTLEVEL; }
 none		{ sync_punct_level = PUNCT_LEVEL_NONE; return PUNCTLEVEL; }
 "sh"  { return SILENCE; }
 "a" { return PLAYFILE; }
+"c"			{ return CODE; }
 "d"   { return DISPATCH; }
 "q"			{return QSPEECH; }
 "s"  { return FLUSH; }
