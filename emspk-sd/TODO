@@ -1,8 +1,12 @@
 
 Short Term Goals:
 
-Make it possible to 'plug in' different back-ends as well as speech-dispatcher.  Seperate the Emacspeak protocol parser from the audio bits.
+* Make it possible to 'plug in' different back-ends as well as speech-dispatcher.  Seperate the Emacspeak protocol parser from the audio bits.
 
+* Define fixed format tokens which can be embedded into text in documents which act as 'directives'
+  for this application.
+  
 Long Term Goals:
 
-Get out more, eat less cheese.
+* Get out more, eat less cheese.
+
