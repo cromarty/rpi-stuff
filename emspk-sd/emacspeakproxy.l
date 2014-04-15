@@ -27,8 +27,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "emspk-sd.tab.h"
-#include "emspk-sd.h"
+#include "emacspeakproxy.tab.h"
+#include "emacspeakproxy.h"
 
 extern sync_punct_level;
 extern sync_dtk_caps_pitch_rise;

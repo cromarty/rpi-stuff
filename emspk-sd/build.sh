@@ -1,11 +1,13 @@
 #!/bin/bash
-rm fart
+[ -f emacspeakproxy ] && rm emacspeakproxy
 
 
-bison -d emspk-sd.y
+bison -d emacspeakproxy.y
 
-flex emspk-sd.l
+flex emacspeakproxy.l
 
-gcc emspk-sd.tab.c lex.yy.c -o fart -lfl
+gcc emacspeakproxy.tab.c lex.yy.c -o emacspeakproxy -lfl
+
+
 
 
