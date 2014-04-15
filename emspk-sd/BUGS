@@ -1,0 +1,6 @@
+A list of known bugs:
+
+* The mapping of speech rate from Emacspeak to this server to speech-dispatcher and other potential back-ends is confusing.
+
+* Some of the features requested by Emacspeak tts protocol function calls might not be available to all modules which can be used with speech-dispatcher.
+

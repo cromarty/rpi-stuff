@@ -1,0 +1,8 @@
+
+Short Term Goals:
+
+Make it possible to 'plug in' different back-ends as well as speech-dispatcher.  Seperate the Emacspeak protocol parser from the audio bits.
+
+Long Term Goals:
+
+Get out more, eat less cheese.

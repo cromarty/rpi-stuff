@@ -7,7 +7,7 @@
 #define PUNCT_LEVEL_SOME 1
 #define PUNCT_LEVEL_ALL 2
 
-int sync_state(int, int, int, int, int);
+int tts_sync_state(int, int, int, int, int);
 int tts_set_speech_rate(int);
 int tts_set_punctuations(int);
 int tts_pause(void);

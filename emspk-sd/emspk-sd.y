@@ -65,31 +65,31 @@ commands : /* empty */
 
 command : EOL { /* nothing */ }
 			| TTS_ALLCAPS_BEEP			{ printf("Called tts_allcaps_beep\n"); }
-		| TTS_INITIALIZE					{ printf("Called tts_initialize\n"); }
-		| TTS_PAUSE					{ printf("Called tts_pause\n"); }
-		| TTS_RESET					{ printf("Called tts_reset\n"); }
-		| TTS_RESUME					{ printf("Called tts_resume\n"); }
+		| TTS_INITIALIZE					{ tts_initialize(); }
+		| TTS_PAUSE					{ tts_pause(); }
+		| TTS_RESET					{ tts_reset(); }
+		| TTS_RESUME					{ tts_resume(); }
 		| TTS_SAY CTEXT					{ tts_say($2); }
 		| TTS_SET_CHARACTER_SCALE NUM					{ printf("Called tts_set_character_scale: %d\n", $2); }
 		| TTS_SET_PUNCTUATIONS identifier					{ tts_set_punctuations(sync_punct_level); }
 		| TTS_SET_SPEECH_RATE NUM					{ tts_set_speech_rate($2); }
 		| TTS_SPLIT_CAPS					{ printf("Called tts_split_caps\n"); }
 		| TTS_SYNC_STATE identifier NUM NUM NUM NUM 
-	{
-		sync_dtk_caps_pitch_rise = $3;
-		sync_dtk_allcaps_beep = $4;
-		sync_dtk_split_caps = $5;
-		sync_speech_rate = $6;
-		sync_state(sync_punct_level, sync_dtk_caps_pitch_rise, sync_dtk_allcaps_beep, sync_dtk_split_caps, sync_speech_rate);
- 	}
-		| FLUSH					{ printf("Called flush\n"); }
-		| SILENCE NUM					{ printf("Called silence: %d\n", $2); }
+				{
+					sync_dtk_caps_pitch_rise = $3;
+					sync_dtk_allcaps_beep = $4;
+					sync_dtk_split_caps = $5;
+					sync_speech_rate = $6;
+					tts_sync_state(sync_punct_level, sync_dtk_caps_pitch_rise, sync_dtk_allcaps_beep, sync_dtk_split_caps, sync_speech_rate);
+				}
+		| FLUSH					{ tts_flush(); }
+		| SILENCE NUM					{ tts_silence($2);; }
 		| QSPEECH CTEXT					{ tts_q($2); }
-		| LETTER CTEXT					{ printf("Called letter: %s\n", $2); }
-		| DISPATCH					{ printf("Called dispatch\n"); }
-		| TONE NUM NUM					{ printf("Called tone: %d %d\n", $2, $3); }
+		| LETTER CTEXT					{ tts_letter($2); }
+		| DISPATCH					{ tts_dispatch(); }
+		| TONE NUM NUM					{ tts_tone($2, $3); }
 		| PLAYFILE CTEXT					{ printf("Called play file: %s\n", $2); }
-		| VERSION					{ printf("Called version\n"); }
+		| VERSION					{ tts_version(); }
 ;
 
 identifier : PUNCTLEVEL
@@ -114,7 +114,7 @@ yyerror(char *s)
 
 
 /* called when we get a 'tts_sync_state command */
-int sync_state(
+int tts_sync_state(
 		int punct_level,
 		int pitch_rise,
 		int caps_beep,
@@ -125,51 +125,56 @@ int sync_state(
 		return 0;
 }
 
+/* called to set the speech rate */
 int tts_set_speech_rate(int speech_rate)
 {
 		printf("Got a tts_set_speech_rate: %d\n", speech_rate);
 	return 0;
 }
 
-
+/* called to set punctuation to 'all', 'some' or 'none' */
 int tts_set_punctuations(int punct_level)
 {
 		printf("Called set punct level: %d\n", punct_level);
 		return 0;
 }
 
-
-
+/* initialize the speech engine */
 int tts_initialize(void)
 {
 		printf("Called initialize\n");
 	return 0;
 }
 
+/* pause speech but do not flush the queue */
 int tts_pause(void)
 {
 		printf("Called pause\n");
 		return 0;
 }
 
+/* reset? */
 int tts_reset(void)
 {
 		printf("Called reset\n");
 		return 0;
 }
 
+/* resume speaking the contents of the queue after a non-flushing pause */
 int tts_resume(void)
 {
 		printf("Called resume\n");
 		return 0;
 }
 
+/* queue a chunk of text for synthesis */
 int tts_q(char *text)
 {
 		printf("Called q to queue text: %s\n", text);
 		return 0;
 }
 
+/* immediately say the string of text */
 int tts_say(char *text)
 {
 		printf("Called tts_say: %s\n", text);
@@ -192,12 +197,14 @@ int tts_silence(int duration_milliseconds)
 		return 0;
 }
 
+/* play a tone of pitch and duration */
 int tts_tone(int pitch, int duration)
 {
 		printf("Called tone function\n");
 		return 0;
 }
 
+/* flush the queue and shut up */
 int tts_flush(void)
 {
 		printf("Called flush function\n");
