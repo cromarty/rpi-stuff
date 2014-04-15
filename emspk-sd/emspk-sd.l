@@ -14,6 +14,8 @@
 
 %%
 
+"\n"				{ return EOL; }
+[ \t]				{ /* eat whitespace */ }
 "tts_allcaps_beep"			{ return TTS_ALLCAPS_BEEP; }
 "tts_capitalize"			{ return TTS_CAPITALIZE; }
 "tts_initialize" { return TTS_INITIALIZE; }
@@ -28,11 +30,9 @@
 "tts_sync_state"			{ return TTS_SYNC_STATE; }
 "{"				{ BEGIN(INBRACES); }
 "}"				{ BEGIN(INITIAL); }
-[0-9]+				{ yylval = atoi(yytext); return NUM; }
-"\n"				{ return EOL; }
-[ \t]				{ /* eat whitespace */ }
-<INBRACES>[^\n]*	{ yyless(yyleng-1); BEGIN(INITIAL); return CTEXT; } 
-(all|some|none)		{ return PUNCTLEVEL; }
+[0-9]+				{ yylval.number = atoi(yytext); return NUM; }
+<INBRACES>.*/\}\n	{ BEGIN(INITIAL); yylval.string = yytext; return CTEXT; } 
+(all|some|none){1}		{ yylval.string = yytext; return NAME; }
 "sh"  { return SILENCE; }
 "a" { return PLAYFILE; }
 "d"   { return DISPATCH; }

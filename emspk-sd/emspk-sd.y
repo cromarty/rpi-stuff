@@ -23,11 +23,11 @@
 %token <number> TTS_SET_SPEECH_RATE
 %token <number> TTS_SPLIT_CAPS
 %token <number> TTS_SYNC_STATE
+%token <string> NAME
 %token <number> QSPEECH
 %token <number> NUM
 %token <number> EOL
 %token <number> SILENCE
-%token <string> PUNCTLEVEL
 %token <string> CTEXT
 %token <number> LETTER
 %token <number> FLUSH
@@ -45,17 +45,18 @@ commands : /* empty */
 | commands command 
 ;
 
-command : TTS_ALLCAPS_BEEP			{ printf("Called tts_allcaps_beep\n"); }
+command : EOL { /* nothing */ }
+			| TTS_ALLCAPS_BEEP			{ printf("Called tts_allcaps_beep\n"); }
 		| TTS_INITIALIZE					{ printf("Called tts_initialize\n"); }
 		| TTS_PAUSE					{ printf("Called tts_pause\n"); }
 		| TTS_RESET					{ printf("Called tts_reset\n"); }
 		| TTS_RESUME					{ printf("Called tts_resume\n"); }
-		| TTS_SAY CTEXT					{ printf("Called tts_say: %s\n", $2); }
+		| TTS_SAY CTEXT					{ printf("Called tts_say: %s\n", yylval.string ); }
 		| TTS_SET_CHARACTER_SCALE NUM					{ printf("Called tts_set_character_scale: %d\n", $2); }
-		| TTS_SET_PUNCTUATIONS PUNCTLEVEL					{ printf("Called tts_set_punctuations: %s\n", $2); }
+		| TTS_SET_PUNCTUATIONS CTEXT					{ printf("Called tts_set_punctuations: %s\n", yylval.string); }
 		| TTS_SET_SPEECH_RATE NUM					{ printf("Called tts_set_speech_rate: %d\n", $2); }
 		| TTS_SPLIT_CAPS					{ printf("Called tts_split_caps\n"); }
-		| TTS_SYNC_STATE PUNCTLEVEL NUM NUM NUM NUM					{ printf("Called tts_sync_state: %s %d %d %d %d\n", $2, $3, $4, $5, $6); }
+		| TTS_SYNC_STATE NAME NUM NUM NUM NUM { printf("Called tts_sync_state: %s %d %d %d %d\n", $2, $4, $4, $5, $6);  }
 		| FLUSH					{ printf("Called flush\n"); }
 		| SILENCE NUM					{ printf("Called silence: %d\n", $2); }
 		| QSPEECH CTEXT					{ printf("Called q: %s\n", $2); }
