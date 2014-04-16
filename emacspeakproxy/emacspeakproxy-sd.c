@@ -1,7 +1,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "emacspeakproxy.h"
+#include "emacspeakproxy-module.h"
  
 /* called when we get tts_all_caps_beep */
 int esp_allcaps_beep(void)

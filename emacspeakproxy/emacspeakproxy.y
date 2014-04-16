@@ -28,8 +28,7 @@
 #include <string.h>
 #include <speech-dispatcher/libspeechd.h>
 
-
-#include "emacspeakproxy.h"
+#include "emacspeakproxy-module.h"
 
 int sync_punct_level;
 
