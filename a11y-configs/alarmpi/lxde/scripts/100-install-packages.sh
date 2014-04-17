@@ -1,8 +1,18 @@
 #!/bin/bash
 
 set -e
-echo '-- Installing stuff for LXDE...'
-pacman -S --noconfirm --noprogressbar libfm lxappearance lxappearance-obconf lxde-common lxde-icon-theme lxdm lxinput lxlauncher lxmenu-data lxmusic lxpanel lxpolkit lxsession lxtask lxterminal menu-cache openbox pcmanfm
-echo '-- Completed installing packages'
-exit 0
+echo '-- Installing LXDE and related stuff...'
+sudo pacman -S --noconfirm --noprogressbar xorg-server xorg-xinit xorg-utils xorg-server-utils 
+sudo pacman -S --noconfirm --noprogressbar xorg-xinit xorg-xclock xorg-twm xterm
+sudo pacman -S --noconfirm --noprogressbar xf86-video-fbdev 
+sudo pacman -S --noconfirm --noprogressbar lxde
 
+echo '-- Setting up /home/pi/.xinitrc...'
+cat <<eof > /home/pi/.xinitrc
+
+exec startlxde
+
+eof
+
+echo '-- Completed installation of LXDE'
+exit 0
