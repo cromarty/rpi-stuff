@@ -25,6 +25,10 @@ install -m 755 "${UTILS_PATH}/speakupconf" /usr/bin
 echo '-- Installing the systemd script that is called from speechd-upd.service...'
 install -m 755 "${CONFIG_PATH}/speechd-up/speechd-upd" /usr/lib/systemd/scripts
 
+#echo '-- Setting up the speech-dispatcher user...'
+#useradd -m -N -d /var/run/speech-dispatcher \
+#	-g audio -c "speech-dispatcher server" -s /bin/false speech-dispatcher
+
 
 echo '-- Creating some soft links to fool sd...'
 mkdir /usr/lib/arm-linux-gnueabihf
