@@ -8,7 +8,7 @@ echo "LANG=en_GB.UTF-8" > /etc/locale.conf
 ln -s /usr/share/zoneinfo/Europe/London /etc/localtime
 
 echo 'Setting the hardware clock...'
-hwclock —systohc —utc
+hwclock --systohc --utc
 
 echo 'Setting the hostname...'
 hostnamectl set-hostname archiso
@@ -17,7 +17,7 @@ echo 'Setting the password for root...'
 echo -e "root\nroot\n" | passwd root
 
 echo 'Adding an ordinary user...'
-useradd -m -g users -G wheel,storage,power -s /bin/bash username
+useradd -m -g users -G wheel,storage,power,audio -s /bin/bash username
 echo -e "password\npassword\n" username
 
 echo 'Installing sudo...'
@@ -40,7 +40,7 @@ systemctl enable sshd.service
 echo 'Enabling the dhcpcd service...'
 systemctl enable dhcpcd.service
 
-echo 'Enabling the espeak service...'
+echo 'Enabling the espeakup service...'
 systemctl enable espeakup.service
 
 echo 'Saving alsa settings...'
@@ -52,7 +52,7 @@ exit
 echo 'un-mounting hard-disk partitions from virtual mount point...'
  umount /mnt/home
  umount /mnt
- 
+
  echo 'Rebooting...'
- 
+
  reboot
