@@ -1,65 +1,47 @@
 
 Here's what is in this repo:
-===========================
-
-
-Top-level directory
-
-In here there is a shell-script called chmodx-shell-scripts.sh.  This script can 
-be executed to recursively set all *.sh scripts in the repo to mode 755.  This 
-is here because I have used a combination of Linux and Windows in developeing 
-these scripts and Windows git does not preserve the executable flag when a 
-branch is pushed from there.
 
 a11y-configs/
 
-This directory contains a mechanism I have called the 'Sausage-machine' and a 
-bunch of scripts which can configure a Raspberry Pi running a number of 
-different versions of Linux for accessibility.
+Contains a mechanism for runnings series of scripts in order of name.
 
-In here you will find a shell-script called main-menu.sh.  When executed this 
-script will present you with a menu of options for configuring your Raspberry Pi 
-for accessibility.
+The groups of scripts relate mostly to accessibility.
 
-Currently it is recommended you start with a fresh install of Raspbian, or 
-whichever version of Linux the menu items suggest.  You will find more README 
-files in the sub-directories of this directory.
+In the top-level directory there is a scripts called generate-run-scripts.sh, 
+which generates a script in each of the sub-sub directories to run the script 
+groups.  For example it will generate a script in:
 
-main-menu.sh calls sm.sh, the actual sausage-machine.  I called it 
-sausage-machine because it is designed to execute a series of scripts in order.
+alarmpi/console-sd-libao
 
-Note that security purists might be unhappy with the way in which this mechanism 
-executes the scripts, but then this is a Raspberry Pi, not a life-support 
-machine on a space-ship.
- 
+Called console-sd-libao.run.sh, which will run the scripts in that group.
+
+Each 'group contains some sub-directories which relate to the group to be run:
+
+config
+scripts
+utils
+
+Withing each sub-directory of a11y-configs you will find another README, and so 
+on down the tree.
+
 bash/
 
-This directory contains a mix of different bash scripts for doing stuff on a 
-Raspberry Pi.  The script names should be descriptive enough.  There is also a 
-README in this directory which gives more detail.  Most of them relate to Arch 
-Linux and some may be useful on a desktop or laptop machine.
+General stuff.
 
-notes/
+emacspeakproxy/
 
-Contains textual notes of my experiences with the Pi.  For my use more than 
-yours but you may find them useful.  Don't expect too much order in here, it's a 
-bit chaotic.
+An attempt at writing an Emacspeak to speech-dispatcher connector using Flex and 
+Bison.  Not finished.
 
 file-conv-utils/
 
-File conversion utilities.  May contain some scripts not really relevant to the 
-Pi.
+Utilities for converting files from one flavour to another.
 
 music-utils/
 
-Various utilities to do with music files.  May contain some scripts not really 
-relevant to the Pi.
+As above but specific to music.
 
-Mike Ray <mike.ray@btinternet.com>
-March 2014.
+notes/
 
-For Raspberry Pi accessibility-related info, visit:
-http://www.raspberryvi.org/
-
-
+See if you can guess?
 

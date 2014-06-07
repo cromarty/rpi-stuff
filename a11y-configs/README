@@ -1,23 +1,7 @@
-
-In this directory:
-
-This directory contains sub-directories which themselves contain 
-'sausage-packs' (see ../sausage-machine/README) which will configure a variety 
-of different Raspberry Pi versions of Linux to add various accessibility tools.
-
-In addition it contains a script; 'main-menu.sh' which will present to the user 
-a menu of Raspberry Pi related sausage-packs to run.
-
-pi-arch/
-
-The pi-arch sub-directory contains sausage-packs which relate to Arch Linux.
-
+alarmpi/
+generate-run-scripts.sh*
+minibian/
 raspbian/
-
-The raspbian directory contains packs for configuring accessibility tools on 
-Raspbian.
-
-It should be obvious from the structure of these two directories how to set-up 
-your own packs of scripts to run with the 'sausage-machine'.
-
-
+README
+talking-arch/
+test/
