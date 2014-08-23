@@ -30,3 +30,9 @@ lex.yy.c
 
 
 
+# ignore object files
+*.o
+
+# ignore dependancy files
+*.d
+
