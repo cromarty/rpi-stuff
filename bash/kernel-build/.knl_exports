@@ -4,8 +4,7 @@
 #
 # [[ -f ~/.knl_exports ]] && . ~/.knl_exports
 #
-# It must appear after you have set the KERNEL_ROOT variable to work 
-properly
+# It must appear after you have set the KERNEL_ROOT variable to work properly
 #
 
 # These depend on KERNEL_ROOT:
