@@ -12,7 +12,7 @@ if [ ! -d $1 ]; then
 	exit 1
 fi
 
-if [ ! -f "$1/linux/MAINTAINERS" ]; then
+if [ ! -f "$1/src/MAINTAINERS" ]; then
 	echo "$1/linux does not look like a valid kernel source tree"
 	exit 1
 fi
