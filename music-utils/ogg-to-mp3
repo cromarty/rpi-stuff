@@ -1,8 +1,0 @@
-#!/bin/bash
-# convert ogg to mp3
-
-for name in *.ogg
-do
-	ffmpeg -i "$name" "$name.mp3"
-done
-
