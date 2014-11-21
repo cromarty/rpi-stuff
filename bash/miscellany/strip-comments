@@ -1,6 +1,0 @@
-#!/bin/bash
-# strip commented and blank lines
-
-sed -e 's/#.*//' \
--e 's/[ ^I]*$//' \
--e '/^$/ d'
