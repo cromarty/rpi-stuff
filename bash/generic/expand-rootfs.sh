@@ -34,7 +34,6 @@ MB_END=$(echo "${MB} - 120" | bc | cut -f 1 -d.)
 
 echo "Size of device in megabytes: ${MB}"
 echo "Start of partition 2: ${PART_START}"
-echo "Start of logical partition 5: ${LOG_START}"
 echo "New size of root partition: ${MB_END}"
 
 fdisk ${DEVICE} <<EOF
