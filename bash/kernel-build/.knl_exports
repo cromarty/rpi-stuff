@@ -8,12 +8,13 @@
 #
 
 # These depend on KERNEL_ROOT:
-export KERNEL_SRC=${KERNEL_ROOT}/linux/
+export KERNEL_SRC=${KERNEL_ROOT}/src/
 export MODULES_TEMP=${KERNEL_ROOT}/modules
-export KERNEL_BUILD=${KERNEL_ROOT}/rpi-build
+export KERNEL_BUILD=${KERNEL_ROOT}/build
 
-# These don't change from build to build:
-export CCROOT=/opt/toolchains
+# These don't change from build to build, but
+# change CCROOT to the root of where you put the cross-compiler tool-chain:
+export CCROOT=/opt/tools
 export CCPREFIX=${CCROOT}/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/bin/arm-bcm2708hardfp-linux-gnueabi-
 export PLATFORM=bcmrpi
 
