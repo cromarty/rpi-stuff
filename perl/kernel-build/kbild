@@ -1,0 +1,152 @@
+#!/usr/bin/perl
+
+use Getopt::Long;
+
+my %paths;
+my %sets;
+my $steps = -1;
+my $types = 0;
+my $errors = 0;
+my $subs = {
+		'build' => \&build_kernel,
+		'modules' => \&build_modules,
+		'instmod' => \&install_modules,
+		'mrproper' => \&mrproper,
+		'oldconfig' => \&oldconfig,
+	'gzip' => \&gzip_modules
+			};
+
+$paths{'kernelroot'} = $ENV{KERNEL_ROOT};
+
+
+my $ccprefix = $ENV{CCPREFIX};
+my $arch = $ENV{ARCH};
+my $platform = $ENV{PLATFORM};
+my $verbose = 0;
+
+GetOptions (
+		'arch=s' => \$arch,
+	'ccprefix=s' => \$ccprefix,
+	'platform=s' => \$platform,
+	'kernelroot=s' => \&path_handler,
+	'build' => sub { $step = 'build' ; $steps++ },
+	'modules' => sub { $step = 'modules' ; $steps++ },
+	'instmod' => sub { $step = 'instmod' ; $steps++ }, 
+	'mrproper' => sub { $step = 'mrproper' ; $steps++ },
+	'oldconfig' => sub { $step = 'oldconfig' ; $steps++ },
+	'gzip' => sub { $step = 'gzip' ; $steps++ },
+	'cross' => sub { $type = 'cross' ; $types++},
+	'native' => sub { $type = 'native' ; $types++ },
+	'verbose' => sub { $verbose = 1}
+	) || die "There were incorrect arguments\n";
+
+$paths{'build'} = "$paths{'kernelroot'}/build";
+$paths{'modules'} = "$paths{'kernelroot'}/modules";
+$paths{'src'} = "$paths{'kernelroot'}/src";
+
+
+
+die "There were errors\n" if $steps;
+
+$errors++ unless -d $paths{'build'};
+$errors++ unless -d $paths{'modules'};
+$errors++ unless -d $paths{'src'};
+
+$errors++ unless -w$paths{'build'};
+$errors++ unless -w $paths{'modules'};
+$errors++ unless -w $paths{'src'};
+
+die "There were permission errors\n" if ($errors);
+
+die "There were type errors\n" if $types > 1;
+
+
+
+
+my $result =&{$subs->{$step}};
+
+print "Result: $?\n";
+
+
+
+
+
+
+
+
+#--- subroutines
+
+
+sub path_handler {
+	my ($key, $path) = @_;
+	$paths{$key} = "$path";
+}
+
+
+sub build_kernel {
+	my $cmd = "make ";
+	$cmd .= "V=$verbose ";
+	$cmd .= "O=$paths{'build'} ";
+	if ( $type eq 'cross' ) {
+		$cmd .= "CROSS_COMPILE=$ccprefix ";
+	}
+	$cmd .= "-j\$(cat /proc/cpuinfo|grep processor|wc -l) ";
+	chdir($paths{'src'});
+		return system($cmd);
+}
+
+sub build_modules {
+	my $cmd = "make ";
+	$cmd .= "O=$paths{'build'} ";
+ $cmd .= "ARCH=$arch ";
+	if ( $type eq 'cross' ) {
+		$cmd .= "CROSS_COMPILE=$ccprefix ";
+	}
+	$cmd .= "modules";
+	chdir($paths{'src'});
+		return system($cmd);
+	}
+
+sub install_modules {
+	my $cmd = "make ";
+	$cmd .= "O=$paths{'build'} ";
+	$cmd .= "ARCH=$arch ";
+	if ( $type eq 'cross' ) {
+		$cmd .= "CROSS_COMPILE=$ccprefix ";
+	}
+	$cmd .= "INSTALL_MOD_PATH=$paths{'modules'} modules_install";
+	chdir($paths{'src'});
+	return system($cmd);
+}
+
+sub mrproper {
+	my $cmd = "make ";
+	$cmd .= "O=$paths{'build'} ";
+ 	$cmd .= "mrproper";
+	chdir($paths{'src'});
+	return system($cmd);
+}
+
+sub oldconfig {
+	my $cmd = "make ";
+	$cmd .= "V=$verbose ";
+	$cmd .= "O=$paths{'build'} ";
+	$cmd .= "ARCH=$arch ";
+	$cmd .= "oldconfig";
+chdir($paths{'src'});
+	return system($cmd);
+}
+
+
+
+sub gzip_modules {
+	my $result;
+	chdir("$paths{'modules'}");
+print "about to zip\n";
+	$result = system("find . -name '*.ko' -exec gzip -9 {} \\;");
+	return $result unless $result == 0;
+print "about to remove ko\n";
+	return system("find . -name '*.ko' -exec rm {} \\;");
+}
+
+
