@@ -1,6 +1,8 @@
 #!/bin/bash
 # convert ogg to mp3
 
+set -e
+
 for OGG in *.ogg
 do
 	MP3=${OGG%.ogg}.mp3
