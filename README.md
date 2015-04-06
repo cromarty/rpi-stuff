@@ -26,9 +26,9 @@ making a full Arch Linux image file for writing to an SD card.
 Works for either ARMv6 or ARMv7.
 
 
-## perl/
+## kernel-build/
 
-Perl scripts.  Including ```kcc```.  See ```README.md``` in that directory.
+A bash script called kcc for doing a kernel cross-compile.
 
 
 
