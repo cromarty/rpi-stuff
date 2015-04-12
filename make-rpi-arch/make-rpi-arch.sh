@@ -25,15 +25,15 @@ WRK=arch-latest-${ARMV}
 IMG=ArchLinuxARM-$(date +%F | sed 's:-::g').${ARMV}.img
 
 # Tweak block count if necessary. Could be smaller perhaps to fit a 2GB card?
-blocks=1998
+BLOCKS=1998
 
 # size of FAT partition to receive kernel etc, in blocks
-split=64
+SPLIT=64
 
 # mount points of file-systems created in the .IMG file
 # sub-directories of working dir will be created with these names
-bootmp=boot
-rootmp=root
+BOOTMP=boot
+ROOTMP=root
 
 # chosen hostname
 HOSTNAME=alarmpi
@@ -68,7 +68,7 @@ cd ${WRK}/
 
 echo "Running dd to make a raw image file, this will take a few minutes..."
 echo "Name of image file will be ${IMG}"
-dd if=/dev/zero of=${IMG} bs=1M count=${blocks}
+dd if=/dev/zero of=${IMG} bs=1M count=${BLOCKS}
 echo "Partitioning the raw image file..."
 parted ${IMG} --script -- mklabel msdos
 parted ${IMG} --script -- mkpart primary fat32 1 ${split}
@@ -82,34 +82,34 @@ device=`kpartx -va ${loopdevice} | sed -E 's/.*(loop[0-9])p.*/\1/g' | head -1`
 device="/dev/mapper/${device}"
 
 # boot partition
-bootp=${device}p1
+BOOTP=${device}p1
 
 # root partition
-rootp=${device}p2
+ROOTP=${device}p2
 
-echo "Boot partition is ${bootp}"
-echo "Root partition is ${rootp}"
+echo "Boot partition is ${BOOTP}"
+echo "Root partition is ${ROOTP}"
 
-echo -e "${bootp}\n${rootp}\n\n" > loop-dev-names
+echo -e "${BOOTP}\n${ROOTP}\n\n" > loop-dev-names
 
 echo "Making file systems..."
-mkfs.vfat $bootp
-mkfs.ext4 $rootp
+mkfs.vfat ${BOOTP}
+mkfs.ext4 ${ROOTP}
 
 # make the mount points
 echo "Making the mount points if they don't exist..."
-if [ ! -d ${bootmp} ]; then
-	mkdir -p ${bootmp}
+if [ ! -d ${BOOTMP} ]; then
+	mkdir -p ${BOOTMP}
 fi
 
-if [ ! -d ${rootmp} ]; then
-	mkdir -p ${rootmp}
+if [ ! -d ${ROOTMP} ]; then
+	mkdir -p ${ROOTMP}
 fi
 
 # mount the two partitions
 echo "Mounting the two partitions..."
-mount $bootp ${bootmp}
-mount $rootp ${rootmp}
+mount ${BOOTP} ${BOOTMP}
+mount ${ROOTP} ${ROOTMP}
 
 echo 'Downloading the latest Arch...'
 case ${ARMV} in
@@ -125,7 +125,7 @@ case ${ARMV} in
 esac
 
 echo 'Extracting the filesystems...'
-bsdtar -xpf arch-latest.tar.gz -C ${rootmp}
+bsdtar -xpf arch-latest.tar.gz -C ${ROOTMP}
 
 # move the boot stuff into the boot partition
 mv root/boot/* boot
@@ -136,11 +136,11 @@ echo "${HOSTNAME}" > root/etc/hostname
 sync
 
 # un-mount the partitions contained in the .IMG file
-umount ${bootmp}
-umount ${rootmp}
+umount ${BOOTMP}
+umount ${ROOTMP}
 
-dmsetup remove ${bootp}
-dmsetup remove ${rootp}
+dmsetup remove ${BOOTP}
+dmsetup remove ${ROOTP}
 #
 # Note: On my Debian x86_64 machine the loop devices persist until I reboot.  No
 # idea why
