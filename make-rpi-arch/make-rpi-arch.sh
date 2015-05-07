@@ -7,15 +7,40 @@
 # Usual GPL stuff about no guarantees etc.
 #
 # Mike Ray, January 2015
-#
 
-# ARM version
-# armv6 for original Raspberry Pi
-# armv7 for Raspberry Pi 2
-# Comment out as needed
 
-#ARMV=armv6
-ARMV=armv7
+function usage() {
+	echo
+	echo "Usage: $0 {armv6|armv7}"	echo
+	echo 'armv6 for original Pi, armv7 for Pi2'
+	echo
+}
+
+if [ `whoami` != 'root' ]; then
+	echo 'Script must be run as root'
+	exit 1
+fi
+
+if [ $# != 1 ]; then
+	usage
+	exit 1
+fi
+
+case ${ARMV} in
+	armv6)
+		echo 'Creating an ARMV6 image file'
+	;;
+	armv7)
+		echo 'Creating an ARMV7 image file'
+	;;
+	*)
+		usage
+		exit 1
+	;;
+esac
+
+
+ARMV=${1}
 
 # working directory
 WRK=arch-latest-${ARMV}
@@ -38,25 +63,8 @@ ROOTMP=root
 # chosen hostname
 HOSTNAME=alarmpi
 
-if [ $(id -u) -ne 0 ]; then
-    echo "Script must be run as root, try 'sudo ./$0'"
-     exit 1
-fi
-
 set -e
 
-case ${ARMV} in
-	armv6)
-		echo 'Creating an ARMV6 image file'
-	;;
-	armv7)
-		echo 'Creating an ARMV7 image file'
-	;;
-	*)
-		echo 'Incorrect ARMV setting'
-		exit 1
-	;;
-esac
 
 echo "Making the work directory if it doesn't exist..."
 if [ ! -d ${WRK} ]; then
