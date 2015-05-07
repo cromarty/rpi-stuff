@@ -14,8 +14,8 @@
 # armv7 for Raspberry Pi 2
 # Comment out as needed
 
-ARMV=armv6
-#ARMV=armv7
+#ARMV=armv6
+ARMV=armv7
 
 # working directory
 WRK=arch-latest-${ARMV}
@@ -66,26 +66,30 @@ fi
 echo "cd to work directory..."
 cd ${WRK}/
 
-echo "Running dd to make a raw image file, this will take a few minutes..."
+echo 'Running dd to make a raw image file, this will take about 30 seconds, depending on the speed of your machine...'
 echo "Name of image file will be ${IMG}"
 dd if=/dev/zero of=${IMG} bs=1M count=${BLOCKS}
 echo "Partitioning the raw image file..."
+echo 'Making an msdos label...'
 parted ${IMG} --script -- mklabel msdos
-parted ${IMG} --script -- mkpart primary fat32 1 ${split}
+echo 'Making the boot partition...'
+parted ${IMG} --script -- mkpart primary fat32 1 ${SPLIT}
+echo 'Setting the boot partition bootable...'
 parted ${IMG} --script set 1 boot on
-parted ${IMG} --script -- mkpart primary ext4 ${split} -1
+echo 'Making the root partition...'
+parted ${IMG} --script -- mkpart primary ext4 ${SPLIT} -1
 
 echo "Setting up the loop device..."
-loopdevice=`losetup -f --show ${IMG}`
-echo "Loop device is ${loopdevice}"
-device=`kpartx -va ${loopdevice} | sed -E 's/.*(loop[0-9])p.*/\1/g' | head -1`
-device="/dev/mapper/${device}"
+LOOPDEVICE=`losetup -f --show ${IMG}`
+echo "Loop device is ${LOOPDEVICE}"
+DEVICE=`kpartx -va ${LOOPDEVICE} | sed -E 's/.*(loop[0-9])p.*/\1/g' | head -1`
+DEVICE="/dev/mapper/${DEVICE}"
 
 # boot partition
-BOOTP=${device}p1
+BOOTP=${DEVICE}p1
 
 # root partition
-ROOTP=${device}p2
+ROOTP=${DEVICE}p2
 
 echo "Boot partition is ${BOOTP}"
 echo "Root partition is ${ROOTP}"
@@ -117,7 +121,7 @@ case ${ARMV} in
 		wget -q http://archlinuxarm.org/os/ArchLinuxARM-rpi-latest.tar.gz -O arch-latest.tar.gz 
 	;;
 	armv7)
-		wget http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz -O arch-latest.tar.gz
+		wget -q http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz -O arch-latest.tar.gz
 	;;
 		*)
 		echo 'Incorrect value for ARMV'
@@ -128,17 +132,22 @@ echo 'Extracting the filesystems...'
 bsdtar -xpf arch-latest.tar.gz -C ${ROOTMP}
 
 # move the boot stuff into the boot partition
+echo 'Move the boot files into the boot partition...'
 mv root/boot/* boot
 
 # write the chosen hostname into /etc/hostname
+echo 'Writing the host name...'
 echo "${HOSTNAME}" > root/etc/hostname
+
 
 sync
 
 # un-mount the partitions contained in the .IMG file
+echo 'Un-mount the partitions...'
 umount ${BOOTMP}
 umount ${ROOTMP}
 
+echo 'Remove the loop devices...'
 dmsetup remove ${BOOTP}
 dmsetup remove ${ROOTP}
 #
