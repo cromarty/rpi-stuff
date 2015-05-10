@@ -26,6 +26,8 @@ if [ $# != 1 ]; then
 	exit 1
 fi
 
+ARMV=${1}
+
 case ${ARMV} in
 	armv6)
 		echo 'Creating an ARMV6 image file'
@@ -40,7 +42,7 @@ case ${ARMV} in
 esac
 
 
-ARMV=${1}
+
 
 # working directory
 WRK=arch-latest-${ARMV}
