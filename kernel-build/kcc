@@ -1,44 +1,71 @@
 #!/bin/bash
 
 
-usage() {
-	echo 'Usage: kbild.sh { defconfig | menuconfig | oldconfig | build | modules | modules_install | mrproper }'
-}
 
-dryrun() {
-	echo 'Dry run:'
-	echo "KERNEL_ROOT is: ${KERNEL_ROOT}"
-	echo "CCPREFIX is:    ${CCPREFIX}"
-	echo 'Kernel source tree looks good'
-	echo 'CC version of gcc found and is executable'
-}
+
+
 
 # all these can be overridden by setting them in the environment
 # before this script is run
 [ -z "${KERNEL_ROOT}" ] && KERNEL_ROOT=/opt/linux/rpi
 [ -z "${CCPREFIX}" ] && CCPREFIX=/opt/toolchains/armv7/arm-unknown-linux-gnueabihf/bin/arm-unknown-linux-gnueabihf-
-
 [ -z "${SRC}" ] && SRC=src
 [ -z "${BUILD}" ] && BUILD=build
 [ -z "${MODULES}" ] && MODULES=modules
+
 [ -z "${ARCH}" ] && ARCH=arm
 [ -z "${PLATFORM}" ] && PLATFORM=bcmrpi
 [ -z "${VERBOSITY}" ] && VERBOSITY=1
 
 if [ $# != 1 ]; then
-	usage
+	echo 'Usage: kbild.sh { defconfig | menuconfig | oldconfig | build | modules | modules_install | mrproper }'
 	exit 1
 fi
+
+
+if [[ ! -d "${KERNEL_ROOT}/${SRC}" || ! -r "${KERNEL_ROOT}/${SRC}" ]]; then
+	echo 'Specified kernel root not found or not readable. Build will stop'
+	exit 1
+fi
+
+echo 'Specified kernel source path exists and is writable...'
 
 if [ ! -f "${KERNEL_ROOT}/${SRC}/MAINTAINERS" ]; then
-	echo 'The specified KERNEL_ROOT/src does not look like a kernel source tree, there is no MAINTAINERS file'
+	echo 'Did not find a MAINTAINERS file in the specified Kernel source tree. Build will stop'
 	exit 1
 fi
 
-if [ ! -x "${CCPREFIX}gcc" ]; then
-	echo 'Did not find an executable gcc with the specified CCPREFIX'
+echo 'Specified Kernel source tree looks good, found the MAINTAINERS file...'
+
+if [[ ! -d "${KERNEL_ROOT}/${BUILD}" || ! -w "${KERNEL_ROOT}/${BUILD}" ]]; then
+	echo 'Specified build directory not found or is not writable. Build will stop'
 	exit 1
 fi
+
+echo 'Build path found and is writable...'
+
+if [[ ! -d "${KERNEL_ROOT}/${MODULES}" || ! -w "${KERNEL_ROOT}/${MODULES}" ]]; then
+	echo 'Specified modules directory not found or is not writable. Build will stop'
+	exit 1
+fi
+
+echo 'Module path found and is writable...'
+
+
+if [ ! -x "${CCPREFIX}gcc" ]; then
+	echo 'Did not find an executable gcc with the specified CCPREFIX. Build will stop'
+	exit 1
+fi
+
+echo 'Cross-compiler found and is executable...'
+
+echo "KERNEL_ROOT = ${KERNEL_ROOT}"
+echo "SRC         = ${SRC}"
+echo "BUILD       = ${BUILD}"
+echo "MODULES     = ${MODULES}"
+echo "CCPREFIX    = ${CCPREFIX}"
+echo "ARCH        = ${ARCH}"
+echo "PLATFORM    = ${PLATFORM}"
 
 set -e
 
@@ -46,11 +73,11 @@ SCRIPT=$(pwd)/$1.script
 
 case $1 in
 	'help')
-		usage
+		echo 'Usage: kbild.sh { defconfig | menuconfig | oldconfig | build | modules | modules_install | mrproper }'
 		exit 0
 	;;
 	'dryrun')
-		dryrun
+		echo 'dryrun specified on command-line. stop'
 		exit 0
 	;;
 	'defconfig')
