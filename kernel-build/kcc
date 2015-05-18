@@ -1,8 +1,9 @@
 #!/bin/bash
 
-
-
-
+if [ -f ~/.kccrc ]; then
+	echo 'Setting environment from ~/.kccrc'
+	. ~/.kccrc
+fi
 
 
 # all these can be overridden by setting them in the environment
@@ -66,6 +67,9 @@ echo "MODULES     = ${MODULES}"
 echo "CCPREFIX    = ${CCPREFIX}"
 echo "ARCH        = ${ARCH}"
 echo "PLATFORM    = ${PLATFORM}"
+
+# temporarily set path locally to include cc prefix path
+PATH=$(dirname ${CCPREFIX}gcc):${PATH}
 
 set -e
 
