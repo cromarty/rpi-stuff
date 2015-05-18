@@ -15,7 +15,7 @@ export MODULES=armv6/modules
 RPIVERSION=armv6
 
 # change this to the cross-compiler prefix
-export CCPREFIX=/opt/toolchains/${RPIVERSION}/arm-unknown-linux-gnueabihf/bin/arm-unknown-linux-gnueabihf-gcc
+export CCPREFIX=/opt/toolchains/${RPIVERSION}/arm-unknown-linux-gnueabihf/bin/arm-unknown-linux-gnueabihf-
 
 # shouldn't need to change these for the Raspberry Pi source from the Foundation
 export ARCH=arm
