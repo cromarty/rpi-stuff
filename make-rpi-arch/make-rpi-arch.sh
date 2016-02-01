@@ -104,6 +104,8 @@ ROOTP=${DEVICE}p2
 echo "Boot partition is ${BOOTP}"
 echo "Root partition is ${ROOTP}"
 
+sleep 5
+
 echo -e "${BOOTP}\n${ROOTP}\n\n" > loop-dev-names
 
 echo "Making file systems..."
