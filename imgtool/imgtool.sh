@@ -20,6 +20,9 @@
 # This code is supplied as is and without any guarantees of fitness for purpose and without liability either stated
 # or implied.
 #
+# You will need losetup and kpartx.
+#
+
 
 usage() {
 
