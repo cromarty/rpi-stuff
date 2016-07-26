@@ -29,6 +29,10 @@ lex.yy.c
 *.tab.h
 
 
+# ignore imgtool stuff
+*.img
+loop-dev-names
+mount-points
 
 # ignore object files
 *.o
