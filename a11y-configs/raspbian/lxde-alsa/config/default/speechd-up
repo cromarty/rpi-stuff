@@ -1,2 +1,0 @@
-# Change to yes if you would like speechd-up to run as a system service.
-RUN_SPEECHD_UP=yes
