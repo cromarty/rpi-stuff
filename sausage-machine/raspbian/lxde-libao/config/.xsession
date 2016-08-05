@@ -1,0 +1,5 @@
+
+
+export SAL_USE_VCLPLUGIN="gtk" GTK_MODULES="gail:atk-bridge" GNOME_ACCESSIBILITY=1
+
+

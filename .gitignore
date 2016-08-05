@@ -40,3 +40,6 @@ mount-points
 # ignore dependancy files
 *.d
 
+# directories under make-rpi-arch
+make-rpi-arch/*/
+
