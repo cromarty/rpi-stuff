@@ -45,6 +45,20 @@ To see usage:
 
 Sudo is required 
 
+imgsync.sh
+==========
+
+This script will use `rsync` to copy files from the boot and root partitions of a mounted image file 
+to boot and root mount-point directories.
+
+The target directories can either be just plain directories or the boot and root partitions of 
+another (probably new empty image created with imgtool.sh) and then mounted.
+
+In this way this script can be used to copy from one Raspberry Pi image to another.
+
+If the target directories are just directories and not a mounted image file's partitions, then it is 
+effectively backing up the contents of the source image.
+
 
 
 

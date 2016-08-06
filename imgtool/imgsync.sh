@@ -2,8 +2,30 @@
 
 
 usage() {
-	echo 'You got it wrong again'
+	cat <<eof
+
+Usage: $0 --source-bootmp DIRECTORY --source-rootmp DIRECTORY --target-bootmp DIRECTORY --target-rootmp DIRECTORY
+
+	Arguments:
+
+		--source-bootmp
+			The source boot mount-point.
+
+		--source-rootmp
+			The source root mount-point.
+
+		--target-bootmp
+			The target boot mount-point.
+
+		--target-rootmp
+			The target root mount-point.
+
+	All arguments are mandatory.
+
+eof
+
 	exit 1
+
 }
 
 
@@ -47,7 +69,7 @@ SOURCE_ROOTMP=
 TARGET_BOOTMP=
 TARGET_ROOTMP=
 
-[ $# -eq 8 ] || { echo "There must be exactly eight arguments" ; exit 1 ; }
+[ $# -eq 8 ] || { echo "There must be exactly eight arguments" ; usage ; }
 
 
 while :
