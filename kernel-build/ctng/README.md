@@ -1,11 +1,13 @@
 
-# ctng
+ctng
+====
 
 In this directory are two different flavours of _.config_ file for creating cross-compilers for the 
 Raspberry Pi or devices with the same CPU/SoC.
 
 * armv6 is the original Raspberry Pi
-* armv7 is the newer version 2 RPI
+* armv7 is the newer version 2 RPI and above
+
 
 Install crosstool-ng and place the _.config_ file from the correct directory for your use and run:
 

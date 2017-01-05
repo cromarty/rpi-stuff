@@ -1,35 +1,23 @@
 
-## In this repo
+rpi-stuff
+=========
 
-A bit misnamed as there is stuff in here which is generic or applicable to other SBCs.
+* imgtool/
 
-## a11y-configs/
+In this directory is a tool for creating and mounting .img files, including mounting existing 
+Raspberry Pi images, creating new (empty) ones and transferring files from one to the other.
 
-In here there is a mechanism I have called the 'sausage-machine'.
+* kernel-build/
 
-It is a mechanism for running multiple scripts in a controlled order for doing complex 
-configurations.
+Stuff relating to cross-compiling a Pi kernel.
 
-## bash/
+* make-rpi-arch/
 
-A mish-mash of stuff.
+A script for making Arch Linux images for the Raspberry Pi.
 
-## file-conv-utils/
+* sausage-machine/
 
-Mostly music file conversion or CD burning scripts.
-
-## make-rpi-arch/
-
-In here is a script for downloading the root file-system of an Arch system from archlinuxarm.org and 
-making a full Arch Linux image file for writing to an SD card.
-
-Works for either ARMv6 or ARMv7.
-
-
-## kernel-build/
-
-A bash script called kcc for doing a kernel cross-compile.
-
-
-
+In here is a mechanism I created for running multiple scripts in sequence. It is a bit out of date 
+and needs to either be scrapped or re-written but some of the scripts contain stuff I refer to 
+occasionally so I have left it here.
 

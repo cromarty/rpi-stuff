@@ -23,6 +23,16 @@
 #
 # Note that vanilla tar won't work, the .tar.gz downloaded from the ArchARM site was created with bsdtar.
 #
+# Look for HOSTNAME further down the script to change your
+# chosen host name.
+#
+# The default user and password combinations are:
+#
+# User:          alarm
+# Password:      alarm
+# root password: root
+#
+#
 
 function usage() {
 	echo
