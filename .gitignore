@@ -7,8 +7,9 @@ res
 # ignore anything ending with ~
 *~
 
-# ignore any zips
+# ignore any zips and archives
 *.zip
+*.tar.gz
 
 # ignore SciTE properties and session files
 *.properties

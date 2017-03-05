@@ -36,8 +36,8 @@
 
 function usage() {
 	echo
-	echo "Usage: $0 {armv6|armv7}"	echo
-	echo 'armv6 for original Pi, armv7 for Pi2'
+	echo "Usage: $0 {armv6|armv7|armv8}"	echo
+	echo 'armv6 for original Pi, armv7 for Pi2, armv8 for 64-bit Pi3'
 	echo
 }
 
@@ -59,6 +59,9 @@ case ${ARMV} in
 	;;
 	armv7)
 		echo 'Creating an ARMV7 image file'
+	;;
+	armv8)
+		echo 'Creating an ARMV8 image file'
 	;;
 	*)
 		usage
@@ -160,13 +163,18 @@ case ${ARMV} in
 	armv7)
 		wget -q http://archlinuxarm.org/os/ArchLinuxARM-rpi-2-latest.tar.gz -O arch-latest.tar.gz
 	;;
+	armv8)
+		wget -q http://archlinuxarm.org/os/ArchLinuxARM-rpi-3-latest.tar.gz -O arch-latest.tar.gz
+	;;
 		*)
 		echo 'Incorrect value for ARMV'
 		exit 1
 esac
 
 echo 'Extracting the filesystems...'
-bsdtar -xpf arch-latest.tar.gz -C ${ROOTMP}
+bsdtar -zxvf arch-latest.tar.gz -C ${ROOTMP}
+#tar -xpf arch-latest.tar.gz -C ${ROOTMP}
+
 
 # move the boot stuff into the boot partition
 echo 'Move the boot files into the boot partition...'
