@@ -13,7 +13,7 @@ gsettings get org.gnome.desktop.a11y.applications screen-reader-enabled
 
 echo 'Setting accessibility switches...'	
 dbus-launch gsettings set org.mate.interface accessibility true
-	dbus-launch gsettings set org.gnome.desktop.a11y.applications screen-reader-enabled true
+dbus-launch gsettings set org.gnome.desktop.a11y.applications screen-reader-enabled true
 
 echo 'The accessibility switches are now:'
 gsettings get org.mate.interface accessibility

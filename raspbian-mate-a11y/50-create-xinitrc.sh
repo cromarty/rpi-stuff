@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [ `whoami` = 'root' ; then
-	echo "Don't run this script as root. Script will exit.'
+if [ `whoami` = 'root' ]; then
+	echo "Don't run this script as root. Script will exit."
 	exit 1
 fi
 
