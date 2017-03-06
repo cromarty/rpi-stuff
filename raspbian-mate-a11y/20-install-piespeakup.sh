@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PIESPEAKUP_VERSION=1.0.0
+PIESPEAKUP_VERSION=1.1.0
 
 if [ `whoami` != 'root' ]; then
 	echo "Script must be run as root, try: sudo $0"
