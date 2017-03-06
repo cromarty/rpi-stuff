@@ -6,8 +6,8 @@ if [ `whoami` != 'root' ]; then
 fi
 
 ./imgsync.sh \
-		--source-bootmp ./existing/bootmp \
-		--source-rootmp ./existing/rootmp \
-		--target-bootmp ./empty/bootmp \
-		--target-rootmp ./empty/rootmp
+		--source-bootmp ./empty/bootmp \
+		--source-rootmp ./empty/rootmp \
+		--target-bootmp ./newempty/bootmp \
+		--target-rootmp ./newempty/rootmp
 

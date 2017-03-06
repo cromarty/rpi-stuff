@@ -23,6 +23,8 @@ echo 'Editing /boot/config.txt...'
 sed -i 's|^\(dtparam=audio=on\)|#\1|' /boot/config.txt
 
 echo 'Installing some stuff, this will take a long time...'
+apt-get install -yq xserver-xorg-core xserver-xorg-video-fbdev
+#xserver-xorg-video-dummy
 apt-get install -yq mate-core mate-desktop-environment gnome-orca xinit
 
 echo 'All done'

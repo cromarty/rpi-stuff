@@ -7,10 +7,10 @@ fi
 
 IMG=$(date +%F)-empty.img
 
-./imgtool.sh -w empty \
+./imgtool.sh -w newempty \
 -f new \
 -i ${IMG} \
-  -c 1800 \
+  -c 3000 \
 -z 1M \
 -s 64
 
