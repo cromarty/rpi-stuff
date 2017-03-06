@@ -118,5 +118,5 @@ echo "Target boot mount-point: ${TARGET_BOOTMP}"
 echo "Target root mount-point: ${TARGET_ROOTMP}"
 
 rsync -rav ${SOURCE_BOOTMP}/* ${TARGET_BOOTMP}
-#rsync -rav --exclude=lost+found ${SOURCE_ROOTMP}/* ${TARGET_ROOTMP}
+rsync -rav --exclude=lost+found ${SOURCE_ROOTMP}/* ${TARGET_ROOTMP}
 
