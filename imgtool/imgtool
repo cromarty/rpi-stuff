@@ -315,7 +315,7 @@ do
 		;;
 		-i | --image)
 			checkargs $*
-			IMG="$2"
+			IMG=$(realpath "$2")
 			shift 2
 		;;
 		-s | --split)
@@ -325,7 +325,7 @@ do
 		;;
 		-w | --workdir)
 			checkargs $*
-			WRK="$2"
+			WRK=$(realpath "$2")
 			shift 2
 		;;
 		-f | --func)
@@ -359,7 +359,7 @@ check_root
 case "$FUNC" in
 	'mount')
 		[ -z "$IMG" ] && { echo 'Image file name is missing' ; usage ; }
-		[ -f "${WRK}/${IMG}" ] || { echo 'Image file does not exist' ; exit 1 ; }  
+		[ -f "${IMG}" ] || { echo 'Image file does not exist' ; exit 1 ; }  
 		mount_image
 	;;
 	'new')
