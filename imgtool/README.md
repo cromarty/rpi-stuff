@@ -200,20 +200,3 @@ from the existing one.
 
 
 
-
-Anciliary Scripts
------------------
-
-makenewimage.sh
-
-Calls imgtool.sh with some default arguments to create a new image and mount the two partitions.
-
-syncexistingtonew.sh
-
-Calls imgsync.sh with some default arguments to rsync from one mounted set of boot and root 
-partitions to another.
-
-Look in the two scripts above to adjust their arguments before you run them.
-
-
-
