@@ -92,7 +92,6 @@ checkargs() {
 } # end check_args
 
 loop_devices() {
-    local IMAGEFILE="${1}"
     
 	echo "Setting up the loop device..."
 	LOOPDEVICE=`losetup -f --show ${IMAGEFILE}`
@@ -104,12 +103,12 @@ loop_devices() {
 } # end loop_devices
 
 mount_partitions() {
-    local WORKDIR=$(realpath "${1}")
 
 	echo "Making the mount points if they don't exist..."
 	[ -d ${BOOTMP} ] || mkdir -p "${BOOTMP}"
 	[ -d ${ROOTMP} ] || mkdir -p "${ROOTMP}"
 
+	echo "Writing mount-points to ${WORKDIR}/mount-points"
 	echo -e "${BOOTMP}\n${ROOTMP}" > ${WORKDIR}/mount-points
 	
 	echo "Mounting the two partitions..."
@@ -120,13 +119,6 @@ mount_partitions() {
 
     
 new_image() {
-	local WORKDIR=$(realpath ${1})
-	local IMAGEFILE=$(realpath $1)/$(basename ${2})
-	local BLOCKSIZE=${3}
-	local BLOCKCOUNT=${4}
-	local SPLIT=${5}
-	local BOOTMP=$(realpath $1)/$(basename ${6})
-	local ROOTMP=$(realpath $1)/$(basename ${7})
 
 	echo "Making the work directory if it doesn't exist..."
 	[ -d ${WORKDIR} ] || mkdir -p "${WORKDIR}"
@@ -143,8 +135,9 @@ new_image() {
 	echo 'Making the root partition...'
 	parted ${IMAGEFILE} --script -- mkpart primary ext4 ${SPLIT} -1
 
-	loop_devices "${IMAGEFILE}"
+	loop_devices
 	
+	echo "Writing loop device names to ${WORKDIR}/loop-dev-names"
 		echo -e "${BOOTP}\n${ROOTP}" > "${WORKDIR}/loop-dev-names"
 
 	echo "Boot partition is ${BOOTP}"
@@ -156,35 +149,30 @@ new_image() {
 	mkfs.vfat ${BOOTP}
 	mkfs.ext4 ${ROOTP}
 
-	mount_partitions "${WORKDIR}"
+	mount_partitions
 
 } # end new_image
 
 mount_image() {
-	local WORKDIR=$(realpath $1)
-	local IMAGEFILE=$(realpath $2)
-	local BOOTMP=$(realpath $1)/$3
-	local ROOTMP=$(realpath $1)/$4
 
 	echo "Making the work directory if it doesn't exist..."
 	[ -d ${WORKDIR} ] || mkdir -p "${WORKDIR}"
 
-	loop_devices "${IMAGEFILE}"
+	loop_devices
 
 	sleep 5
 
-	mount_partitions "${WORKDIR}"
-	
+	mount_partitions
+
+		echo "Writing loop device names to ${WORKDIR}/loop-dev-names"
+		echo -e "${BOOTP}\n${ROOTP}" > "${WORKDIR}/loop-dev-names"
+		
 } # end mount_image
 
 validate_blocksize() {
-	local BLOCKSIZE=$1
-
 case "$BLOCKSIZE" in
-	'1M')
+	'1M'|'1MB')
 	;;
-	'1MB')
-		;;
 	*)
 		echo 'Invalid block-size'
 		usage
@@ -195,8 +183,6 @@ esac
 } # end validate_blocksize
 
 validate_blockcount() {
-	local BLOCKCOUNT=$1
-
 echo "$BLOCKCOUNT" | grep "^[0-9][0-9]*$" >/dev/null
 if [ $? -eq 1 ]; then
 		echo 'Bad block count'
@@ -206,8 +192,6 @@ fi
 
 
 validate_split() {
-    local SPLIT=$1
-
 echo "${SPLIT}" | grep "^[0-9][0-9]*$" >/dev/null
 if [ $? -eq 1 ]; then
 		echo 'Bad split value'
@@ -217,9 +201,6 @@ fi
 
 
 remove_loop_devices() {
-	local WORKDIR=$(realpath $1)
-
-	set +e
 	
 	echo 'Removing loop devices...'
 	[ -f ${WORKDIR}/loop-dev-names ] || { echo "${WORKDIR}/loop-dev-names does not exist" ; exit 1 ; }
@@ -229,18 +210,12 @@ remove_loop_devices() {
 		echo "Removing loop device ${LOOP}..."
 		dmsetup remove ${LOOP}
 	done
-
-	set -e
 	
 } # end remove_loop_devices
 
 
 remove_mount_points() {
-	local WORKDIR=$(realpath $1)
 
-	set +e
-	
-	echo 'Removing mount points...'
 	[ -f ${WORKDIR}/mount-points ] || { echo "${WORKDIR}/mount-points does not exist" ; exit 1 ; }
 	cat ${WORKDIR}/mount-points | \
 	while read MOUNTPOINT
@@ -249,30 +224,21 @@ remove_mount_points() {
 		rmdir ${MOUNTPOINT}
 	done
 
-	set -e
-		
 } # end remove_mount_points
 
 un_mount_partitions() {
-	local WORKDIR=$(realpath $1)
-	local MOUNTPOINTS=${WORKDIR}/mount-points
-
-	set +e
 	
 	echo 'Un-mounting partitions...'
-	cat ${MOUNTPOINTS} | \
+	cat ${WORKDIR}/mount-points | \
 	while read MOUNTPOINT
 	do
 	      echo "umount-ing ${MOUNTPOINT}"
 		umount "${MOUNTPOINT}"
 	done
-
-	set -e
 	
 } # end un_mount_partitions
 
 clean_up() {
-	local WORKDIR=$(realpath $1)
 
 	un_mount_partitions ${WORKDIR}
 	remove_mount_points ${WORKDIR}
@@ -294,13 +260,13 @@ check_root() {
 
 #-- main code
 
+set -e
+
 BLOCKSIZE=1M
 BOOTMP=bootmp
 ROOTMP=rootmp
 SPLIT=64
 DRYRUN=
-
-set -e
 
 while :
 do
@@ -336,7 +302,7 @@ do
 		;;
 		-i | --image)
 			checkargs $*
-			IMAGEFILE=$(basename "$2")
+			IMAGEFILE="$2"
 			shift 2
 		;;
 		-s | --split)
@@ -346,7 +312,7 @@ do
 		;;
 		-w | --workdir)
 			checkargs $*
-			WORKDIR=$(realpath "${2}")
+			WORKDIR=${2}
 			shift 2
 		;;
 		-f | --func)
@@ -374,24 +340,34 @@ check_root
 [ -z "$WORKDIR" ] && { echo 'No working directory supplied' ; usage ; }
 [ -z "$FUNC" ] && { echo 'No function supplied' ; usage ; }
 
+
+WORKDIR=$(realpath ${WORKDIR})
+
+BOOTMP=${WORKDIR}/${BOOTMP}
+ROOTMP=${WORKDIR}/${ROOTMP}
+
+
 case "$FUNC" in
 	'mount')
 		[ -z "$IMAGEFILE" ] && { echo 'Image file name is missing' ; usage ; }
 		[ -f "${IMAGEFILE}" ] || { echo 'Image file does not exist' ; exit 1 ; }  
-		mount_image ${WORKDIR} ${IMAGEFILE} ${BOOTMP} ${ROOTMP}
+		IMAGEFILE=$(realpath ${IMAGEFILE})
+		mount_image
 	;;
 	'new')
-		[ -z "$IMAGEFILE" ] && { echo 'Image file name is missing' ; usage ; }
 		[ -z "$BLOCKCOUNT" ] && { echo 'No block-count supplied' ; usage ; }
 		[ -z "$BLOCKSIZE" ] && { echo 'No block-size supplied' ; usage ; }
 		[ -z "$SPLIT" ] && { echo 'No split-size supplied' ; usage ; }
-		validate_blockcount ${BLOCKCOUNT}
-		validate_blocksize ${BLOCKSIZE}
-		validate_split ${SPLIT}
-		new_image ${WORKDIR} ${IMAGEFILE} ${BLOCKSIZE} ${BLOCKCOUNT} ${SPLIT} ${BOOTMP} ${ROOTMP}
+		[ -z "$IMAGEFILE" ] && { echo 'Image file name is missing' ; usage ; }
+		[ -f "${IMAGEFILE}" ] && { echo 'Image file already exists, not overwriting' ; exit 1 ; }  
+		validate_blockcount
+		validate_blocksize
+		validate_split
+		IMAGEFILE=$(realpath ${IMAGEFILE})
+		new_image
 	;;
 	'cleanup')
-		clean_up ${WORKDIR}
+		clean_up
 	;;
 	*)
 		echo 'Invalid function'
@@ -400,4 +376,5 @@ case "$FUNC" in
 	;;
 esac
 
+echo "All done"
 exit 0
