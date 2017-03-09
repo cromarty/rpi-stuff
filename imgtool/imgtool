@@ -81,7 +81,6 @@ Usage:
      Default = 64.
 
 eof
-
   
 	exit 1
 } # end usage
@@ -106,7 +105,6 @@ loop_devices() {
 
 mount_partitions() {
     local WORKDIR=$(realpath "${1}")
-    echo "WORKDIR in mount_partitions is ${WORKDIR}"
 
 	echo "Making the mount points if they don't exist..."
 	[ -d ${BOOTMP} ] || mkdir -p "${BOOTMP}"
@@ -122,7 +120,6 @@ mount_partitions() {
 
     
 new_image() {
-	echo "in new_image"
 	local WORKDIR=$(realpath ${1})
 	local IMAGEFILE=$(realpath $1)/$(basename ${2})
 	local BLOCKSIZE=${3}
@@ -168,8 +165,6 @@ mount_image() {
 	local IMAGEFILE=$(realpath $2)
 	local BOOTMP=$(realpath $1)/$3
 	local ROOTMP=$(realpath $1)/$4
-
-	echo "WORKDIR in mount_image is ${WORKDIR}"
 
 	echo "Making the work directory if it doesn't exist..."
 	[ -d ${WORKDIR} ] || mkdir -p "${WORKDIR}"
