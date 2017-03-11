@@ -240,8 +240,9 @@ make_image() {
 
 	echo 'Extracting the filesystems...'
 	gunzip ${WORKDIR}/arch-latest-${ARCH}.tar.gz
+	set +e
 	tar -xpf ${WORKDIR}/arch-latest-${ARCH}.tar -C ${ROOTMP}
-
+	set -e
 	# move the boot stuff into the boot partition
 	echo 'Move the boot files into the boot partition...'
 	mv ${ROOTMP}/boot/* ${BOOTMP}
