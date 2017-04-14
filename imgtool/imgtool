@@ -1,175 +1,149 @@
 #!/bin/bash
-#
-# imgtool.sh
-# Copyright (C) 2016 Mike Ray <mike.ray@btinternet.com>
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-#
-# This code is supplied as is and without any guarantees of fitness for purpose and without liability either stated
-# or implied.
-#
-# You will need losetup and kpartx.
-#
+
+. ./imgtool.lib
 
 
 usage() {
+	cat <<EOF >&2
 
-	cat <<eof
+Usage: imgtool [OPTIONS}
 
-Usage:
+	Options:
 
--h | --help Usage
+		-C
 
-     Display this usage message and exit.
+			Perform a 'clean-up' of previous Mount/New run.
 
--d | --dryrun
+		-M
 
-     Perform a dry-run but actually do nothing. All other parameters still as required.
+			Perform a MOUNT operation, see other options below.
 
--f | --func { mount|new|cleanup} Function
+		-N
 
-     mount = Mount a previously created image file.
-          new = Create and mount a new image (.img) file.
-          cleanup = Un-mount img partitions, remove the loop devices and remove the mount-points
+			Perform a NEW operation, see other options below.
 
--i | --image Image file name file
+		-c
 
-     Name of the image file to create/mount. Mandatory.
-     
--w | --workdir Work directory
+			Block-count. Number of (BLOCKSIZE -z) blocks to write to a (NEW -N) image 
+			file. Mandatory for a -N operation.
 
-     Name of the working directory. Mandatory.
-     
--b | --bootmp Boot mount point
+		-i
 
-     Name of the mount-point where the boot partition of the image file will be mounted.
+			Name of the image file to either MOUNT (-M) or create (-N). Full path, mandatory for either a MOUNT or NEW operation.
 
-     Default = 'bootmp'
-     
--r | --rootmp Root mount point
+		-r
 
-     Name of the mount-point where the root partition of the image file will be mounted.
-     
-          Default = 'rootmp'
+			Name of the directory which will be the mount-point (within the work 
+			directory, see below) for MOUNT or NEW operation.
 
--c | --bcount Block count
+		-s
 
-     Number of blocks to allocate for a new image file. Mandatory.
+			Split. Number of blocks of size -z (see below) which will form the size of 
+			the FAT32 boot partition for a NEW (-N) image file.
 
--z | --bsize Block size
+			The root partition (second partition) will begin from this position.
 
-          Block-size for the dd command.
+			Mandatory in a NEW (-N) operation.
 
-     Default = '1M'.
+		-w
 
--s | --split Split
+			The work directory in which to work, relative to the CWD. It will be created 
+			if it doesn't exist.
 
-     Split between boot and root partition, will be size of boot partition in number of blocks.
+			Mandatory for all (-C, -M, -N) operations.
 
-     Default = 64.
+		-z
 
-eof
-  
-	exit 1
-} # end usage
+			Block-size to be used in a NEW (-N) operation to create a new image.
 
-checkargs() {
-	if [ $# -lt 2 ]; then
+			Valid values are '1M' or '1MB'. See 'dd' manual page.
+
+			Mandatory for a NEW (-N) operation.
+
+Examples:
+
+		Create a new image file and mount the two partitions:
+
+			$ imgtool -N -w work -i work/newimage.img -c 2000 -s 64 -z 1M -r rootmp
+
+			The above will create an image file of 2000 1M blocks in size with the split 
+			of 64 blocks, in the 'work' directory, and mount the root partion at 
+'work/rootmp'.
+
+			Note that the FAT32 boot partition will be mounted on a directory called 
+			'boot' which is created by imgtool under the root mount-point (-r).
+
+		Mount an existing image:
+
+			$ imgtool -M -w work -i oldimage.img -r rootmp
+
+			The above will create the work directory 'work', and mount the pre-existing 
+			image file 'oldimage.img' using the root mount-point 'rootmp'.
+
+			As in the NEW operation, the boot (FAT32) partition is mounted on 
+			<rootmp>/boot.
+
+		Clean-up:
+
+			$ imgtool -C -w work
+
+			The above will perform a clean-up for a previous MOUNT (-M) or NEW (-N) 
+			operation. These are the steps:
+
+			* umount both partitions.
+			* Remove both partition mount-points.
+				* Remove both the loop-devices used in the previous operation.
+			* Remove both working files:
+				loop-dev-names
+				mount-points
+
+EOF
+
+
+}
+
+
+
+read_rc_file() {
+    local __BLOCKCOUNT=${1}
+    local __BLOCKSIZE=${2}
+    local __ROOTMOUNTPOINT=${3}
+    local __FUNCTION=${4}
+
+if [ -f ~/.imgtoolrc ]; then
+	source ~/.imgtoolrc
+else
+if [ -f /etc/imgtoolrc ]; then
+		source /etc/imgtoolrc
+fi
+fi
+
+eval $__BLOCKCOUNT="'$BLOCKCOUNT'"
+	eval $__BLOCKSIZE="'$BLOCKSIZE'"
+eval $__ROOTMOUNTPOINT="'$ROOTMOUNTPOINT'"
+eval $__FUNCTION="'$FUNCTION'"
+}
+
+validate_blockcount() {
+echo "$BLOCKCOUNT" | grep "^[0-9][0-9]*$" >/dev/null
+if [ $? -eq 1 ]; then
+		echo 'Bad block count'
 		usage
-	fi
-} # end check_args
+fi
+}
 
-loop_devices() {
-    
-	echo "Setting up the loop device..."
-	LOOPDEVICE=`losetup -f --show ${IMAGEFILE}`
-	DEVICE=`kpartx -va ${LOOPDEVICE} | sed -E 's/.*(loop[0-9][0-9]*)p.*/\1/g' | head -1`
-	DEVICE="/dev/mapper/${DEVICE}"
-	BOOTP=${DEVICE}p1
-	ROOTP=${DEVICE}p2
-
-} # end loop_devices
-
-mount_partitions() {
-
-	echo "Making the mount points if they don't exist..."
-	[ -d ${BOOTMP} ] || mkdir -p "${BOOTMP}"
-	[ -d ${ROOTMP} ] || mkdir -p "${ROOTMP}"
-
-	echo "Writing mount-points to ${WORKDIR}/mount-points"
-	echo -e "${BOOTMP}\n${ROOTMP}" > ${WORKDIR}/mount-points
-	
-	echo "Mounting the two partitions..."
-	mount ${BOOTP} ${BOOTMP}
-	mount ${ROOTP} ${ROOTMP}
-
-} # end mount_partitions
-
-    
-new_image() {
-
-	echo "Making the work directory if it doesn't exist..."
-	[ -d ${WORKDIR} ] || mkdir -p "${WORKDIR}"
-
-	echo "Running dd to make a raw (zero-filled) image"
-	dd if=/dev/zero of=${IMAGEFILE} bs=${BLOCKSIZE} count=${BLOCKCOUNT}
-
-	echo "Partitioning the raw image file..."
-	parted ${IMAGEFILE} --script -- mklabel msdos
-	echo 'Making the boot partition...'
-	parted ${IMAGEFILE} --script -- mkpart primary fat32 1 ${SPLIT}
-	echo 'Setting the boot partition bootable...'
-	parted ${IMAGEFILE} --script set 1 boot on
-	echo 'Making the root partition...'
-	parted ${IMAGEFILE} --script -- mkpart primary ext4 ${SPLIT} -1
-
-	loop_devices
-	
-	echo "Writing loop device names to ${WORKDIR}/loop-dev-names"
-		echo -e "${BOOTP}\n${ROOTP}" > "${WORKDIR}/loop-dev-names"
-
-	echo "Boot partition is ${BOOTP}"
-	echo "Root partition is ${ROOTP}"
-
-	sleep 5
-
-	echo "Making file systems..."
-	mkfs.vfat ${BOOTP}
-	mkfs.ext4 ${ROOTP}
-
-	mount_partitions
-
-} # end new_image
-
-mount_image() {
-
-	echo "Making the work directory if it doesn't exist..."
-	[ -d ${WORKDIR} ] || mkdir -p "${WORKDIR}"
-
-	loop_devices
-
-	sleep 5
-
-	mount_partitions
-
-		echo "Writing loop device names to ${WORKDIR}/loop-dev-names"
-		echo -e "${BOOTP}\n${ROOTP}" > "${WORKDIR}/loop-dev-names"
-		
-} # end mount_image
+validate_mountpoint() {
+declare -r point=${1}
+declare -r MOUNTPOINT=${2}
+	echo $MOUNTPOINT | grep "^[\./A-Za-z0-9][\.A-Za-z0-9]*" >/dev/null
+if [ $? -eq 1 ]; then
+echo "Bad $point mount point"
+	exit 1
+fi
+}
 
 validate_blocksize() {
+	declare -r BLOCKSIZE=${1}
 case "$BLOCKSIZE" in
 	'1M'|'1MB')
 	;;
@@ -180,201 +154,109 @@ case "$BLOCKSIZE" in
 	;;
 esac
     
-} # end validate_blocksize
-
-validate_blockcount() {
-echo "$BLOCKCOUNT" | grep "^[0-9][0-9]*$" >/dev/null
-if [ $? -eq 1 ]; then
-		echo 'Bad block count'
-		usage
-fi
-} # end validate_blockcount
-
+}
 
 validate_split() {
+local SPLIT=${1}
 echo "${SPLIT}" | grep "^[0-9][0-9]*$" >/dev/null
 if [ $? -eq 1 ]; then
-		echo 'Bad split value'
-		usage
+echo "Bad split"
+usage
 fi
-} # end validate_split
+}
+
+#-- Main code
+
+check_root RESULT
+if [ $RESULT != 1 ]; then
+	echo "Script must be run as root, try: sudo $0"
+	exit 1
+fi
 
 
-remove_loop_devices() {
-	
-	echo 'Removing loop devices...'
-	[ -f ${WORKDIR}/loop-dev-names ] || { echo "${WORKDIR}/loop-dev-names does not exist" ; exit 1 ; }
-	cat ${WORKDIR}/loop-dev-names | \
-	while read LOOP
-	do
-		echo "Removing loop device ${LOOP}..."
-		dmsetup remove ${LOOP}
-	done
-	
-} # end remove_loop_devices
+WORKDIR=
+IMAGE=
 
+read_rc_file BLOCKCOUNT BLOCKSIZE ROOTMOUNTPOINT FUNCTION 
 
-remove_mount_points() {
-
-	[ -f ${WORKDIR}/mount-points ] || { echo "${WORKDIR}/mount-points does not exist" ; exit 1 ; }
-	cat ${WORKDIR}/mount-points | \
-	while read MOUNTPOINT
-	do
-	    echo "rmdir-ing ${MOUNTPOINT}"
-		rmdir ${MOUNTPOINT}
-	done
-
-} # end remove_mount_points
-
-un_mount_partitions() {
-	
-	echo 'Un-mounting partitions...'
-	cat ${WORKDIR}/mount-points | \
-	while read MOUNTPOINT
-	do
-	      echo "umount-ing ${MOUNTPOINT}"
-		umount "${MOUNTPOINT}"
-	done
-	
-} # end un_mount_partitions
-
-clean_up() {
-
-	un_mount_partitions ${WORKDIR}
-	remove_mount_points ${WORKDIR}
-	remove_loop_devices ${WORKDIR}
-
-	rm ${WORKDIR}/mount-points
-	rm ${WORKDIR}/loop-dev-names
-
-} # end clean_up
-
-
-check_root() {
-	if [ `whoami` != 'root' ]; then
-		echo "Script must be run as root, try 'sudo $0'"
-		exit 1
-	fi
-
-} # end check_root
-
-#-- main code
-
-set -e
-
-BLOCKSIZE=1M
-BOOTMP=bootmp
-ROOTMP=rootmp
-SPLIT=64
-DRYRUN=
-
-while :
-do
-	case "$1" in
-		-b | --bootmp)
-			checkargs $*
-			BOOTMP="$2"
-			shift 2
+while getopts ':CMNc:hi:r:s:w:z:' flag ; do
+case $flag in
+	h)
+		usage
+		exit 0
+;;
+C)
+FUNCTION=cleanup
+;;
+M)
+FUNCTION=mount
+;;
+N)
+FUNCTION=new
+;;
+c)
+		BLOCKCOUNT=$OPTARG
+validate_blockcount $BLOCKCOUNT
+;;
+i)
+IMAGEFILE=$OPTARG
+;;
+	r)
+	ROOTMOUNTPOINT=$OPTARG
+validate_mountpoint root $ROOTMOUNTPOINT
 		;;
-		-r | --rootmp)
-			checkargs $*
-			ROOTMP="$2"
-			shift 2
+s)
+SPLIT=$OPTARG
+validate_split ${SPLIT}
+;;
+	w)
+		WORKDIR=$OPTARG
 		;;
-		-c | --bcount)
-			checkargs $*
-			BLOCKCOUNT="$2"
-			shift 2
-		;;
-		-z | --bsize)
-			checkargs $*
-			BLOCKSIZE="$2"
-			shift 2
-		;;
-		-h | --help)
-			usage
-			# no shifting needed here, we're done.
-			exit 0
-		;;
-		-d|--dryrun)
-			DRYRUN=1
-			shift
-		;;
-		-i | --image)
-			checkargs $*
-			IMAGEFILE="$2"
-			shift 2
-		;;
-		-s | --split)
-			checkargs $*
-			SPLIT="${2}"
-			shift 2
-		;;
-		-w | --workdir)
-			checkargs $*
-			WORKDIR=${2}
-			shift 2
-		;;
-		-f | --func)
-			FUNC=${2}
-			shift 2
-		;;
-		--)
-			shift
-			break;
-		;;
-		-*)
-			echo "Error: Unknown option: $1" >&2
-			usage
+z)
+BLOCKSIZE=$OPTARG
+validate_blocksize $BLOCKSIZE
+;;
+	(?)
+		echo "Invalid option" >&2
+	usage
 			exit 1
-		;;
-		*)
-			break
-		;;
-	esac
-
+;;
+	:)
+echo "Option -$OPTARG requires an argument." >&2
+		usage
+exit 1
+;;
+esac
 done
 
-check_root
-
-[ -z "$WORKDIR" ] && { echo 'No working directory supplied' ; usage ; }
-[ -z "$FUNC" ] && { echo 'No function supplied' ; usage ; }
 
 
-WORKDIR=$(realpath ${WORKDIR})
+[ -z $WORKDIR ] && { echo "Work directory not set" ; usage; }
+if [ $FUNCTION = 'mount' ] || [ $FUNCTION = 'new' ]; then
+[ -z "${IMAGEFILE}" ] && { echo "Image file name not set"; usage; }
+[ -z $ROOTMOUNTPOINT ] && { echo "Root mount point not set"; usage; }
+fi
 
-BOOTMP=${WORKDIR}/${BOOTMP}
-ROOTMP=${WORKDIR}/${ROOTMP}
+if [ $FUNCTION = 'new' ]; then
+[ -z $BLOCKCOUNT ] && { echo "block count not set" ; usage; }
+[ -z $BLOCKSIZE ] && { echo "Blocksize not set"; usage; }
+[ -z $SPLIT ] && { echo "Split size not set"; usage; }
+fi
 
 
-case "$FUNC" in
-	'mount')
-		[ -z "$IMAGEFILE" ] && { echo 'Image file name is missing' ; usage ; }
-		[ -f "${IMAGEFILE}" ] || { echo 'Image file does not exist' ; exit 1 ; }  
-		IMAGEFILE=$(realpath ${IMAGEFILE})
-		mount_image
-	;;
-	'new')
-		[ -z "$BLOCKCOUNT" ] && { echo 'No block-count supplied' ; usage ; }
-		[ -z "$BLOCKSIZE" ] && { echo 'No block-size supplied' ; usage ; }
-		[ -z "$SPLIT" ] && { echo 'No split-size supplied' ; usage ; }
-		[ -z "$IMAGEFILE" ] && { echo 'Image file name is missing' ; usage ; }
-		[ -f "${IMAGEFILE}" ] && { echo 'Image file already exists, not overwriting' ; exit 1 ; }  
-		validate_blockcount
-		validate_blocksize
-		validate_split
-		IMAGEFILE=$(realpath ${IMAGEFILE})
-		new_image
-	;;
-	'cleanup')
-		clean_up
-	;;
-	*)
-		echo 'Invalid function'
-		usage
-		exit 1
-	;;
+
+case $FUNCTION in
+cleanup)
+clean_up ${WORKDIR} ${ROOTMP}
+;;
+mount)
+mount_image ${WORKDIR} ${IMAGEFILE} ${ROOTMOUNTPOINT}
+;;
+new)
+new_image $WORKDIR ${IMAGEFILE} ${ROOTMOUNTPOINT} ${BLOCKCOUNT} ${BLOCKSIZE} ${SPLIT}
+;;
 esac
 
-echo "All done"
 exit 0
+
+
