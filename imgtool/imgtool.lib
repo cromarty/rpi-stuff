@@ -80,7 +80,9 @@ local ROOTP=${3}
 	mount "${BOOTP}" "${WORKDIR}/${ROOTMP}/boot"
 
 	echo "Writing mount-points to ${WORKDIR}/mount-points"
-	echo -e "${ROOTMP}/boot\n${ROOTMP}" > ${WORKDIR}/mount-points
+	REALBOOTMOUNTPOINT=$(realpath ${WORKDIR}/${ROOTMP}/boot)
+	REALROOTMOUNTPOINT=$(realpath ${WORKDIR}/${ROOTMP})
+	echo -e "${REALBOOTMOUNTPOINT}\n${REALROOTMOUNTPOINT}" > ${WORKDIR}/mount-points
 
 
 }
@@ -115,7 +117,9 @@ local ROOTP
 	loop_devices ${WORKDIR} ${IMAGEFILE} BOOTP ROOTP
 
 	echo "Writing loop device names to ${WORKDIR}/loop-dev-names"
-		echo -e "${BOOTP}\n${ROOTP}" > "${WORKDIR}/loop-dev-names"
+		LD1PATH=$(realpath ${BOOTP})
+	LD2PATH=$(realpath ${ROOTP})
+		echo -e "${LD1PATH}\n${LD2PATH}" > "${WORKDIR}/loop-dev-names"
 
 	echo "Boot partition is ${BOOTP}"
 	echo "Root partition is ${ROOTP}"
@@ -153,7 +157,7 @@ remove_mount_points() {
 	while read MOUNTPOINT
 	do
 	    echo "Removing ${MOUNTPOINT}"
-		[ -d "${WORKDIR}/${MOUNTPOINT}" ] && rmdir "${WORKDIR}/${MOUNTPOINT}"
+		[ -d "${MOUNTPOINT}" ] && rmdir "${MOUNTPOINT}"
 	done
 
 }
@@ -161,12 +165,12 @@ remove_mount_points() {
 un_mount_partitions() {
 	local WORKDIR=${1}
 	
-	echo 'Un-mounting partitions...'
+	echo 'umount partitions...'
 	cat ${WORKDIR}/mount-points | \
 	while read MOUNTPOINT
 	do
-	      echo "umount-ing ${MOUNTPOINT}"
-		umount "${WORKDIR}/${MOUNTPOINT}"
+	      echo "umount ${MOUNTPOINT}"
+		umount "${MOUNTPOINT}"
 	done
 	
 }
