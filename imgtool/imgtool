@@ -94,8 +94,8 @@ Examples:
 			* Remove both partition mount-points.
 				* Remove both the loop-devices used in the previous operation.
 			* Remove both working files:
-				loop-dev-names
-				mount-points
+				imgtool-loop-dev-names
+				imgtool-mount-points
 
 EOF
 
