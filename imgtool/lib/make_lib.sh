@@ -7,6 +7,7 @@ cat mount_device >> ../imgtool.lib
 cat mount_image >> ../imgtool.lib
 cat mount_partitions >> ../imgtool.lib
 cat new_image >> ../imgtool.lib
+cat prepare_device >> ../imgtool.lib
 cat remove_loop_devices >> ../imgtool.lib
 cat remove_mount_points >> ../imgtool.lib
 cat un_mount_partitions >> ../imgtool.lib

@@ -1,0 +1,39 @@
+
+    
+prepare_device() {
+	    local WORKDIR=${1}
+	    	  local DEVICE=${2}
+	local ROOTMP=${3}
+	local BLOCKCOUNT=${4}
+local BLOCKSIZE=${5}
+local SPLIT=${6}	    
+
+	echo "Making the work directory if it doesn't exist..."
+	[ -d ${WORKDIR} ] || mkdir -p "${WORKDIR}"
+
+	#put partition deletes in here
+
+	echo "Partitioning the device..."
+	parted "${DEVICE}" --script -- mklabel msdos
+	echo 'Making the boot partition...'
+	parted "${DEVICE}" --script -- mkpart primary fat32 1 ${SPLIT}
+	echo 'Setting the boot partition bootable...'
+	parted "${DEVICE}" --script set 1 boot on
+	echo 'Making the root partition...'
+	parted "${DEVICE}" --script -- mkpart primary ext4 ${SPLIT} -1
+#local BOOTP
+#local ROOTP
+
+
+	echo "Boot partition is ${DEVICE}1"
+	echo "Root partition is ${DEVICE}2"
+
+	sleep 2
+
+	echo "Making file systems..."
+	mkfs.vfat ${DEVICE}1
+	mkfs.ext4 ${DEVICE}2
+
+	mount_partitions ${WORKDIR} ${DEVICE}1 ${DEVICE}2 ${ROOTMP}
+
+}
