@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. ./imgtool.lib
+
 usage() {
 	echo "Bad" >&2
 }
@@ -8,11 +10,18 @@ validate_path() {
 	local CHECKPATH=${1}
 
 	[ -d ${CHECKPATH} ] || { echo "The path ${CHECKPATH} does not exist"; exit 1; }
-[ -r ${CHECKPATH} ] || { echo "You don't have read permissions to ${CHECKPATH}"; exit 1; }
-[ -w ${CHECKPATH} ] || { echo "You don't have write permissions for ${CHECKPATH}"; exit 1; }
+
 }
 
-while getopts ':hB:R:b:r:' flag ; do
+#-- Main code
+
+check_root RESULT
+if [ $RESULT != 1 ]; then
+	echo "Script must be run as root"
+	exit 1
+fi
+
+while getopts ':hB:R:b:r:s:t:' flag ; do
 case $flag in
 	h)
 		usage
@@ -34,6 +43,10 @@ r)
 validate_path ${OPTARG}
 		TOROOT=${OPTARG}
 ;;
+s)
+;;
+t)
+;;
 	(?)
 		echo "Invalid option" >&2
 	usage
@@ -51,10 +64,10 @@ done
 
 #-- Main program
 
-echo "Source boot mount-point: ${FROMBOOT}"
-echo "Source root mount-point: ${FROMROOT}"
-echo "Target boot mount-point: ${TOBOOT}"
-echo "Target root mount-point: ${TOROOT}"
+#echo "Source boot mount-point: ${FROMBOOT}"
+#echo "Source root mount-point: ${FROMROOT}"
+#echo "Target boot mount-point: ${TOBOOT}"
+#echo "Target root mount-point: ${TOROOT}"
 
 #rsync -av ${SOURCE_BOOTMP}/* ${TARGET_BOOTMP}
 #rsync -av --exclude=lost+found ${SOURCE_ROOTMP}/* ${TARGET_ROOTMP}

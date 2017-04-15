@@ -1,0 +1,22 @@
+
+mount_device() {
+	      local WORKDIR=${1}
+	local DEVICE=${2}
+	local ROOTMP=${3}
+
+[ -b "${DEVICE}" ] || { echo "Supplied device name ${DEVICE} does not exist or is not a block device"; exit 1; }
+
+	echo "Making the work directory if it doesn't exist..."
+
+	[ -d "${WORKDIR}" ] || mkdir -p "${WORKDIR}"
+
+	#loop_devices ${WORKDIR} ${IMAGEFILE} BOOTP ROOTP
+BOOTP=${DEVICE}1
+ROOTP=${DEVICE}2
+
+	sleep 2
+
+	mount_partitions ${WORKDIR} ${BOOTP} ${ROOTP} ${ROOTMP}
+		
+}
+

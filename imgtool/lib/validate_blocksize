@@ -1,0 +1,14 @@
+
+validate_blocksize() {
+	declare -r BLOCKSIZE=${1}
+case "$BLOCKSIZE" in
+	'1M'|'1MB')
+	;;
+	*)
+		echo 'Invalid block-size'
+		usage
+		exit 1
+	;;
+esac
+    
+}

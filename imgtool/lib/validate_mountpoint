@@ -1,0 +1,10 @@
+
+validate_mountpoint() {
+declare -r point=${1}
+declare -r MOUNTPOINT=${2}
+	echo $MOUNTPOINT | grep "^[\./A-Za-z0-9][\.A-Za-z0-9]*" >/dev/null
+if [ $? -eq 1 ]; then
+echo "Bad $point mount point"
+	exit 1
+fi
+}

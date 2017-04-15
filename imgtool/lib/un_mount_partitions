@@ -1,0 +1,13 @@
+
+un_mount_partitions() {
+	local WORKDIR=${1}
+	
+	echo 'umount partitions...'
+	cat ${WORKDIR}/imgtool-mount-points | cut -f3 -d: | \
+	while read MOUNTPOINT
+	do
+	      echo "umount ${MOUNTPOINT}"
+		umount "${MOUNTPOINT}"
+	done
+	
+}

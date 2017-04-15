@@ -1,0 +1,14 @@
+
+clean_up() {
+	local WORKDIR=${1}
+	local ROOTMP=${2}
+
+	un_mount_partitions ${WORKDIR}
+	remove_mount_points ${WORKDIR}
+	remove_loop_devices ${WORKDIR}
+
+	rm ${WORKDIR}/imgtool-mount-points
+	#rm ${WORKDIR}/imgtool-loop-dev-names
+
+}
+

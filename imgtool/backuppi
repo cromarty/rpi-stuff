@@ -1,0 +1,128 @@
+#!/bin/bash
+
+. ./imgtool.lib
+
+
+usage() {
+	cat <<EOF >&2
+
+EOF
+
+
+}
+
+
+read_rc_file() {
+    local __BLOCKCOUNT=${1}
+    local __BLOCKSIZE=${2}
+    local __ROOTMOUNTPOINT=${3}
+    local __FUNCTION=${4}
+
+if [ -f ~/.imgtoolrc ]; then
+	source ~/.imgtoolrc
+else
+if [ -f /etc/imgtoolrc ]; then
+		source /etc/imgtoolrc
+fi
+fi
+
+eval $__BLOCKCOUNT="'$BLOCKCOUNT'"
+	eval $__BLOCKSIZE="'$BLOCKSIZE'"
+eval $__ROOTMOUNTPOINT="'$ROOTMOUNTPOINT'"
+eval $__FUNCTION="'$FUNCTION'"
+}
+
+#-- Main code
+
+check_root RESULT
+if [ $RESULT != 1 ]; then
+	echo "Script must be run as root, try: sudo $0"
+	exit 1
+fi
+
+
+WORKDIR=
+IMAGE=
+
+#read_rc_file BLOCKCOUNT BLOCKSIZE ROOTMOUNTPOINT FUNCTION 
+
+while getopts ':CMNc:hi:r:s:w:z:' flag ; do
+case $flag in
+	h)
+		usage
+		exit 0
+;;
+C)
+FUNCTION=cleanup
+;;
+M)
+FUNCTION=mount
+;;
+N)
+FUNCTION=new
+;;
+c)
+		BLOCKCOUNT=$OPTARG
+#validate_blockcount $BLOCKCOUNT
+;;
+i)
+IMAGEFILE=$OPTARG
+;;
+	r)
+	ROOTMOUNTPOINT=$OPTARG
+#validate_mountpoint root $ROOTMOUNTPOINT
+		;;
+s)
+SPLIT=$OPTARG
+#validate_split ${SPLIT}
+;;
+	w)
+		WORKDIR=$OPTARG
+		;;
+z)
+BLOCKSIZE=$OPTARG
+#validate_blocksize $BLOCKSIZE
+;;
+	(?)
+		echo "Invalid option" >&2
+	usage
+			exit 1
+;;
+	:)
+echo "Option -$OPTARG requires an argument." >&2
+		usage
+exit 1
+;;
+esac
+done
+
+
+
+[ -z $WORKDIR ] && { echo "Work directory not set" ; usage; }
+if [ $FUNCTION = 'mount' ] || [ $FUNCTION = 'new' ]; then
+[ -z "${IMAGEFILE}" ] && { echo "Image file name not set"; usage; }
+[ -z $ROOTMOUNTPOINT ] && { echo "Root mount point not set"; usage; }
+fi
+
+if [ $FUNCTION = 'new' ]; then
+[ -z $BLOCKCOUNT ] && { echo "block count not set" ; usage; }
+[ -z $BLOCKSIZE ] && { echo "Blocksize not set"; usage; }
+[ -z $SPLIT ] && { echo "Split size not set"; usage; }
+fi
+
+
+
+case $FUNCTION in
+cleanup)
+imgtool -C -w ${WORKDIR}
+;;
+mount)
+imgtool -w ${WORKDIR} -i ${IMAGEFILE} -r ${ROOTMOUNTPOINT}
+;;
+new)
+imgtool -N -w $WORKDIR -i ${IMAGEFILE} -r ${ROOTMOUNTPOINT} -c ${BLOCKCOUNT} -z ${BLOCKSIZE} -s ${SPLIT} && imgtool_rsync
+;;
+esac
+
+exit 0
+

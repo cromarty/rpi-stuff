@@ -93,8 +93,7 @@ Examples:
 			* umount both partitions.
 			* Remove both partition mount-points.
 				* Remove both the loop-devices used in the previous operation.
-			* Remove both working files:
-				imgtool-loop-dev-names
+			* Remove working file:
 				imgtool-mount-points
 
 EOF
@@ -124,46 +123,7 @@ eval $__ROOTMOUNTPOINT="'$ROOTMOUNTPOINT'"
 eval $__FUNCTION="'$FUNCTION'"
 }
 
-validate_blockcount() {
-echo "$BLOCKCOUNT" | grep "^[0-9][0-9]*$" >/dev/null
-if [ $? -eq 1 ]; then
-		echo 'Bad block count'
-		usage
-fi
-}
 
-validate_mountpoint() {
-declare -r point=${1}
-declare -r MOUNTPOINT=${2}
-	echo $MOUNTPOINT | grep "^[\./A-Za-z0-9][\.A-Za-z0-9]*" >/dev/null
-if [ $? -eq 1 ]; then
-echo "Bad $point mount point"
-	exit 1
-fi
-}
-
-validate_blocksize() {
-	declare -r BLOCKSIZE=${1}
-case "$BLOCKSIZE" in
-	'1M'|'1MB')
-	;;
-	*)
-		echo 'Invalid block-size'
-		usage
-		exit 1
-	;;
-esac
-    
-}
-
-validate_split() {
-local SPLIT=${1}
-echo "${SPLIT}" | grep "^[0-9][0-9]*$" >/dev/null
-if [ $? -eq 1 ]; then
-echo "Bad split"
-usage
-fi
-}
 
 #-- Main code
 
@@ -174,12 +134,13 @@ if [ $RESULT != 1 ]; then
 fi
 
 
+
 WORKDIR=
 IMAGE=
 
 read_rc_file BLOCKCOUNT BLOCKSIZE ROOTMOUNTPOINT FUNCTION 
 
-while getopts ':CMNc:hi:r:s:w:z:' flag ; do
+while getopts ':CD:I:N:c:hr:s:w:z:' flag ; do
 case $flag in
 	h)
 		usage
@@ -188,18 +149,21 @@ case $flag in
 C)
 FUNCTION=cleanup
 ;;
-M)
-FUNCTION=mount
+D)
+FUNCTION=mountdevice
+DEVICE=$OPTARG
+;;
+I)
+FUNCTION=mountimage
+IMAGEFILE=$OPTARG
 ;;
 N)
 FUNCTION=new
+IMAGEFILE=$OPTARG
 ;;
 c)
 		BLOCKCOUNT=$OPTARG
 validate_blockcount $BLOCKCOUNT
-;;
-i)
-IMAGEFILE=$OPTARG
 ;;
 	r)
 	ROOTMOUNTPOINT=$OPTARG
@@ -232,12 +196,17 @@ done
 
 
 [ -z $WORKDIR ] && { echo "Work directory not set" ; usage; }
-if [ $FUNCTION = 'mount' ] || [ $FUNCTION = 'new' ]; then
+if [ ${FUNCTION} = 'mountimage' ] || [ $FUNCTION = 'new' ]; then
 [ -z "${IMAGEFILE}" ] && { echo "Image file name not set"; usage; }
 [ -z $ROOTMOUNTPOINT ] && { echo "Root mount point not set"; usage; }
 fi
 
-if [ $FUNCTION = 'new' ]; then
+if [ ${FUNCTION} = 'mountdevice' ]; then
+[ -z "${DEVICE}" ] && { echo "Device name not set"; usage; }
+[ -z $ROOTMOUNTPOINT ] && { echo "Root mount point not set"; usage; }
+fi
+
+if [ ${FUNCTION} = 'new' ]; then
 [ -z $BLOCKCOUNT ] && { echo "block count not set" ; usage; }
 [ -z $BLOCKSIZE ] && { echo "Blocksize not set"; usage; }
 [ -z $SPLIT ] && { echo "Split size not set"; usage; }
@@ -249,8 +218,11 @@ case $FUNCTION in
 cleanup)
 clean_up ${WORKDIR} ${ROOTMP}
 ;;
-mount)
+mountimage)
 mount_image ${WORKDIR} ${IMAGEFILE} ${ROOTMOUNTPOINT}
+;;
+mountdevice)
+mount_device ${WORKDIR} ${DEVICE} ${ROOTMOUNTPOINT}
 ;;
 new)
 new_image $WORKDIR ${IMAGEFILE} ${ROOTMOUNTPOINT} ${BLOCKCOUNT} ${BLOCKSIZE} ${SPLIT}

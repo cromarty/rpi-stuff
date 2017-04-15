@@ -1,0 +1,15 @@
+
+remove_loop_devices() {
+	local WORKDIR=${1}	
+
+	echo 'Removing loop devices...'
+	#[ -f ${WORKDIR}/imgtool-loop-dev-names ] || { echo "${WORKDIR}/loop-dev-names does not exist" ; exit 1 ; }
+	cat ${WORKDIR}/imgtool-mount-points | cut -f2 -d: | \
+	while read LOOP
+	do
+		echo "Removing loop device ${LOOP}..."
+		dmsetup remove "${LOOP}"
+	done
+	
+}
+

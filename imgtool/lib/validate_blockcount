@@ -1,0 +1,9 @@
+
+validate_blockcount() {
+echo "$BLOCKCOUNT" | grep "^[0-9][0-9]*$" >/dev/null
+if [ $? -eq 1 ]; then
+		echo 'Bad block count'
+		usage
+fi
+}
+
