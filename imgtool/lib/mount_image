@@ -1,10 +1,10 @@
 
 mount_image() {
-	      local WORKDIR=${1}
+	local WORKDIR=${1}
 	local IMAGEFILE=${2}
 	local ROOTMP=${3}
 
-[ -f "${IMAGEFILE}" ] || { echo "Supplied image file does not exist"; exit 1; }
+	[ -f "${IMAGEFILE}" ] || { echo "Supplied image file does not exist"; exit 1; }
 
 	echo "Making the work directory if it doesn't exist..."
 
@@ -15,6 +15,6 @@ mount_image() {
 	sleep 5
 
 	mount_partitions ${WORKDIR} ${BOOTP} ${ROOTP} ${ROOTMP}
-		
+
 }
 

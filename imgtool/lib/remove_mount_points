@@ -6,7 +6,7 @@ remove_mount_points() {
 	cat ${WORKDIR}/imgtool-mount-points | cut -f3 -d: | \
 	while read MOUNTPOINT
 	do
-	    echo "Removing ${MOUNTPOINT}"
+		echo "Removing ${MOUNTPOINT}"
 		[ -d "${MOUNTPOINT}" ] && rmdir "${MOUNTPOINT}"
 	done
 

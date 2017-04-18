@@ -1,9 +1,10 @@
 
 validate_split() {
-local SPLIT=${1}
-echo "${SPLIT}" | grep "^[0-9][0-9]*$" >/dev/null
-if [ $? -eq 1 ]; then
-echo "Bad split"
-usage
-fi
+	local SPLIT=${1}
+	echo "${SPLIT}" | grep "^[0-9][0-9]*$" >/dev/null
+	if [ $? -eq 1 ]; then
+		echo "Bad split"
+		usage
+	fi
+
 }

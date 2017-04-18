@@ -1,10 +1,10 @@
 
 mount_partitions() {
-local WORKDIR=${1}
+	local WORKDIR=${1}
 	local BOOTP=${2}
-local ROOTP=${3}
+	local ROOTP=${3}
 	local ROOTMP=${4}
-	
+
 	echo "Making the mount point if it doesn't exist..."
 	[ -d "${WORKDIR}/${ROOTMP}" ] || mkdir -p "${WORKDIR}/${ROOTMP}"
 	mount ${ROOTP} ${WORKDIR}/${ROOTMP}
@@ -15,7 +15,6 @@ local ROOTP=${3}
 	REALBOOTMOUNTPOINT=$(realpath ${WORKDIR}/${ROOTMP}/boot)
 	REALROOTMOUNTPOINT=$(realpath ${WORKDIR}/${ROOTMP})
 	echo -e "1:${BOOTP}:${REALBOOTMOUNTPOINT}\n2:${ROOTP}:${REALROOTMOUNTPOINT}" > ${WORKDIR}/imgtool-mount-points
-
 
 }
 

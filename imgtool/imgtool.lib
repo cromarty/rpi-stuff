@@ -1,12 +1,12 @@
 
 check_root() {
-local  __resultvar=${1}
-if [ `whoami` != 'root' ]; then
-local myresult=0
-else
-local myresult=1
-fi
-eval $__resultvar="'$myresult'"
+	local  __resultvar=${1}
+	if [ `whoami` != 'root' ]; then
+		local myresult=0
+	else
+		local myresult=1
+	fi
+	eval $__resultvar="'$myresult'"
 }
 
 
@@ -16,28 +16,42 @@ clean_up() {
 
 	un_mount_partitions ${WORKDIR}
 	remove_mount_points ${WORKDIR}
-	remove_loop_devices ${WORKDIR}
+
+	if cat ${WORKDIR}/imgtool-mount-points | grep loop >/dev/null
+	then
+		remove_loop_devices ${WORKDIR}
+	fi
 
 	rm ${WORKDIR}/imgtool-mount-points
-	#rm ${WORKDIR}/imgtool-loop-dev-names
+
+}
+
+
+delete_partitions() {
+	local DEVICE=${1}
+
+	for PART in `parted -ms /dev/sda -- print | perl -ne "if (m/^\d/) {print;}" | cut -f1 -d':' | sort -r`
+	do
+		parted ${DEVICE} -- rm ${PART} >/dev/null
+	done
 
 }
 
 
 loop_devices() {
-local WORKDIR=${1}
-local IMAGEFILE=${2}
+	local WORKDIR=${1}
+	local IMAGEFILE=${2}
 
-local __BOOTP=${3}
-local __ROOTP=${4}
+	local __BOOTP=${3}
+	local __ROOTP=${4}
 
 	echo "Setting up the loop device..."
 
 	LOOPDEVICE=$(losetup -f --show ${IMAGEFILE})
 	DEVICE=$(kpartx -va ${LOOPDEVICE} | sed -E 's/.*(loop[0-9][0-9]*)p.*/\1/g' | head -1)
 	DEVICE="/dev/mapper/${DEVICE}"
-BOOTP=${DEVICE}p1
-ROOTP=${DEVICE}p2
+	BOOTP=${DEVICE}p1
+	ROOTP=${DEVICE}p2
 
 	eval $__BOOTP="'$BOOTP'"
 	eval $__ROOTP="'$ROOTP'"
@@ -45,33 +59,32 @@ ROOTP=${DEVICE}p2
 
 
 mount_device() {
-	      local WORKDIR=${1}
+	local WORKDIR=${1}
 	local DEVICE=${2}
 	local ROOTMP=${3}
 
-[ -b "${DEVICE}" ] || { echo "Supplied device name ${DEVICE} does not exist or is not a block device"; exit 1; }
+	[ -b "${DEVICE}" ] || { echo "Supplied device name ${DEVICE} does not exist or is not a block device"; exit 1; }
 
 	echo "Making the work directory if it doesn't exist..."
 
 	[ -d "${WORKDIR}" ] || mkdir -p "${WORKDIR}"
 
-	#loop_devices ${WORKDIR} ${IMAGEFILE} BOOTP ROOTP
-BOOTP=${DEVICE}1
-ROOTP=${DEVICE}2
+	BOOTP=${DEVICE}1
+	ROOTP=${DEVICE}2
 
 	sleep 2
 
 	mount_partitions ${WORKDIR} ${BOOTP} ${ROOTP} ${ROOTMP}
-		
+
 }
 
 
 mount_image() {
-	      local WORKDIR=${1}
+	local WORKDIR=${1}
 	local IMAGEFILE=${2}
 	local ROOTMP=${3}
 
-[ -f "${IMAGEFILE}" ] || { echo "Supplied image file does not exist"; exit 1; }
+	[ -f "${IMAGEFILE}" ] || { echo "Supplied image file does not exist"; exit 1; }
 
 	echo "Making the work directory if it doesn't exist..."
 
@@ -82,16 +95,16 @@ mount_image() {
 	sleep 5
 
 	mount_partitions ${WORKDIR} ${BOOTP} ${ROOTP} ${ROOTMP}
-		
+
 }
 
 
 mount_partitions() {
-local WORKDIR=${1}
+	local WORKDIR=${1}
 	local BOOTP=${2}
-local ROOTP=${3}
+	local ROOTP=${3}
 	local ROOTMP=${4}
-	
+
 	echo "Making the mount point if it doesn't exist..."
 	[ -d "${WORKDIR}/${ROOTMP}" ] || mkdir -p "${WORKDIR}/${ROOTMP}"
 	mount ${ROOTP} ${WORKDIR}/${ROOTMP}
@@ -103,18 +116,17 @@ local ROOTP=${3}
 	REALROOTMOUNTPOINT=$(realpath ${WORKDIR}/${ROOTMP})
 	echo -e "1:${BOOTP}:${REALBOOTMOUNTPOINT}\n2:${ROOTP}:${REALROOTMOUNTPOINT}" > ${WORKDIR}/imgtool-mount-points
 
-
 }
 
 
-    
+
 new_image() {
-	    local WORKDIR=${1}
-	    	  local IMAGEFILE=${2}
+	local WORKDIR=${1}
+	local IMAGEFILE=${2}
 	local ROOTMP=${3}
 	local BLOCKCOUNT=${4}
-local BLOCKSIZE=${5}
-local SPLIT=${6}	    
+	local BLOCKSIZE=${5}
+	local SPLIT=${6}	    
 
 	echo "Making the work directory if it doesn't exist..."
 	[ -d ${WORKDIR} ] || mkdir -p "${WORKDIR}"
@@ -130,15 +142,10 @@ local SPLIT=${6}
 	parted "${IMAGEFILE}" --script set 1 boot on
 	echo 'Making the root partition...'
 	parted "${IMAGEFILE}" --script -- mkpart primary ext4 ${SPLIT} -1
-local BOOTP
-local ROOTP
+	local BOOTP
+	local ROOTP
 
 	loop_devices ${WORKDIR} ${IMAGEFILE} BOOTP ROOTP
-
-	#echo "Writing loop device names to ${WORKDIR}/imgtool-loop-dev-names"
-		#LD1PATH=$(realpath ${BOOTP})
-	#LD2PATH=$(realpath ${ROOTP})
-		#echo -e "${LD1PATH}\n${LD2PATH}" > "${WORKDIR}/imgtool-loop-dev-names"
 
 	echo "Boot partition is ${BOOTP}"
 	echo "Root partition is ${ROOTP}"
@@ -153,18 +160,50 @@ local ROOTP
 
 }
 
+prepare_device() {
+	local WORKDIR=${1}
+	local DEVICE=${2}
+	local ROOTMP=${3}
+	local BLOCKCOUNT=${4}
+	local BLOCKSIZE=${5}
+	local SPLIT=${6}	    
+
+	echo "Making the work directory if it doesn't exist..."
+	[ -d ${WORKDIR} ] || mkdir -p "${WORKDIR}"
+
+	echo "Partitioning the device..."
+	parted "${DEVICE}" --script -- mklabel msdos
+	echo 'Making the boot partition...'
+	parted "${DEVICE}" --script -- mkpart primary fat32 1 ${SPLIT}
+	echo 'Setting the boot partition bootable...'
+	parted "${DEVICE}" --script set 1 boot on
+	echo 'Making the root partition...'
+	parted "${DEVICE}" --script -- mkpart primary ext4 ${SPLIT} -1
+
+	echo "Boot partition is ${DEVICE}1"
+	echo "Root partition is ${DEVICE}2"
+
+	sleep 2
+
+	echo "Making file systems..."
+	mkfs.vfat ${DEVICE}1
+	mkfs.ext4 ${DEVICE}2
+
+	mount_partitions ${WORKDIR} ${DEVICE}1 ${DEVICE}2 ${ROOTMP}
+
+}
+
 remove_loop_devices() {
 	local WORKDIR=${1}	
 
 	echo 'Removing loop devices...'
-	#[ -f ${WORKDIR}/imgtool-loop-dev-names ] || { echo "${WORKDIR}/loop-dev-names does not exist" ; exit 1 ; }
 	cat ${WORKDIR}/imgtool-mount-points | cut -f2 -d: | \
 	while read LOOP
 	do
 		echo "Removing loop device ${LOOP}..."
 		dmsetup remove "${LOOP}"
 	done
-	
+
 }
 
 
@@ -175,7 +214,7 @@ remove_mount_points() {
 	cat ${WORKDIR}/imgtool-mount-points | cut -f3 -d: | \
 	while read MOUNTPOINT
 	do
-	    echo "Removing ${MOUNTPOINT}"
+		echo "Removing ${MOUNTPOINT}"
 		[ -d "${MOUNTPOINT}" ] && rmdir "${MOUNTPOINT}"
 	done
 
@@ -183,69 +222,73 @@ remove_mount_points() {
 
 un_mount_partitions() {
 	local WORKDIR=${1}
-	
+
 	echo 'umount partitions...'
 	cat ${WORKDIR}/imgtool-mount-points | cut -f3 -d: | \
 	while read MOUNTPOINT
 	do
-	      echo "umount ${MOUNTPOINT}"
+		echo "umount ${MOUNTPOINT}"
 		umount "${MOUNTPOINT}"
 	done
-	
+
 }
 
 validate_blockcount() {
-echo "$BLOCKCOUNT" | grep "^[0-9][0-9]*$" >/dev/null
-if [ $? -eq 1 ]; then
+	echo "$BLOCKCOUNT" | grep "^[0-9][0-9]*$" >/dev/null
+	if [ $? -eq 1 ]; then
 		echo 'Bad block count'
 		usage
-fi
+	fi
+
 }
 
 
 validate_blocksize() {
 	declare -r BLOCKSIZE=${1}
-case "$BLOCKSIZE" in
-	'1M'|'1MB')
-	;;
-	*)
-		echo 'Invalid block-size'
-		usage
-		exit 1
-	;;
-esac
-    
+	case "$BLOCKSIZE" in
+		'1M'|'1MB')
+		;;
+		*)
+			echo 'Invalid block-size'
+			usage
+			exit 1
+		;;
+	esac
+
 }
 
 validate_mountpoint() {
-declare -r point=${1}
-declare -r MOUNTPOINT=${2}
+	declare -r point=${1}
+	declare -r MOUNTPOINT=${2}
 	echo $MOUNTPOINT | grep "^[\./A-Za-z0-9][\.A-Za-z0-9]*" >/dev/null
-if [ $? -eq 1 ]; then
-echo "Bad $point mount point"
-	exit 1
-fi
+	if [ $? -eq 1 ]; then
+		echo "Bad $point mount point"
+		exit 1
+	fi
+
 }
 
 validate_split() {
-local SPLIT=${1}
-echo "${SPLIT}" | grep "^[0-9][0-9]*$" >/dev/null
-if [ $? -eq 1 ]; then
-echo "Bad split"
-usage
-fi
+	local SPLIT=${1}
+	echo "${SPLIT}" | grep "^[0-9][0-9]*$" >/dev/null
+	if [ $? -eq 1 ]; then
+		echo "Bad split"
+		usage
+	fi
+
 }
 
 volume_is_mounted() {
-local DEVICE=${1}
-local MOUNTPOINT=${2}
-local  __RESULT=${3}
+	local DEVICE=${1}
+	local MOUNTPOINT=${2}
+	local  __RESULT=${3}
 
-if mount | grep "${DEVICE} on ${MOUNTPOINT} type" > /dev/null 
-then
-local MYRESULT=1
-else
-local MYRESULT=0
-fi
-eval $__RESULT="'$MYRESULT'"
+	if mount | grep "${DEVICE} on ${MOUNTPOINT} type" > /dev/null 
+	then
+		local MYRESULT=1
+	else
+		local MYRESULT=0
+	fi
+	eval $__RESULT="'$MYRESULT'"
+
 }

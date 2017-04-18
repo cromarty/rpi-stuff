@@ -2,6 +2,7 @@
 
 cat check_root > ../imgtool.lib
 cat clean_up >> ../imgtool.lib
+cat delete_partitions >> ../imgtool.lib
 cat loop_devices >> ../imgtool.lib
 cat mount_device >> ../imgtool.lib
 cat mount_image >> ../imgtool.lib

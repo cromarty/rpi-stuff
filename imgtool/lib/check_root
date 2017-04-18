@@ -1,11 +1,11 @@
 
 check_root() {
-local  __resultvar=${1}
-if [ `whoami` != 'root' ]; then
-local myresult=0
-else
-local myresult=1
-fi
-eval $__resultvar="'$myresult'"
+	local  __resultvar=${1}
+	if [ `whoami` != 'root' ]; then
+		local myresult=0
+	else
+		local myresult=1
+	fi
+	eval $__resultvar="'$myresult'"
 }
 

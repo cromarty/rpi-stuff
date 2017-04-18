@@ -1,14 +1,15 @@
 
 volume_is_mounted() {
-local DEVICE=${1}
-local MOUNTPOINT=${2}
-local  __RESULT=${3}
+	local DEVICE=${1}
+	local MOUNTPOINT=${2}
+	local  __RESULT=${3}
 
-if mount | grep "${DEVICE} on ${MOUNTPOINT} type" > /dev/null 
-then
-local MYRESULT=1
-else
-local MYRESULT=0
-fi
-eval $__RESULT="'$MYRESULT'"
+	if mount | grep "${DEVICE} on ${MOUNTPOINT} type" > /dev/null 
+	then
+		local MYRESULT=1
+	else
+		local MYRESULT=0
+	fi
+	eval $__RESULT="'$MYRESULT'"
+
 }

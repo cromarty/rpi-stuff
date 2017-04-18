@@ -1,12 +1,12 @@
 
-    
+
 new_image() {
-	    local WORKDIR=${1}
-	    	  local IMAGEFILE=${2}
+	local WORKDIR=${1}
+	local IMAGEFILE=${2}
 	local ROOTMP=${3}
 	local BLOCKCOUNT=${4}
-local BLOCKSIZE=${5}
-local SPLIT=${6}	    
+	local BLOCKSIZE=${5}
+	local SPLIT=${6}	    
 
 	echo "Making the work directory if it doesn't exist..."
 	[ -d ${WORKDIR} ] || mkdir -p "${WORKDIR}"
@@ -22,15 +22,10 @@ local SPLIT=${6}
 	parted "${IMAGEFILE}" --script set 1 boot on
 	echo 'Making the root partition...'
 	parted "${IMAGEFILE}" --script -- mkpart primary ext4 ${SPLIT} -1
-local BOOTP
-local ROOTP
+	local BOOTP
+	local ROOTP
 
 	loop_devices ${WORKDIR} ${IMAGEFILE} BOOTP ROOTP
-
-	#echo "Writing loop device names to ${WORKDIR}/imgtool-loop-dev-names"
-		#LD1PATH=$(realpath ${BOOTP})
-	#LD2PATH=$(realpath ${ROOTP})
-		#echo -e "${LD1PATH}\n${LD2PATH}" > "${WORKDIR}/imgtool-loop-dev-names"
 
 	echo "Boot partition is ${BOOTP}"
 	echo "Root partition is ${ROOTP}"
