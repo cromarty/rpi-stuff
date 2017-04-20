@@ -1,232 +1,141 @@
 #!/bin/bash
 
+export TEXTDOMAIN=imgtool
+export TEXTDOMAINDIR=$PWD/locale
+
+. gettext.sh
+
 . ./imgtool.lib
 
-
 usage() {
-	cat <<EOF >&2
-
-Usage: imgtool [OPTIONS}
-
-	Options:
-
-		-C
-
-			Perform a 'clean-up' of previous Mount/New run.
-
-		-M
-
-			Perform a MOUNT operation, see other options below.
-
-		-N
-
-			Perform a NEW operation, see other options below.
-
-		-c
-
-			Block-count. Number of (BLOCKSIZE -z) blocks to write to a (NEW -N) image 
-			file. Mandatory for a -N operation.
-
-		-i
-
-			Name of the image file to either MOUNT (-M) or create (-N). Full path, mandatory for either a MOUNT or NEW operation.
-
-		-r
-
-			Name of the directory which will be the mount-point (within the work 
-			directory, see below) for MOUNT or NEW operation.
-
-		-s
-
-			Split. Number of blocks of size -z (see below) which will form the size of 
-			the FAT32 boot partition for a NEW (-N) image file.
-
-			The root partition (second partition) will begin from this position.
-
-			Mandatory in a NEW (-N) operation.
-
-		-w
-
-			The work directory in which to work, relative to the CWD. It will be created 
-			if it doesn't exist.
-
-			Mandatory for all (-C, -M, -N) operations.
-
-		-z
-
-			Block-size to be used in a NEW (-N) operation to create a new image.
-
-			Valid values are '1M' or '1MB'. See 'dd' manual page.
-
-			Mandatory for a NEW (-N) operation.
-
-Examples:
-
-		Create a new image file and mount the two partitions:
-
-			$ imgtool -N -w work -i work/newimage.img -c 2000 -s 64 -z 1M -r rootmp
-
-			The above will create an image file of 2000 1M blocks in size with the split 
-			of 64 blocks, in the 'work' directory, and mount the root partion at 
-'work/rootmp'.
-
-			Note that the FAT32 boot partition will be mounted on a directory called 
-			'boot' which is created by imgtool under the root mount-point (-r).
-
-		Mount an existing image:
-
-			$ imgtool -M -w work -i oldimage.img -r rootmp
-
-			The above will create the work directory 'work', and mount the pre-existing 
-			image file 'oldimage.img' using the root mount-point 'rootmp'.
-
-			As in the NEW operation, the boot (FAT32) partition is mounted on 
-			<rootmp>/boot.
-
-		Clean-up:
-
-			$ imgtool -C -w work
-
-			The above will perform a clean-up for a previous MOUNT (-M) or NEW (-N) 
-			operation. These are the steps:
-
-			* umount both partitions.
-			* Remove both partition mount-points.
-				* Remove both the loop-devices used in the previous operation.
-			* Remove working file:
-				imgtool-mount-points
-
-EOF
-
-
+	echo $(gettext "Usage")
 }
-
-
 
 read_rc_file() {
-    local __BLOCKCOUNT=${1}
-    local __BLOCKSIZE=${2}
-    local __ROOTMOUNTPOINT=${3}
-    local __FUNCTION=${4}
+	local __BLOCKCOUNT=${1}
+	local __BLOCKSIZE=${2}
+	local __SPLIT=${3}
+	local __ROOTMOUNTPOINT=${4}
 
-if [ -f ~/.imgtoolrc ]; then
-	source ~/.imgtoolrc
-else
-if [ -f /etc/imgtoolrc ]; then
-		source /etc/imgtoolrc
-fi
-fi
+	if [ -f ~/.imgtoolrc ]; then
+		source ~/.imgtoolrc
+	else
+		if [ -f /etc/imgtoolrc ]; then
+			source /etc/imgtoolrc
+		fi
+	fi
 
-eval $__BLOCKCOUNT="'$BLOCKCOUNT'"
-	eval $__BLOCKSIZE="'$BLOCKSIZE'"
-eval $__ROOTMOUNTPOINT="'$ROOTMOUNTPOINT'"
-eval $__FUNCTION="'$FUNCTION'"
+	eval ${__BLOCKCOUNT}="'${BLOCKCOUNT}'"
+	eval ${__BLOCKSIZE}="'${BLOCKSIZE}'"
+	eval ${__SPLIT}="'${SPLIT}'"
+	eval ${__ROOTMOUNTPOINT}="'${ROOTMOUNTPOINT}'"
+
 }
-
-
 
 #-- Main code
 
 check_root RESULT
-if [ $RESULT != 1 ]; then
-	echo "Script must be run as root, try: sudo $0"
+
+if [ ${RESULT} != 1 ]; then
+	$PROGNAME=$0
+	echo $(eval_gettext "Script must be run as root, try: sudo \$PROGNAME") ; echo
 	exit 1
 fi
 
-
-
+# Don't want these from the rc file:
 WORKDIR=
-IMAGE=
+IMAGEFILE=
+FUNCTION=
 
-read_rc_file BLOCKCOUNT BLOCKSIZE ROOTMOUNTPOINT FUNCTION 
+read_rc_file BLOCKCOUNT BLOCKSIZE SPLIT ROOTMOUNTPOINT
 
-while getopts ':CD:I:N:c:hr:s:w:z:' flag ; do
-case $flag in
+while getopts ':C:D:M:N:c:hr:s:w:z:' flag ; do
+	case $flag in
 	h)
 		usage
 		exit 0
-;;
+	;;
 C)
-FUNCTION=cleanup
-;;
-D)
-FUNCTION=mountdevice
-DEVICE=$OPTARG
-;;
-I)
-FUNCTION=mountimage
-IMAGEFILE=$OPTARG
-;;
-N)
-FUNCTION=new
-IMAGEFILE=$OPTARG
-;;
-c)
-		BLOCKCOUNT=$OPTARG
-validate_blockcount $BLOCKCOUNT
-;;
+		FUNCTION=cleanup
+		WORKDIR=${OPTARG}
+		break 2
+	;;
+	D)
+		FUNCTION=mountdevice
+		DEVICE=${OPTARG}
+	;;
+	M)
+		FUNCTION=mountimage
+		IMAGEFILE=${OPTARG}
+	;;
+	N)
+		FUNCTION=new
+		IMAGEFILE=${OPTARG}
+	;;
+	c)
+		BLOCKCOUNT=${OPTARG}
+		validate_blockcount ${BLOCKCOUNT}
+	;;
 	r)
-	ROOTMOUNTPOINT=$OPTARG
-validate_mountpoint root $ROOTMOUNTPOINT
-		;;
-s)
-SPLIT=$OPTARG
-validate_split ${SPLIT}
-;;
+		ROOTMOUNTPOINT=${OPTARG}
+		validate_mountpoint ${ROOTMOUNTPOINT}
+	;;
+	s)
+		SPLIT=${OPTARG}
+		validate_split ${SPLIT}
+	;;
 	w)
-		WORKDIR=$OPTARG
-		;;
-z)
-BLOCKSIZE=$OPTARG
-validate_blocksize $BLOCKSIZE
-;;
+		WORKDIR=${OPTARG}
+	;;
+	z)
+		BLOCKSIZE=${OPTARG}
+		validate_blocksize ${BLOCKSIZE}
+	;;
 	(?)
-		echo "Invalid option" >&2
-	usage
-			exit 1
-;;
-	:)
-echo "Option -$OPTARG requires an argument." >&2
+		echo $(gettext "Invalid option") >&2
+		echo >&2
 		usage
-exit 1
-;;
-esac
+		exit 1
+	;;
+	:)
+		echo $(eval_gettext "Option - \$OPTARG requires an argument.") >&2
+		echo >&2
+		usage
+		exit 1
+	;;
+	esac
 done
 
-
-
-[ -z $WORKDIR ] && { echo "Work directory not set" ; usage; }
+[ -z ${WORKDIR} ] && { echo $(gettext "Work directory not set") ; echo ; usage; }
 if [ ${FUNCTION} = 'mountimage' ] || [ $FUNCTION = 'new' ]; then
-[ -z "${IMAGEFILE}" ] && { echo "Image file name not set"; usage; }
-[ -z $ROOTMOUNTPOINT ] && { echo "Root mount point not set"; usage; }
+	[ -z "${IMAGEFILE}" ] && { echo $(gettext "Image file name not set") ; echo ; usage; }
+	[ -z ${ROOTMOUNTPOINT} ] && { echo $(gettext "Root mount-point not set") ; echo ; usage; }
 fi
 
 if [ ${FUNCTION} = 'mountdevice' ]; then
-[ -z "${DEVICE}" ] && { echo "Device name not set"; usage; }
-[ -z $ROOTMOUNTPOINT ] && { echo "Root mount point not set"; usage; }
+	[ -z "${DEVICE}" ] && { echo $(gettext "Device name not set") ; echo ; usage; }
+	[ -z ${ROOTMOUNTPOINT} ] && { echo $(gettext "Root mount-point not set") ; echo ; usage; }
 fi
 
 if [ ${FUNCTION} = 'new' ]; then
-[ -z $BLOCKCOUNT ] && { echo "block count not set" ; usage; }
-[ -z $BLOCKSIZE ] && { echo "Blocksize not set"; usage; }
-[ -z $SPLIT ] && { echo "Split size not set"; usage; }
+	[ -z ${BLOCKCOUNT} ] && { echo $(gettext "Block count not set") ; echo ; usage; }
+	[ -z ${BLOCKSIZE} ] && { echo $(gettext "Block size not set") ; echo ; usage; }
+	[ -z ${SPLIT} ] && { echo $(gettext "Split size not set") ; echo ; usage; }
 fi
 
-
-
-case $FUNCTION in
-cleanup)
-clean_up ${WORKDIR} ${ROOTMP}
-;;
-mountimage)
-mount_image ${WORKDIR} ${IMAGEFILE} ${ROOTMOUNTPOINT}
-;;
-mountdevice)
-mount_device ${WORKDIR} ${DEVICE} ${ROOTMOUNTPOINT}
-;;
-new)
-new_image $WORKDIR ${IMAGEFILE} ${ROOTMOUNTPOINT} ${BLOCKCOUNT} ${BLOCKSIZE} ${SPLIT}
-;;
+case ${FUNCTION} in
+	cleanup)
+		clean_up ${WORKDIR} ${ROOTMP}
+	;;
+	mountimage)
+		mount_image ${WORKDIR} ${IMAGEFILE} ${ROOTMOUNTPOINT}
+	;;
+	mountdevice)
+		mount_device ${WORKDIR} ${DEVICE} ${ROOTMOUNTPOINT}
+	;;
+	new)
+		new_image ${WORKDIR} ${IMAGEFILE} ${ROOTMOUNTPOINT} ${BLOCKCOUNT} ${BLOCKSIZE} ${SPLIT}
+	;;
 esac
 
 exit 0

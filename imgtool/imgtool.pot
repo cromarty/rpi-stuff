@@ -1,0 +1,64 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-04-20 12:33+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: imgtool:11
+msgid "Usage"
+msgstr ""
+
+#: imgtool:41
+#, sh-format
+msgid "Script must be run as root, try: sudo $PROGNAME"
+msgstr ""
+
+#: imgtool:93
+msgid "Invalid option"
+msgstr ""
+
+#: imgtool:99
+#, sh-format
+msgid "Option - $OPTARG requires an argument."
+msgstr ""
+
+#: imgtool:109
+msgid "Work directory not set"
+msgstr ""
+
+#: imgtool:111
+msgid "Image file name not set"
+msgstr ""
+
+#: imgtool:112 imgtool:117
+msgid "Root mount-point not set"
+msgstr ""
+
+#: imgtool:116
+msgid "Device name not set"
+msgstr ""
+
+#: imgtool:121
+msgid "Block count not set"
+msgstr ""
+
+#: imgtool:122
+msgid "Block size not set"
+msgstr ""
+
+#: imgtool:123
+msgid "Split size not set"
+msgstr ""

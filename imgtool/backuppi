@@ -1,4 +1,8 @@
 #!/bin/bash
+export TEXTDOMAIN=imgtool
+export TEXTDOMAINDIR=$PWD/locale
+
+. gettext.sh
 
 . ./imgtool.lib
 
@@ -8,29 +12,8 @@ usage() {
 
 EOF
 
-
 }
 
-
-read_rc_file() {
-    local __BLOCKCOUNT=${1}
-    local __BLOCKSIZE=${2}
-    local __ROOTMOUNTPOINT=${3}
-    local __FUNCTION=${4}
-
-if [ -f ~/.imgtoolrc ]; then
-	source ~/.imgtoolrc
-else
-if [ -f /etc/imgtoolrc ]; then
-		source /etc/imgtoolrc
-fi
-fi
-
-eval $__BLOCKCOUNT="'$BLOCKCOUNT'"
-	eval $__BLOCKSIZE="'$BLOCKSIZE'"
-eval $__ROOTMOUNTPOINT="'$ROOTMOUNTPOINT'"
-eval $__FUNCTION="'$FUNCTION'"
-}
 
 #-- Main code
 
@@ -44,7 +27,6 @@ fi
 WORKDIR=
 IMAGE=
 
-#read_rc_file BLOCKCOUNT BLOCKSIZE ROOTMOUNTPOINT FUNCTION 
 
 while getopts ':CMNc:hi:r:s:w:z:' flag ; do
 case $flag in
@@ -63,25 +45,25 @@ FUNCTION=new
 ;;
 c)
 		BLOCKCOUNT=$OPTARG
-#validate_blockcount $BLOCKCOUNT
+validate_blockcount $BLOCKCOUNT
 ;;
 i)
 IMAGEFILE=$OPTARG
 ;;
 	r)
 	ROOTMOUNTPOINT=$OPTARG
-#validate_mountpoint root $ROOTMOUNTPOINT
+validate_mountpoint root $ROOTMOUNTPOINT
 		;;
 s)
 SPLIT=$OPTARG
-#validate_split ${SPLIT}
+validate_split ${SPLIT}
 ;;
 	w)
 		WORKDIR=$OPTARG
 		;;
 z)
 BLOCKSIZE=$OPTARG
-#validate_blocksize $BLOCKSIZE
+validate_blocksize $BLOCKSIZE
 ;;
 	(?)
 		echo "Invalid option" >&2
@@ -110,14 +92,12 @@ if [ $FUNCTION = 'new' ]; then
 [ -z $SPLIT ] && { echo "Split size not set"; usage; }
 fi
 
-
-
 case $FUNCTION in
 cleanup)
 imgtool -C -w ${WORKDIR}
 ;;
 mount)
-imgtool -w ${WORKDIR} -i ${IMAGEFILE} -r ${ROOTMOUNTPOINT}
+imgtool -w ${WORKDIR} -i ${IMAGEFILE} -r ${ROOTMOUNTPOINT} && imgrsync
 ;;
 new)
 imgtool -N -w $WORKDIR -i ${IMAGEFILE} -r ${ROOTMOUNTPOINT} -c ${BLOCKCOUNT} -z ${BLOCKSIZE} -s ${SPLIT} && imgtool_rsync

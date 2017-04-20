@@ -5,13 +5,13 @@ mount_partitions() {
 	local ROOTP=${3}
 	local ROOTMP=${4}
 
-	echo "Making the mount point if it doesn't exist..."
+	echo $(gettext "Making the mount point if it doesn't exist") ; echo
 	[ -d "${WORKDIR}/${ROOTMP}" ] || mkdir -p "${WORKDIR}/${ROOTMP}"
 	mount ${ROOTP} ${WORKDIR}/${ROOTMP}
 	[ -d "${WORKDIR}/${ROOTMP}/boot" ] || mkdir -p "${WORKDIR}/${ROOTMP}/boot"
 	mount "${BOOTP}" "${WORKDIR}/${ROOTMP}/boot"
 
-	echo "Writing mount-points to ${WORKDIR}/imgtool-mount-points"
+	echo $(eval_gettext "Writing mount-points to \$WORKDIR/imgtool-mount-points") ; echo
 	REALBOOTMOUNTPOINT=$(realpath ${WORKDIR}/${ROOTMP}/boot)
 	REALROOTMOUNTPOINT=$(realpath ${WORKDIR}/${ROOTMP})
 	echo -e "1:${BOOTP}:${REALBOOTMOUNTPOINT}\n2:${ROOTP}:${REALROOTMOUNTPOINT}" > ${WORKDIR}/imgtool-mount-points

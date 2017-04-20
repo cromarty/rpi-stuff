@@ -6,7 +6,7 @@ loop_devices() {
 	local __BOOTP=${3}
 	local __ROOTP=${4}
 
-	echo "Setting up the loop device..."
+	echo $(gettext "Setting up the loop device") ; echo
 
 	LOOPDEVICE=$(losetup -f --show ${IMAGEFILE})
 	DEVICE=$(kpartx -va ${LOOPDEVICE} | sed -E 's/.*(loop[0-9][0-9]*)p.*/\1/g' | head -1)

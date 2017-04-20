@@ -7,24 +7,24 @@ prepare_device() {
 	local BLOCKSIZE=${5}
 	local SPLIT=${6}	    
 
-	echo "Making the work directory if it doesn't exist..."
+	echo $(gettext "Making the work directory if it doesn't exist") ; echo
 	[ -d ${WORKDIR} ] || mkdir -p "${WORKDIR}"
 
-	echo "Partitioning the device..."
+	echo $("Partitioning the device") ; echo
 	parted "${DEVICE}" --script -- mklabel msdos
-	echo 'Making the boot partition...'
+	echo $(gettext "Making the boot partition...") ; echo
 	parted "${DEVICE}" --script -- mkpart primary fat32 1 ${SPLIT}
-	echo 'Setting the boot partition bootable...'
+	echo $(gettext "Setting the boot partition bootable") ; echo
 	parted "${DEVICE}" --script set 1 boot on
-	echo 'Making the root partition...'
+	echo $(gettext "Making the root partition") ; echo
 	parted "${DEVICE}" --script -- mkpart primary ext4 ${SPLIT} -1
 
-	echo "Boot partition is ${DEVICE}1"
-	echo "Root partition is ${DEVICE}2"
+	echo $(eval_gettext "Boot partition is \${DEVICE}1") ; echo
+	echo $(eval_gettext "Root partition is \${DEVICE}2") ; echo
 
 	sleep 2
 
-	echo "Making file systems..."
+	echo $(gettext "Making file systems") ; echo
 	mkfs.vfat ${DEVICE}1
 	mkfs.ext4 ${DEVICE}2
 

@@ -5,7 +5,7 @@ validate_blocksize() {
 		'1M'|'1MB')
 		;;
 		*)
-			echo 'Invalid block-size'
+			echo $(gettext "Invalid block-size") ; echo
 			usage
 			exit 1
 		;;

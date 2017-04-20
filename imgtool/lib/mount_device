@@ -6,7 +6,7 @@ mount_device() {
 
 	[ -b "${DEVICE}" ] || { echo "Supplied device name ${DEVICE} does not exist or is not a block device"; exit 1; }
 
-	echo "Making the work directory if it doesn't exist..."
+	echo $(gettext "Making the work directory if it doesn't exist") ; echo
 
 	[ -d "${WORKDIR}" ] || mkdir -p "${WORKDIR}"
 

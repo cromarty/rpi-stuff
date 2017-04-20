@@ -6,7 +6,7 @@ mount_image() {
 
 	[ -f "${IMAGEFILE}" ] || { echo "Supplied image file does not exist"; exit 1; }
 
-	echo "Making the work directory if it doesn't exist..."
+	echo $(gettext "Making the work directory if it doesn't exist") ; echo
 
 	[ -d "${WORKDIR}" ] || mkdir -p "${WORKDIR}"
 
