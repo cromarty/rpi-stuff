@@ -11,26 +11,6 @@ usage() {
 	echo $(gettext "Usage")
 }
 
-read_rc_file() {
-	local __BLOCKCOUNT=${1}
-	local __BLOCKSIZE=${2}
-	local __SPLIT=${3}
-	local __ROOTMOUNTPOINT=${4}
-
-	if [ -f ~/.imgtoolrc ]; then
-		source ~/.imgtoolrc
-	else
-		if [ -f /etc/imgtoolrc ]; then
-			source /etc/imgtoolrc
-		fi
-	fi
-
-	eval ${__BLOCKCOUNT}="'${BLOCKCOUNT}'"
-	eval ${__BLOCKSIZE}="'${BLOCKSIZE}'"
-	eval ${__SPLIT}="'${SPLIT}'"
-	eval ${__ROOTMOUNTPOINT}="'${ROOTMOUNTPOINT}'"
-
-}
 
 #-- Main code
 
@@ -42,12 +22,15 @@ if [ ${RESULT} != 1 ]; then
 	exit 1
 fi
 
-# Don't want these from the rc file:
+
 WORKDIR=
 IMAGEFILE=
 FUNCTION=
+SPLIT=64
+BLOCKSIZE=1M
+BLOCKCOUNT=
+ROOTMOUNTPOINT=root
 
-read_rc_file BLOCKCOUNT BLOCKSIZE SPLIT ROOTMOUNTPOINT
 
 while getopts ':C:D:M:N:c:hr:s:w:z:' flag ; do
 	case $flag in
@@ -106,21 +89,21 @@ C)
 	esac
 done
 
-[ -z ${WORKDIR} ] && { echo $(gettext "Work directory not set") ; echo ; usage; }
+[ -z ${WORKDIR} ] && { echo $(gettext "Work directory not set") ; echo ; usage; exit 1 ; }
 if [ ${FUNCTION} = 'mountimage' ] || [ $FUNCTION = 'new' ]; then
-	[ -z "${IMAGEFILE}" ] && { echo $(gettext "Image file name not set") ; echo ; usage; }
-	[ -z ${ROOTMOUNTPOINT} ] && { echo $(gettext "Root mount-point not set") ; echo ; usage; }
+	[ -z "${IMAGEFILE}" ] && { echo $(gettext "Image file name not set") ; echo ; usage; exit 1 ; }
+	[ -z ${ROOTMOUNTPOINT} ] && { echo $(gettext "Root mount-point not set") ; echo ; usage ; exit ; }
 fi
 
 if [ ${FUNCTION} = 'mountdevice' ]; then
-	[ -z "${DEVICE}" ] && { echo $(gettext "Device name not set") ; echo ; usage; }
-	[ -z ${ROOTMOUNTPOINT} ] && { echo $(gettext "Root mount-point not set") ; echo ; usage; }
+	[ -z "${DEVICE}" ] && { echo $(gettext "Device name not set") ; echo ; usage ; exit 1 ; }
+	[ -z ${ROOTMOUNTPOINT} ] && { echo $(gettext "Root mount-point not set") ; echo ; usage ; exit ; }
 fi
 
 if [ ${FUNCTION} = 'new' ]; then
-	[ -z ${BLOCKCOUNT} ] && { echo $(gettext "Block count not set") ; echo ; usage; }
-	[ -z ${BLOCKSIZE} ] && { echo $(gettext "Block size not set") ; echo ; usage; }
-	[ -z ${SPLIT} ] && { echo $(gettext "Split size not set") ; echo ; usage; }
+	[ -z ${BLOCKCOUNT} ] && { echo $(gettext "Block count not set") ; echo ; usage ; exit 1 ; }
+	[ -z ${BLOCKSIZE} ] && { echo $(gettext "Block size not set") ; echo ; usage ; exit 1 ; }
+	[ -z ${SPLIT} ] && { echo $(gettext "Split size not set") ; echo ; usage ; exit 1 ; }
 fi
 
 case ${FUNCTION} in
