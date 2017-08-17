@@ -5,7 +5,7 @@ export TEXTDOMAINDIR=$PWD/locale
 
 . gettext.sh
 
-. ./imgtool.lib
+. imgtool.lib
 
 usage() {
 	echo $(gettext "Usage")
@@ -37,7 +37,7 @@ read_rc_file() {
 check_root RESULT
 
 if [ ${RESULT} != 1 ]; then
-	$PROGNAME=$0
+	PROGNAME=$0
 	echo $(eval_gettext "Script must be run as root, try: sudo \$PROGNAME") ; echo
 	exit 1
 fi
