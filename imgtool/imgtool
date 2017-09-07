@@ -32,7 +32,7 @@ BLOCKCOUNT=
 ROOTMOUNTPOINT=root
 
 
-while getopts ':C:D:M:N:c:hr:s:w:z:' flag ; do
+while getopts ':C:D:M:N:c:hs:w:z:' flag ; do
 	case $flag in
 	h)
 		usage
@@ -58,10 +58,6 @@ C)
 	c)
 		BLOCKCOUNT=${OPTARG}
 		validate_blockcount ${BLOCKCOUNT}
-	;;
-	r)
-		ROOTMOUNTPOINT=${OPTARG}
-		validate_mountpoint ${ROOTMOUNTPOINT}
 	;;
 	s)
 		SPLIT=${OPTARG}
