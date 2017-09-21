@@ -8,7 +8,7 @@ fi
 PREFIX=/usr/local/bin
 
 install -m0755 imgtool ${PREFIX}
-install -m644 imgtool.lib ${PREFIX}
+
 
 
 
