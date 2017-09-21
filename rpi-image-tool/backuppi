@@ -1,10 +1,13 @@
 #!/bin/bash
+
 export TEXTDOMAIN=imgtool
 export TEXTDOMAINDIR=$PWD/locale
 
 . gettext.sh
 
-. ./imgtool.lib
+# Lib functions
+
+
 
 
 usage() {
@@ -97,10 +100,10 @@ cleanup)
 imgtool -C -w ${WORKDIR}
 ;;
 mount)
-imgtool -w ${WORKDIR} -i ${IMAGEFILE} -r ${ROOTMOUNTPOINT} && imgrsync
+rpi-image-tool -w ${WORKDIR} -i ${IMAGEFILE} -r ${ROOTMOUNTPOINT} && imgrsync
 ;;
 new)
-imgtool -N -w $WORKDIR -i ${IMAGEFILE} -r ${ROOTMOUNTPOINT} -c ${BLOCKCOUNT} -z ${BLOCKSIZE} -s ${SPLIT} && imgtool_rsync
+rpi-image-tool -N -w $WORKDIR -i ${IMAGEFILE} -r ${ROOTMOUNTPOINT} -c ${BLOCKCOUNT} -z ${BLOCKSIZE} -s ${SPLIT} && rpi-image-sync
 ;;
 esac
 

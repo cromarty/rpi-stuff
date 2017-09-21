@@ -1,6 +1,7 @@
 #!/bin/bash
 
-. ./imgtool.lib
+
+. /usr/share/rpi-image-tool/rpi-image-tool.lib
 
 usage() {
 	echo "Bad" >&2
