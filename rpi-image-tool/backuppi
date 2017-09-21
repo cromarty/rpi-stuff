@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export TEXTDOMAIN=imgtool
+export TEXTDOMAIN=rpi-image-tool
 export TEXTDOMAINDIR=$PWD/locale
 
 . gettext.sh
@@ -97,7 +97,7 @@ fi
 
 case $FUNCTION in
 cleanup)
-imgtool -C -w ${WORKDIR}
+rpi-image-tool -C -w ${WORKDIR}
 ;;
 mount)
 rpi-image-tool -w ${WORKDIR} -i ${IMAGEFILE} -r ${ROOTMOUNTPOINT} && imgrsync

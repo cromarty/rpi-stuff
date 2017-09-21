@@ -1,14 +1,23 @@
 #!/bin/bash
 
-export TEXTDOMAIN=imgtool
-export TEXTDOMAINDIR=$PWD/locale
+export TEXTDOMAIN=rpi-image-tool
+#export TEXTDOMAINDIR=$PWD/locale
+export TEXTDOMAINDIR=/usr/local/share/locale
 
 . gettext.sh
 
-. /usr/share/rpi-image-tool/rpi-image-tool.lib
+if [ -r /usr/share/rpi-image-tool/rpi-image-tool.lib ]; then
+ 	source /usr/share/rpi-image-tool/rpi-image-tool.lib
+fi
+
+if [ -r ./rpi-image-tool.lib ]; then
+	source ./rpi-image-tool.lib
+fi
+
 
 usage() {
-	echo $(gettext "Usage")
+	USAGE=$(gettext "usage_")
+	echo -e "${USAGE}"
 }
 
 
@@ -86,6 +95,7 @@ C)
 done
 
 [ -z ${WORKDIR} ] && { echo $(gettext "Work directory not set") ; echo ; usage; exit 1 ; }
+
 if [ ${FUNCTION} = 'mountimage' ] || [ $FUNCTION = 'new' ]; then
 	[ -z "${IMAGEFILE}" ] && { echo $(gettext "Image file name not set") ; echo ; usage; exit 1 ; }
 	[ -z ${ROOTMOUNTPOINT} ] && { echo $(gettext "Root mount-point not set") ; echo ; usage ; exit ; }

@@ -30,10 +30,13 @@ lex.yy.c
 *.tab.h
 
 
-# ignore imgtool stuff
+# ignore rpi-image-tool stuff
 *.img
-loop-dev-names
-mount-points
+
+# .mo files
+*.mo
+
+
 
 # ignore object files
 *.o
