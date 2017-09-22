@@ -1,22 +1,17 @@
 #!/bin/bash
 
 export TEXTDOMAIN=rpi-image-tool
-export TEXTDOMAINDIR=$PWD/locale
+export TEXTDOMAINDIR=/usr/local/share/locale
 
 . gettext.sh
 
-# Lib functions
-
-
+. rpi-image-tool.lib
 
 
 usage() {
-	cat <<EOF >&2
-
-EOF
-
+	USAGE=$(gettext "backup_usage")
+	echo -e "${USAGE}"
 }
-
 
 #-- Main code
 

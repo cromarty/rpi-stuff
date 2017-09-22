@@ -1,10 +1,15 @@
 #!/bin/bash
 
+export TEXTDOMAIN=rpi-image-tool
+export TEXTDOMAINDIR=/usr/local/share/locale
 
-. /usr/share/rpi-image-tool/rpi-image-tool.lib
+. gettext.sh
+
+. rpi-image-tool.lib
 
 usage() {
-	echo "Bad" >&2
+	USAGE=$(gettext "sync_usage")
+	echo -e "${USAGE}"
 }
 
 validate_path() {
@@ -65,10 +70,9 @@ done
 
 #-- Main program
 
-#echo "Source boot mount-point: ${FROMBOOT}"
-#echo "Source root mount-point: ${FROMROOT}"
-#echo "Target boot mount-point: ${TOBOOT}"
-#echo "Target root mount-point: ${TOROOT}"
+
+
+
 
 #rsync -av ${SOURCE_BOOTMP}/* ${TARGET_BOOTMP}
 #rsync -av --exclude=lost+found ${SOURCE_ROOTMP}/* ${TARGET_ROOTMP}

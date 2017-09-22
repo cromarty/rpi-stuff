@@ -1,5 +1,4 @@
-EXEC_PREFIX = /usr/local/bin
-LIB_PREFIX = /usr/local/share
+PREFIX = /usr/local/bin
 
 install:
 	install -m0755 rpi-image-tool $(PREFIX)/rpi-image-tool

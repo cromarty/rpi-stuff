@@ -6,17 +6,11 @@ export TEXTDOMAINDIR=/usr/local/share/locale
 
 . gettext.sh
 
-if [ -r /usr/share/rpi-image-tool/rpi-image-tool.lib ]; then
- 	source /usr/share/rpi-image-tool/rpi-image-tool.lib
-fi
-
-if [ -r ./rpi-image-tool.lib ]; then
-	source ./rpi-image-tool.lib
-fi
+. rpi-image-tool.lib
 
 
 usage() {
-	USAGE=$(gettext "usage_")
+	USAGE=$(gettext "tool_usage")
 	echo -e "${USAGE}"
 }
 
