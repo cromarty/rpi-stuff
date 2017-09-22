@@ -19,7 +19,7 @@ fi
 [ -z "${VERBOSITY}" ] && VERBOSITY=1
 
 if [ $# != 1 ]; then
-	echo 'Usage: kbild.sh { defconfig | menuconfig | oldconfig | build | modules | modules_install | mrproper }'
+	echo 'Usage: kcc.sh { defconfig | menuconfig | oldconfig | build | modules | modules_install | mrproper }'
 	exit 1
 fi
 
@@ -77,7 +77,7 @@ SCRIPT=$(pwd)/$1.script
 
 case $1 in
 	'help')
-		echo 'Usage: kbild.sh { defconfig | menuconfig | oldconfig | build | modules | modules_install | mrproper }'
+		echo 'Usage: kcc.sh { defconfig | menuconfig | oldconfig | build | modules | modules_install | mrproper }'
 		exit 0
 	;;
 	'dryrun')

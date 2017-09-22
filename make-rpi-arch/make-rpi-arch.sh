@@ -23,6 +23,9 @@
 #
 # Note that vanilla tar won't work, the .tar.gz downloaded from the ArchARM site was created with bsdtar.
 #
+# Note added 21/09/2017. The tarball will fail to extract properly unless you have
+# bsdtar 3.3+.  A good excuse for using an Arch desktop and not Debian or Ubuntu.
+#
 # Look for HOSTNAME further down the script to change your
 # chosen host name.
 #
@@ -34,7 +37,8 @@
 #
 #
 
-function usage() {
+
+usage() {
 	echo
 	echo "Usage: $0 {armv6|armv7|armv8}"	echo
 	echo 'armv6 for original Pi, armv7 for Pi2, armv8 for 64-bit Pi3'
@@ -68,8 +72,6 @@ case ${ARMV} in
 		exit 1
 	;;
 esac
-
-
 
 
 # working directory
