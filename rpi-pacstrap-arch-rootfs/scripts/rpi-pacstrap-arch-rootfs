@@ -1,14 +1,16 @@
 #!/bin/bash
-#
 
-export TEXTDOMAIN=bootstrap_arch_pi
-export TEXTDOMAINDIR=.
+
+export TEXTDOMAIN=rpi-pacstrap-arch-rootfs
+export TEXTDOMAINDIR=/usr/local/share/locale
 
 . gettext.sh
 
+. rpi-pacstrap-arch-rootfs.lib
+
 # Set up the defaults
-archroot=root
-packagelist=pacstrap_package_list.txt
+archroot=rootfs
+packagelist=rpi_pacstrap_package_list.txt
 
 hostname=alarmpi
 rootpwd=root
@@ -22,6 +24,14 @@ usage() {
 
 
 set -e
+
+check_root result
+
+if [ ${result} != 1 ]; then
+	PROGNAME=$0
+	echo $(eval_gettext "Script must be run as root, try: sudo \$PROGNAME") ; echo
+	exit 1
+fi
 
 while getopts ":d:l:r:" opt
 do
