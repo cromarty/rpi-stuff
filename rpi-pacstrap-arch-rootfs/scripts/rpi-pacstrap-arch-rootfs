@@ -8,7 +8,7 @@ export TEXTDOMAINDIR=.
 
 # Set up the defaults
 archroot=root
-packagelist=package_list.txt
+packagelist=pacstrap_package_list.txt
 
 hostname=alarmpi
 rootpwd=root
