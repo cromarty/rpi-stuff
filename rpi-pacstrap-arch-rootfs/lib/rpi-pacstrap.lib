@@ -11,6 +11,30 @@ check_root() {
 }
 
 
+validate_hostname() {
+# does not check length does not exceed 253, and does not allow hostname to start with a digit
+	local hostname=${1}
+	local  __resultvar=${2}
+
+	echo "${hostname}" | grep -P "^[a-z][a-z-0-9]*$" >/dev/null
+	local myresult=$?
+	eval $__resultvar="'$myresult'"
+}
+
+
+validate_username() {
+# User name must start with a lower-case alpha character and be followed by up to 31 alphanumerics plus dash or underscores
+# Maximum length of 32
+	local username=${1}
+	local __resultvar=${2}
+
+	echo "${username}" | grep -P "^[a-z][a-z0-9-_]{0,31}$" >/dev/null
+	local myresult=$?
+	eval $__resultvar="'$myresult'"
+}
+
+
+
 arch_chroot() {
 	local archroot=$1
 	local input=$2
