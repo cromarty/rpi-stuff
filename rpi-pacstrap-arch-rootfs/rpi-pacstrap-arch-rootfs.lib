@@ -1,0 +1,45 @@
+
+arch_chroot() {
+	local archroot=$1
+	local input=$2
+
+	arch-chroot "${archroot}" /bin/bash -c "${input}"
+
+}
+
+chroot_set_hostname() {
+	local archroot=$1
+	local hostname=$2
+
+	input="echo \"${hostname}\" > /etc/hostname"
+	arch_chroot "${archroot}" "${input}"
+
+}
+
+chroot_add_user() {
+	local archroot=$1
+	local username=$2
+
+	input="useradd -m -g users -G wheel,storage,power -s /bin/bash ${username}"
+	arch_chroot "${archroot}" "${input}"
+
+}
+
+chroot_passwd() {
+	local archroot=$1
+	local username=$2
+	local userpwd=$3
+
+	input="echo -e \"${userpwd}\n${userpwd}\n\" | passwd ${username}"
+	arch_chroot "${archroot}" "${input}"
+
+}
+
+get_installed_package_list() {
+	local listfilename=$1
+
+	pacman -Qe | awk '{print $1}' > "${listfilename}"
+
+}
+
+

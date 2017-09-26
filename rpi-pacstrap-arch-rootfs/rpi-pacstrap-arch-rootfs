@@ -1,0 +1,69 @@
+#!/bin/bash
+#
+
+export TEXTDOMAIN=bootstrap_arch_pi
+export TEXTDOMAINDIR=.
+
+. gettext.sh
+
+# Set up the defaults
+archroot=root
+packagelist=package_list.txt
+
+hostname=alarmpi
+rootpwd=root
+username=alarm
+userpwd=alarm
+
+usage() {
+	usage="this is the usage"
+	echo $usage
+}
+
+
+set -e
+
+while getopts ":d:l:r:" opt
+do
+	case $opt in
+d)
+archroot="${OPTARG}"
+;;
+		l)
+			packagelist="${OPTARG}"
+		;;
+		r)
+			archroot="${OPTARG}"
+		;;
+		\?)
+			usage
+			exit 1
+			;;
+esac
+done
+
+if [ ! -r ${packagelist} ]; then
+	echo $(eval_gettext "Package list: \${packagelist} does not exist or is not readable") 
+	exit 1
+fi
+
+
+
+if mount | grep "${archroot}" > /dev/null; then
+	# it's a mount point (device mounted)
+	echo $(eval_gettext "Pacstrapping arch root filesystem into \${archroot}")
+	echo $(eval_gettext "Target: \${archroot} is a mounted partion")
+pacstrap "${archroot}" $(cat $packagelist) 
+else
+	# no it's not a mounted mount point
+	echo $(eval_gettext "Target \${archroot} is a directory")
+	[ -d "${archroot}" ] || mkdir "${archroot}"
+	pacstrap -d "${archroot}" $(cat $packagelist)
+fi
+
+sync
+
+echo $(gettext "Completed pacstrap of base file system")
+
+exit 0
+
