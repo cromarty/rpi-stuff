@@ -43,3 +43,25 @@ get_installed_package_list() {
 }
 
 
+archive_arch_rootfs() {
+	local archroot=$1
+	local archive=$2
+	local logfile=$3
+
+	# create a temporary list of socket files to exclude
+	find ${archroot} -type s -print > /tmp/sockets-to-exclude
+
+	tar cvpzf \
+		"${archive}" \
+		-X /tmp/sockets-to-exclude \
+		--exclude=${archroot}/proc \
+		--exclude=${archroot}/lost+found  \
+		--exclude=${archroot}/tmp \
+		--exclude=/${archroot}/mnt \
+		--exclude=${archroot}/sys ${archroot} \
+		> "${logfile}"
+
+}
+
+
+
