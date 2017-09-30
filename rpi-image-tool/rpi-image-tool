@@ -32,6 +32,8 @@ FUNCTION=
 SPLIT=64
 BLOCKSIZE=1M
 BLOCKCOUNT=
+
+BOOTMOUNTPOINT=boot
 ROOTMOUNTPOINT=root
 
 
@@ -92,12 +94,10 @@ done
 
 if [ ${FUNCTION} = 'mountimage' ] || [ $FUNCTION = 'new' ]; then
 	[ -z "${IMAGEFILE}" ] && { echo $(gettext "Image file name not set") ; echo ; usage; exit 1 ; }
-	[ -z ${ROOTMOUNTPOINT} ] && { echo $(gettext "Root mount-point not set") ; echo ; usage ; exit ; }
 fi
 
 if [ ${FUNCTION} = 'mountdevice' ]; then
 	[ -z "${DEVICE}" ] && { echo $(gettext "Device name not set") ; echo ; usage ; exit 1 ; }
-	[ -z ${ROOTMOUNTPOINT} ] && { echo $(gettext "Root mount-point not set") ; echo ; usage ; exit ; }
 fi
 
 if [ ${FUNCTION} = 'new' ]; then
@@ -108,16 +108,17 @@ fi
 
 case ${FUNCTION} in
 	cleanup)
-		clean_up ${WORKDIR} ${ROOTMP}
+		clean_up ${WORKDIR}
+# ${BOOTMP} ${ROOTMP}
 	;;
 	mountimage)
-		mount_image ${WORKDIR} ${IMAGEFILE} ${ROOTMOUNTPOINT}
+		mount_image ${WORKDIR} ${IMAGEFILE} ${BOOTMOUNTPOINT} ${ROOTMOUNTPOINT}
 	;;
 	mountdevice)
-		mount_device ${WORKDIR} ${DEVICE} ${ROOTMOUNTPOINT}
+		mount_device ${WORKDIR} ${DEVICE} ${BOOTMOUNTPOINT} ${ROOTMOUNTPOINT}
 	;;
 	new)
-		new_image ${WORKDIR} ${IMAGEFILE} ${ROOTMOUNTPOINT} ${BLOCKCOUNT} ${BLOCKSIZE} ${SPLIT}
+		new_image ${WORKDIR} ${IMAGEFILE} ${BOOTMOUNTPOINT} ${ROOTMOUNTPOINT} ${BLOCKCOUNT} ${BLOCKSIZE} ${SPLIT}
 	;;
 esac
 
