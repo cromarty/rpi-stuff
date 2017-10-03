@@ -1,4 +1,5 @@
 alsa-utils
+arch-install-scripts
 autoconf
 automake
 bash
@@ -29,10 +30,13 @@ inetutils
 iproute2
 iputils
 jfsutils
+json-c
 less
 libtool
+liburcu
 licenses
 linux-raspberrypi
+linux-raspberrypi-headers
 logrotate
 lvm2
 m4

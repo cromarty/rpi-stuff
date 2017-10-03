@@ -1,0 +1,81 @@
+#!/bin/bash
+
+export TEXTDOMAIN=rpi-pacstrap
+export TEXTDOMAINDIR=/usr/local/share/locale
+
+. gettext.sh
+
+set -e
+
+if [ `whoami` != 'root' ]; then
+	PROGNAME=$0
+	echo $(eval_gettext "Script must be run as root, try: \${PROGNAME}") ; echo
+	exit 1
+fi
+
+[ -z ${PS_ROOTPWD} ] && PS_ROOTPWD=root
+[ -z ${PS_HOSTNAME} ] && PS_HOSTNAME=alarmpi
+[ -z ${PS_USERNAME} ] && PS_USERNAME=alarm
+[ -z ${PS_USERPWD} ] && PS_USERPWD=alarm
+
+if ! test -z ${1} ; then
+	rootfs=${1}
+fi
+
+packagelist=$(mktemp)
+
+cat /dev/stdin > "${packagelist}"
+
+if mount | grep "${rootfs}" > /dev/null; then
+	# it's a mount point (device mounted)
+	echo $(eval_gettext "Pacstrapping arch root filesystem into \${rootfs}") ; echo
+	echo $(eval_gettext "Target: \${rootfs} is a mounted partition") ; echo
+pacstrap "${rootfs}" $(cat ${packagelist}) 
+else
+	# no it's not a mounted mount point
+	echo $(eval_gettext "Target \${rootfs} is a directory") ; echo
+	pacstrap -d "${rootfs}" $(cat ${packagelist})
+fi
+
+sync
+
+echo $(gettext "Completed pacstrap of base file system") ; echo
+
+# set hostname
+echo $(eval_gettext "Set hostname to \${PS_HOSTNAME}") ; echo
+input="echo \"${PS_HOSTNAME}\" > /etc/hostname"
+arch-chroot "${rootfs}" /bin/bash -c "${input}"
+echo $(eval_gettext "Successfully set hostname to \${PS_HOSTNAME}") ; echo
+
+# set root password
+echo $(eval_gettext "Set root password to \${PS_ROOTPWD}") ; echo
+input="echo -e \"${PS_ROOTPWD}\n${PS_ROOTPWD}\n\" | passwd root"
+arch-chroot "${rootfs}" /bin/bash -c "${input}"
+echo $(gettext "Successfully changed root password") ; echo
+
+# add new user
+echo $(eval_gettext "Add user \${PS_USERNAME}") ; echo
+input="useradd -m -g users -G wheel,storage,power -s /bin/bash ${PS_USERNAME}"
+arch-chroot "${rootfs}" /bin/bash -c "${input}"
+echo $(eval_gettext "Successfully added new user \${PS_USERNAME}") ; echo
+
+# set user password
+echo $(eval_gettext "Set password for user \${PS_USERNAME} to ${PS_USERPWD}") ; echo
+input="echo -e \"${PS_USERPWD}\n${PS_USERPWD}\n\" | passwd ${PS_USERNAME}"
+arch-chroot "${rootfs}" /bin/bash -c "${input}"
+echo $(eval_gettext "Successfully set new password for user ${PS_USERNAME}") ; echo
+
+echo $(gettext "Attempting to enable dhcpcd.service") ; echo
+input="which dhcpcd &>/dev/null && systemctl enable dhcpcd.service"
+arch-chroot "${rootfs}" /bin/bash -c "${input}"
+echo $(gettext "Successfully enabled dhcpcd.service") ; echo
+
+echo $(gettext "Attempting to enable sshd.service") ; echo
+input="which sshd &>/dev/null && systemctl enable sshd.service"
+arch-chroot "${rootfs}" /bin/bash -c "${input}"
+echo $(gettext "Successfully enabled sshd.service") ; echo
+
+echo $(gettext "All done") ; echo
+
+exit 0
+
