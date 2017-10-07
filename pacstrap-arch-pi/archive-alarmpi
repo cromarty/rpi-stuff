@@ -1,0 +1,19 @@
+#!/bin/bash
+
+archroot=./root1
+backupfile=now.tar.gz
+logfile=mylog.log
+
+socks=`mktemp`
+find "${archroot}" -type s > "${socks}"
+
+tar zcvf "${backupfile}" \
+	--exclude-from="${socks}" \
+	--exclude="${archroot}/dev \
+	--exclude="${archroot}"/mnt \
+	--exclude="${archroot}"/proc \
+	--exclude="${archroot}"/run \
+	--exclude="${archroot}"/sys \
+	--exclude="${archroot}"/tmp" \
+	--exclude=lost+found \
+	"${archroot}" > "${logfile}"

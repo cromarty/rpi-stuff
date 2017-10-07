@@ -1,0 +1,45 @@
+#!/bin/bash
+
+export TEXTDOMAIN=rpi-pacstrap
+export TEXTDOMAINDIR=/usr/local/share/locale
+
+. gettext.sh
+
+set -e
+
+if [ `whoami` != 'root' ]; then
+	PROGNAME=$0
+	echo $(eval_gettext "Script must be run as root, try: \${PROGNAME}") ; echo
+	exit 1
+fi
+
+[ -z ${PS_ROOTPWD} ] && PS_ROOTPWD=root
+[ -z ${PS_HOSTNAME} ] && PS_HOSTNAME=alarmpi
+[ -z ${PS_USERNAME} ] && PS_USERNAME=alarm
+[ -z ${PS_USERPWD} ] && PS_USERPWD=alarm
+
+if ! test -z ${1} ; then
+	rootfs=${1}
+fi
+
+packagelist=$(mktemp)
+
+cat /dev/stdin > "${packagelist}"
+
+if mount | grep "${rootfs}" > /dev/null; then
+	# it's a mount point (device mounted)
+	echo $(eval_gettext "Pacstrapping arch root filesystem into \${rootfs}") ; echo
+	echo $(eval_gettext "Target: \${rootfs} is a mounted partition") ; echo
+	pacstrap "${rootfs}" $(cat ${packagelist}) 
+else
+	# no it's not a mounted mount point
+	echo $(eval_gettext "Target \${rootfs} is a directory") ; echo
+	pacstrap -d "${rootfs}" $(cat ${packagelist})
+fi
+
+sync
+
+echo $(gettext "All done") ; echo
+
+exit 0
+
