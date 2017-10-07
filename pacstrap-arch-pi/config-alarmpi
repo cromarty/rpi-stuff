@@ -14,7 +14,6 @@ if [ `whoami` != 'root' ]; then
 fi
 
 [ -z ${PS_ROOTPWD} ] && PS_ROOTPWD=root
-[ -z ${PS_HOSTNAME} ] && PS_HOSTNAME=alarmpi
 [ -z ${PS_USERNAME} ] && PS_USERNAME=alarm
 [ -z ${PS_USERPWD} ] && PS_USERPWD=alarm
 
@@ -37,10 +36,6 @@ echo $(gettext "Adding lines to /etc/fstab") ; echo
 input="echo -e \"\n\n/dev/mmcblk0p1  /boot   vfat    defaults        0       0\n\n\" >> /etc/fstab"
 arch-chroot "${rootfs}" /bin/bash -c "${input}"
 
-# set hostname
-echo $(eval_gettext "Set hostname to \${PS_HOSTNAME}") ; echo
-input="echo \"${PS_HOSTNAME}\" > /etc/hostname"
-arch-chroot "${rootfs}" /bin/bash -c "${input}"
 
 # set root password
 echo $(eval_gettext "Set root password to \${PS_ROOTPWD}") ; echo
@@ -68,7 +63,7 @@ if arch-chroot "${rootfs}" /bin/bash -c "which dhcpcd &>/dev/null" ; then
 	echo $(gettext "Enabling dhcpcd.service") ; echo
 	arch-chroot "${rootfs}" /bin/bash -c "systemctl enable dhcpcd.service"
 else
-	echo ${gettext "dhcpcd is not installed") ; echo
+	echo $(gettext "dhcpcd is not installed") ; echo
 fi
 
 # Enable sshd.service if installed
