@@ -1,9 +1,16 @@
 #!/bin/bash
 
+export TEXTDOMAIN=pacstrap-alarmpi
+export TEXTDOMAINDIR=/usr/local/share/locale
+
+. gettext.sh
+
 set -e
 
 if [ `whoami` != 'root' ]; then
-	echo "Must be run as root"
+	progname=$0
+	echo $(eval_gettext "Must be run as root, try: sudo 
+\${progname}") ; echo
 	exit 1
 fi
 
@@ -24,45 +31,44 @@ done
 
 shift $(($OPTIND -1 ))
 
-CHROOT="${1}"
+chroot_="${1}"
 
-[ -d "${CHROOT}" ] || mkdir -p "${CHROOT}"
+[ -d "${chroot_}" ] || mkdir -p "${chroot_}"
 
 
 if [ ${chrootdir} = '1' ]; then
-	pacstrap -d "${CHROOT}" base linux-raspberrypi linux-raspberrypi-headers raspberrypi-firmware openssh sudo
+	pacstrap -d "${chroot_}" base linux-raspberrypi linux-raspberrypi-headers raspberrypi-firmware openssh sudo
 else
-	pacstrap "${CHROOT}" base linux-raspberrypi linux-raspberrypi-headers raspberrypi-firmware openssh sudo
+	pacstrap "${chroot_}" base linux-raspberrypi linux-raspberrypi-headers raspberrypi-firmware openssh sudo
 fi
 
+cp /boot/*.bin "${chroot_}"/boot
+cp /boot/*.dat "${chroot_}"/boot
+cp /boot/*.elf "${chroot_}"/boot
 
-cp /boot/*.bin "${CHROOT}"/boot
-cp /boot/*.dat "${CHROOT}"/boot
-cp /boot/*.elf "${CHROOT}"/boot
+chroot "${chroot_}"/ mknod -m 600 /dev/console c 5 1
+chroot "${chroot_}"/ mknod -m 666 /dev/null c 1 3
+chroot "${chroot_}"/ mknod -m 666 /dev/zero c 1 5
 
+chroot "${chroot_}" /bin/bash -c 'echo "alarmpi" > /etc/hostname'
 
-chroot "${CHROOT}"/ mknod -m 600 /dev/console c 5 1
-chroot "${CHROOT}"/ mknod -m 666 /dev/null c 1 3
-chroot "${CHROOT}"/ mknod -m 666 /dev/zero c 1 5
+chroot "${chroot_}" /bin/bash -c 'echo -e "\n\n/dev/mmcblk0p1  /boot   vfat    defaults        0       0\n\n" >> /etc/fstab'
 
-chroot "${CHROOT}" /bin/bash -c 'echo "alarmpi" > /etc/hostname'
-
-chroot "${CHROOT}" /bin/bash -c 'echo -e "\n\n/dev/mmcblk0p1  /boot   vfat    defaults        0       0\n\n" >> /etc/fstab'
-
-chroot "${CHROOT}" /bin/bash -c 'echo "SSHD: ALL" >> /etc/hosts.allow'
+chroot "${chroot_}" /bin/bash -c 'echo "SSHD: ALL" >> /etc/hosts.allow'
 
 
 # set root password
-echo -e "root\nroot\n" | chroot "${CHROOT}" /usr/bin/passwd root
+echo -e "root\nroot\n" | chroot "${chroot_}" /usr/bin/passwd root
 
 
 # add a user and set the password
-chroot "${CHROOT}" useradd -m -g users -G wheel,storage,power -s /bin/bash alarm
-echo -e "alarm\nalarm\n" | chroot "${CHROOT}" /usr/bin/passwd alarm
+chroot "${chroot_}" useradd -m -g users -G wheel,storage,power -s /bin/bash alarm
+echo -e "alarm\nalarm\n" | chroot "${chroot_}" /usr/bin/passwd alarm
 
 
-chroot "${CHROOT}" systemctl enable dhcpcd.service
-chroot "${CHROOT}" systemctl enable sshd.service
+chroot "${chroot_}" systemctl enable dhcpcd.service
+chroot "${chroot_}" systemctl enable sshd.service
 
-echo "All done"
+echo $(gettext "All done") ; echo
+
 
