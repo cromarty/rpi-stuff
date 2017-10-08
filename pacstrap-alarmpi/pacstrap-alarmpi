@@ -9,8 +9,7 @@ set -e
 
 if [ `whoami` != 'root' ]; then
 	progname=$0
-	echo $(eval_gettext "Must be run as root, try: sudo 
-\${progname}") ; echo
+	echo $(eval_gettext "Must be run as root, try: sudo \${progname}") ; echo
 	exit 1
 fi
 
