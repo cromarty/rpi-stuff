@@ -4,5 +4,5 @@ all: en
 
 en:
 	install -m0644 -d $(PREFIX)/en/LC_MESSAGES
-	install -m0644 ./locale/en/LC_MESSAGES/pacstrap-arch-pi.mo $(PREFIX)/en/LC_MESSAGES
+	install -m0644 ./locale/en/LC_MESSAGES/pacstrap-alarmpi.mo $(PREFIX)/en/LC_MESSAGES
 

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# not complete and not tested
+
 archroot=./root1
 backupfile=now.tar.gz
 logfile=mylog.log
