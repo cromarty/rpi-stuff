@@ -21,6 +21,7 @@ do
 	case $opt in
 		d)
 			chrootdir=1
+			break 2
 		;;
 		\?)
 			echo "Usage: ./foo.sh [-d] <directory>"
@@ -33,13 +34,14 @@ shift $(($OPTIND -1 ))
 
 chroot_="${1}"
 
-[ -d "${chroot_}" ] || mkdir -p "${chroot_}"
+packages=(base linux-raspberrypi linux-raspberrypi-headers raspberrypi-firmware openssh sudo ntp parted dialog libnewt)
 
-
-if [ ${chrootdir} = '1' ]; then
-	pacstrap -d "${chroot_}" base linux-raspberrypi linux-raspberrypi-headers raspberrypi-firmware openssh sudo
+if [ "${chrootdir}" = '1' ]; then
+	echo "Pacstrapping into a directory..."
+	pacstrap -d "${chroot_}" ${packages[@]}	
 else
-	pacstrap "${chroot_}" base linux-raspberrypi linux-raspberrypi-headers raspberrypi-firmware openssh sudo
+	echo "Pacstrapping into a mount-point..."
+	pacstrap "${chroot_}" ${packages[@]}	
 fi
 
 cp /boot/*.bin "${chroot_}"/boot
@@ -68,6 +70,7 @@ echo -e "alarm\nalarm\n" | chroot "${chroot_}" /usr/bin/passwd alarm
 
 chroot "${chroot_}" systemctl enable dhcpcd.service
 chroot "${chroot_}" systemctl enable sshd.service
+chroot "${chroot_}" systemctl enable ntpd.service
 
 echo $(gettext "All done") ; echo
 
