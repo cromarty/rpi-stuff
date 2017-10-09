@@ -1,9 +1,0 @@
-PREFIX = /usr/local/share/locale
-
-all: en
-
-en:
-	msgfmt -o ./locale/en/LC_MESSAGES/rpi-image-tool.mo ./locale/en/LC_MESSAGES/rpi-image-tool.po
-	install -m0644 -d $(PREFIX)/en/LC_MESSAGES
-	install -m0644 ./locale/en/LC_MESSAGES/rpi-image-tool.mo $(PREFIX)/en/LC_MESSAGES
-
