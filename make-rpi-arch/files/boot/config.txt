@@ -1,0 +1,9 @@
+# See /boot/overlays/README for all available options
+
+initramfs initramfs-linux.img followkernel
+
+gpu_mem=64
+dtparam=audio=on
+hdmi_drive=2
+avoid_warnings=2
+dtoverlay=vc4-kms-v3d

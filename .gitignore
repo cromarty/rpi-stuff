@@ -21,16 +21,13 @@ res
 # ignore windows batch files
 *.bat
 
-# ignore auto-generated bash scripts
-*.run.sh
-
 # ignore generated lexer and bison output
 lex.yy.c
 *.tab.c
 *.tab.h
 
 
-# ignore rpi-image-tool stuff
+# ignore image files
 *.img
 
 # .mo files
@@ -44,6 +41,4 @@ lex.yy.c
 # ignore dependancy files
 *.d
 
-# directories under make-rpi-arch
-make-rpi-arch/*/
 
